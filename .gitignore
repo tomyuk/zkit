@@ -1,0 +1,10 @@
+#*
+.#*
+*~
+etc/bash_local
+*.pyc
+*.pyo
+lib/python*/site-packages
+bin
+build
+temp

@@ -1,0 +1,45 @@
+
+変数展開
+http://amt.ty.land.to/OpenNote/zsh.info.html#sec42
+
+${name}
+    変数の値に置換される。
+${+name}
+    名前がセットされたパラメータだったら 1 そうでなかったらゼロ
+${name:-word}
+    名前がセットされていて、ノンヌルな値ならば値を返す、
+${name:=word}
+    名前がセットされていなければ、word をセットする
+${name::=word}
+    名前にワードを無条件にセットする
+${name:?word}
+    * 名前がセットされていてノンヌルならば、値をセットする
+    * そうでなければ、shell を exit する
+${name:+word}
+    名前がセットされていてノンヌルならば、word に置換する
+${name#pattern} ${name##pattern}
+    * パターンが値の頭にマッチしたら、マッチした部分を除いた値に置換
+    * そうでなかったら、単に値に置換
+    * # の方は最短マッチ、 ## は最長マッチ
+${name%pattern} ${name%%pattern}
+    * パターンが値の終りにマッチしたら、マッチした部分を除いた値に置換
+    * そうでなかったら、単に値に置換
+    * % の方は最短マッチ、 %% は最長マッチ
+${name:#pattern}
+    * パターンが名前にマッチしたら空文字列に置換
+    * そうでなかったら、単に値に置換
+${name/pattern/repl} ${name//pattern/repl}
+    * 名前のパターンにマッチする部分が repl に置き換えられる
+    * ${name/pattern/repl} の方が、最初のマッチだけ置換
+    * ${name//pattern/repl} の方が、すべてんマッチを置換
+    * ダブルクォート文字列と同じ展開規則が適用されるので ${name/$opat/$npat} のように書くことができる
+    * パターンに # や % をつけて、最初や最後のマッチを指定できる
+${#spec}
+    * spec が変数名だと値の長さ、配列だと配列長
+    * ^', `', and `~' を # と組み合わせる時は # より前(左)に置く
+例
+if [[ -r ~/.zshrc ]] source ~/.zshrc
+for distro in Vine Gentoo Berry Momonga; echo $distro Linux
+for distro ( Ubuntu Fedora SUSE Debian ) echo $distro Linux
+for (( i=1 ; i < 10 ; i++ )) echo $i
+i=0 ; while [[ $i -le 10 ]] { echo $((i++)) }
