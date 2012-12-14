@@ -28,7 +28,7 @@ case $TERM in
 	if [ "$SSH_TTY" ]; then
 	    function __zkit_icon_title () {
 		printf "\033]0;%s@%s(%s):%s\007" \
-		    "${USER}" "${HOSTNAME%%.*}" "${SSH_TTY/#\/dev\/}" "${PWD/#$HOME/~}"
+		    "${USER}" "${HOST%%.*}" "${SSH_TTY/#\/dev\/}" "${PWD/#$HOME/~}"
 	    }
 	else
 	    function __zkit_icon_title () {
