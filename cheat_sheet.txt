@@ -1,4 +1,3 @@
-
 変数展開
 http://amt.ty.land.to/OpenNote/zsh.info.html#sec42
 
