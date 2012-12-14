@@ -1,5 +1,5 @@
 #
-#
+# その他の対話的動作の設定
 #
 
 bindkey -e
@@ -9,10 +9,9 @@ bindkey ' ' magic-space
 #
 autoload -Uz select-word-style
 select-word-style default
-zstyle ':zle:*' word-chars " _-.,/;@"
+zstyle ':zle:*' word-chars ' _-.,/;@:$'
 zstyle ':zle:*' word-style unspecified
 zstyle ':zle:*' skip-whitespace-first false
-
 
 setopt no_check_jobs no_hup notify
 setopt ignore_eof
