@@ -30,19 +30,20 @@ zstyle ':completion:*:default' list-colors ${(s.:.)LS_COLORS}
 # 	. ${HOME}/.private/etc/bash_completion
 # fi
 
-autoload -Uz bashcompinit
-bashcompinit
+# autoload -Uz bashcompinit
+# bashcompinit
 
-emulate ksh
-setopt null_glob
-for i in /etc/bash_completion.d/[0-9a-zA-Z]*.(sh|bash); do
-    if [[ -r "$i" ]]; then
-	echo source $i
-    	source "$i"
-    fi
-done
-unsetopt null_glob
-emulate zsh
+# emulate ksh
+# setopt null_glob
+# for i in /etc/bash_completion.d/[0-9a-zA-Z]*.(sh|bash); do
+#     if [[ -r "$i" ]]; then
+# 	echo source $i
+#     	source "$i"
+#     fi
+# done
+# unsetopt null_glob
+# emulate zsh
+
 
 # if [[ -r ${HOME}/.private/etc/bash_aliases ]]; then
 # 	. ${HOME}/.private/etc/bash_aliases
