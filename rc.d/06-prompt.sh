@@ -32,7 +32,7 @@ else
     shlvl=$SHLVL
 fi
 if [[ $shlvl > 1 ]]; then
-    PS1="$PS1%{$Plc}38;5;143m%}[$shlvl]"
+    PS1="$PS1%{${lc}38;5;143m%}[$shlvl] "
 fi
 unset shlvl
 
@@ -41,7 +41,7 @@ RPROMPT="${c7} %~${c0}"
 
 case $TERM in
     xterm*)
-	if [ "$SSH_TTY" ]; then
+	if [[ -n "$SSH_TTY" ]]; then
 	    function __zkit_icon_title () {
 		printf "\033]0;%s@%s(%s):%s\007" \
 		    "${USER}" "${HOST%%.*}" "${SSH_TTY/#\/dev\/}" "${PWD/#$HOME/~}"
