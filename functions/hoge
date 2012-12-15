@@ -1,0 +1,15 @@
+# -*- shell-script -*-
+# funcrtion sample () template {
+
+
+typeset -a src
+
+
+while read -rl line; do
+    typeset -p line
+done
+
+
+
+
+#}

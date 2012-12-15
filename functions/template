@@ -1,0 +1,121 @@
+# -*- shell-script -*-
+# funcrtion () template {
+#
+#{{ template <input >output
+#
+#   ====================
+#   Zkit Template Engine
+#   ====================
+#   :Author: Tomoyuki Kano <tomo@appletz.jp>
+#   :License: BSD
+#   :Abstract:
+#
+#   This is a template engine based on zsh.
+#
+#
+#
+#   .. contents::
+#
+#   Template Language
+#   =================
+#
+#   Literal shell code execution
+#       Using ``{% bash-statement %}``.
+#
+#   .. sourcecode:: bash
+#
+#       Hello {{$name}}!
+#       {% for (( i=0; i++ < 2; )); do -%}
+#       {%-  for (( j=0; j++ < 2; )); do -%}
+#           Line [{{ $i }}] [{{ $j }}]
+#       {%   done -%}
+#       {% done -%}
+#
+#   xxxxx
+#
+#}}
+
+emulate -RL zsh
+
+local
+import array
+
+#{{ template <input >output
+#
+#   Compile template and execute.
+#
+#}}
+
+function __template_expand_expr () {
+    push_ifs $' \t\n'
+    local re_expr='(.*)\{\{(.*)\}\}(.*)'
+    local left=$1 expr right
+    local -i i n=0
+    local -a out=()
+    
+    while [[ $left =~ $re_expr ]]; do
+	left=${BASH_REMATCH[1]}
+	expr=${BASH_REMATCH[2]}
+	right=${BASH_REMATCH[3]}
+	out[n++]="echo -n '$right'"
+	out[n++]="(echo ${expr})|ripnl"
+    done
+    # reverse output
+    echo "echo -n '${left}'"
+    for (( i = n; i-- > 0; )); do
+	echo "${out[i]}"
+    done
+    pop_ifs
+}
+
+function ripnl () {
+    local line
+    push_ifs ''
+    while read -r line; do
+	if declare -p lastline >/dev/null 2>&1; then
+	    echo "$lastline"
+	fi
+	local lastline=$line
+    done
+    if declare -p lastline >/dev/null 2>&1; then
+	echo -n "$lastline"
+    fi
+    pop_ifs
+}
+
+local line
+local re_inner='(.*)(\{%-?)[ \t\n]+(.+)[ \t\n]+(-?%\})(.*)'
+local -a stack=() out
+local -i i=0
+
+push_ifs ''
+mapfile line
+line="${line[*]}"
+while [[ $line =~ $re_inner ]]; do
+    line=${BASH_REMATCH[1]}
+    begin=${BASH_REMATCH[2]}
+    stmnt=${BASH_REMATCH[3]}
+    end=${BASH_REMATCH[4]}
+    tail=${BASH_REMATCH[5]}
+
+    if [ $begin == '{%-' ]; then
+	line="${line%${line##*[![:space:]]}}"
+    fi
+    if [ $end == '-%}' ]; then
+	tail="${tail#${tail%%[![:space:]]*}}"
+    fi
+
+    stack[i++]=$(__template_expand_expr "${tail}")
+    stack[i++]="${stmnt}"
+done
+stack[i++]=$(__template_expand_expr "${line}")
+array_reverse stack out
+
+IFS=$'\n'
+code="${out[*]}"
+IFS=$' \t\n'
+eval "( $code )"
+pop_ifs
+
+
+# }
