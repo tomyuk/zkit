@@ -23,3 +23,7 @@ pathmunge $ZDOTDIR/scripts
 pathmunge $HOME/.private/bin
 pathmunge $HOME/.private/tools
 
+#
+# FPATH
+#
+fpath=( $ZDOTDIR/functions $fpath )
