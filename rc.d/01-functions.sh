@@ -1,34 +1,35 @@
 
 
-#--------------------
-# pathmerge <newpath> ['after']
-#   <newpath> で指定したディレクトリをPATH に追加する。
-#   <newpath> が PATH に含まれている場合はまずそれを削除してから追加を行う。
-#   'after' が指定されていれば PATH の末尾に <newpath> を追加する
-#   そうでなければ PATH の先頭に <newpath> を追加する
+#{{ pathmerge [-a] <newpath>
+#
+#}}
 
-pathmunge () {
-    while [[ $PATH =~ :$1: ]]; do
-	PATH=${PATH/:$1:/:}
-    done
-    while [[ $PATH =~ ^$1: ]]; do
-	PATH=${PATH/#$1:/}
-    done
-    while [[ $PATH =~ :$1$ ]]; do
-	PATH=${PATH/%:$1/}
-    done
-    if [[ "$2" == "after" ]]; then
-        PATH=$PATH:$1
-    else
-        PATH=$1:$PATH
+function pathmunge () {
+    local i j after=false
+
+    if [[ $1 == -a ]]; then
+	after=true
+	shift
     fi
+
+    for i in $@; do
+	for (( j = 1; j <= $#path; j++ )); do
+	    if [[ $path[j] == $i ]] { path[j]=() }
+	done
+	if $after; then
+	    path=( $path $i )
+	else
+	    path=( $i $path )
+	fi
+    done
 }
 
-#--------------------
-# envpathmerge <name> <path>
-# ディレクトリ <path> と <path>/bin が存在する場合に
-# 環境変数 <name>=<path> を設定し PATH に $path/bin を追加する
-# ディレクトリが存在しない場合には、変数 <name> を削除する
+#{{ envpathmerge <name> <path>
+#
+#   ディレクトリ <path> と <path>/bin が存在する場合に
+#   環境変数 <name>=<path> を設定し PATH に $path/bin を追加する
+#   ディレクトリが存在しない場合には、変数 <name> を削除する
+# }}
 
 function envpathmunge() {
     if [[ -d "$2" && -d "$2/bin" ]]; then

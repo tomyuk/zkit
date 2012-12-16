@@ -1,0 +1,147 @@
+# -*- shell-script -*-
+# funcrtion () template {
+#
+#{{ template <input >output
+#
+#   ====================
+#   Zkit Template Engine
+#   ====================
+#   :Author: Tomoyuki Kano <tomo@appletz.jp>
+#   :License: BSD
+#   :Abstract:
+#
+#   This is a template engine based on zsh.
+#
+#
+#
+#   .. contents::
+#
+#   Template Language
+#   =================
+#
+#   Literal shell code execution
+#       Using ``{% bash-statement %}``.
+#
+#   .. sourcecode:: bash
+#
+#       Hello {{$name}}!
+#       {% for (( i=0; i++ < 2; )); do -%}
+#       {%-  for (( j=0; j++ < 2; )); do -%}
+#           Line [{{ $i }}] [{{ $j }}]
+#       {%   done -%}
+#       {% done -%}
+#
+#   xxxxx
+#
+#}}
+
+emulate -RL zsh
+
+local _ifs
+local line
+local -a stack
+local out
+integer i=0
+typeset -a src
+
+
+function filter_upper () {
+    local __ifs=$IFS line
+    IFS=
+    while read -r line; do
+	echo "${(U)line}"
+    done
+    IFS=$__ifs
+}
+
+function ripnl () {
+    local line
+    local _ifs=$IFS
+    IFS=
+    while read -r line; do
+	if declare -p lastline >/dev/null 2>&1; then
+	    echo "$lastline"
+	fi
+	local lastline=$line
+    done
+    if declare -p lastline >/dev/null 2>&1; then
+	echo -n "$lastline"
+    fi
+    IFS=$_ifs
+}
+
+
+function __template_expand_expr () {
+    # push_ifs $' \t\n'
+    local _ifs=$IFS
+    local re_expr='(.*)\{=(.*)=\}(.*)'
+    local left=$1 expr right
+    integer i n
+    local -a out
+    
+    IFS=$' \t\n'
+    while [[ $left =~ $re_expr ]]; do
+	left=${match[1]}
+	expr=${match[2]}
+	right=${match[3]}
+	out+="echo -n '$right'"
+	out+="(echo ${expr})|ripnl"
+    done
+    out+="echo -n '$left'"
+
+    # reverse output
+    out=(${(Oa)out})
+    echo "${(j.\n.)out}"
+    IFS=$_ifs
+}
+
+
+_ifs=$IFS
+IFS=
+if [[ -n "$1" ]]; then
+    zmodload zsh/mapfile
+    tmpl=${mapfile[$1]}
+else
+    while read -r line; do
+	src+=$line
+    done
+    src+=''
+    IFS=$'\n'
+    tmpl="${src[*]}"
+fi
+
+
+local re_inner='(.*)(\{%-?)[ \t\n]+(.+)[ \t\n]+(-?%\})(.*)'
+while [[ $tmpl =~ $re_inner ]]; do
+    tmpl=${match[1]}
+    begin=${match[2]}
+    stmnt=${match[3]}
+    end=${match[4]}
+    tail=${match[5]}
+
+    if [[ $begin == '{%-' ]]; then
+	tmpl="${tmpl%${tmpl##*[![:space:]]}}"
+    fi
+    if [[ $end == '-%}' ]]; then
+	tail="${tail#${tail%%[![:space:]]*}}"
+    fi
+
+    stack+=$(__template_expand_expr "${tail}")
+    stack+="${stmnt}"
+done
+stack+=$(__template_expand_expr "${tmpl}")
+out=(${(Oa)stack})
+
+IFS=$'\n'
+code="${out[*]}"
+IFS=$' \t\n'
+# echo "----------------------------------------" >&2
+# echo $code >&2
+# echo "----------------------------------------" >&2
+eval "( $code )"
+
+IFS=$_ifs
+
+return 0
+
+# }

@@ -1,6 +1,15 @@
 #
+# 環境変数の設定
 #
-#
+
+# 256color xterm
+if [[ $TERM == xterm* ]]; then
+    export TERM=xterm-256color
+fi
+
+# SSH_ASKPASS
+SSH_ASKPASS=/usr/libexec/openssh/gnome-ssh-askpass
+export SSH_ASKPASS
 
 case $(uname -s); in
     Linux)
@@ -42,5 +51,5 @@ case $(uname -s); in
 	;;
 esac
 
-export EDITOR="emacs -nw -Q --eval '(setq backup-inhibited t)'"
+#export EDITOR="emacs -nw -Q --eval '(setq backup-inhibited t)'"
 FCEDIT="emacs -nw -Q --eval '(setq backup-inhibited t)'"

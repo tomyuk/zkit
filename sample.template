@@ -1,0 +1,8 @@
+LINE 1
+{%- for (( i=0; i<2; i++ )); do %}
+{%-   for j in $(seq 1 2); do %}
+ == {= $(( i * 2 )) =} LINE  2 [{= $i =}][{= $j =}] <<{= $PWD  x | sed -e "s|^$HOME|\$HOME|" =}>>
+{= "    hello wold! " |filter_upper =}
+{%-   done %}
+{%- done %}
+LINE END

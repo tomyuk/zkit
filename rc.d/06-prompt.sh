@@ -20,12 +20,28 @@ if [ "${SSH_CONNECTION}" ]; then
 else
     PS1="${c1}[${c2}%n${c1}]$PS1"
 fi
-PROMPT2="%B%{${lc}38;5;10n%}%_>%{${lc}m%}%b "
+# SHLVL の調整
+# TODO Mac の場合
+if [[ -n "$DISPLAY" ]]; then
+    if [[ -n "$GJS_DEBUG_OUTPUT" ]]; then
+	shlvl=$(( $SHLVL - 1 ))  # Gnome Desktop から起動した場合
+    else
+	shlvl=$(( $SHLVL - 2 ))  # その他のランチャーから起動した場合
+    fi
+else
+    shlvl=$SHLVL
+fi
+if [[ $shlvl > 1 ]]; then
+    PS1="$PS1%{${lc}38;5;143m%}[$shlvl] "
+fi
+unset shlvl
+
+PS2="%B%{${lc}38;5;10m%}%_>%{${lc}m%}%b "
 RPROMPT="${c7} %~${c0}"
 
 case $TERM in
     xterm*)
-	if [ "$SSH_TTY" ]; then
+	if [[ -n "$SSH_TTY" ]]; then
 	    function __zkit_icon_title () {
 		printf "\033]0;%s@%s(%s):%s\007" \
 		    "${USER}" "${HOST%%.*}" "${SSH_TTY/#\/dev\/}" "${PWD/#$HOME/~}"
@@ -38,10 +54,6 @@ case $TERM in
 	    }
 	fi
 	;;
-    # screen)
-    # 	function __zkit_icon_title () {
-    # 	}
-    # 	;;
     *)
 	function __zkit_icon_title () { }
 	;;

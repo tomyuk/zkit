@@ -8,4 +8,5 @@ lib/python*/site-packages
 bin
 build
 temp
-.zsh_history
+.zsh_*
+.zcompdump
