@@ -37,40 +37,27 @@
 
 emulate -RL zsh
 
-local
-import array
+local _ifs
+local line
+local -a stack
+local out
+integer i=0
+typeset -a src
 
-#{{ template <input >output
-#
-#   Compile template and execute.
-#
-#}}
 
-function __template_expand_expr () {
-    push_ifs $' \t\n'
-    local re_expr='(.*)\{\{(.*)\}\}(.*)'
-    local left=$1 expr right
-    local -i i n=0
-    local -a out=()
-    
-    while [[ $left =~ $re_expr ]]; do
-	left=${BASH_REMATCH[1]}
-	expr=${BASH_REMATCH[2]}
-	right=${BASH_REMATCH[3]}
-	out[n++]="echo -n '$right'"
-	out[n++]="(echo ${expr})|ripnl"
+function filter_upper () {
+    local __ifs=$IFS line
+    IFS=
+    while read -r line; do
+	echo "${(U)line}"
     done
-    # reverse output
-    echo "echo -n '${left}'"
-    for (( i = n; i-- > 0; )); do
-	echo "${out[i]}"
-    done
-    pop_ifs
+    IFS=$__ifs
 }
 
 function ripnl () {
     local line
-    push_ifs ''
+    local _ifs=$IFS
+    IFS=
     while read -r line; do
 	if declare -p lastline >/dev/null 2>&1; then
 	    echo "$lastline"
@@ -80,42 +67,81 @@ function ripnl () {
     if declare -p lastline >/dev/null 2>&1; then
 	echo -n "$lastline"
     fi
-    pop_ifs
+    IFS=$_ifs
 }
 
-local line
+
+function __template_expand_expr () {
+    # push_ifs $' \t\n'
+    local _ifs=$IFS
+    local re_expr='(.*)\{=(.*)=\}(.*)'
+    local left=$1 expr right
+    integer i n
+    local -a out
+    
+    IFS=$' \t\n'
+    while [[ $left =~ $re_expr ]]; do
+	left=${match[1]}
+	expr=${match[2]}
+	right=${match[3]}
+	out+="echo -n '$right'"
+	out+="(echo ${expr})|ripnl"
+    done
+    out+="echo -n '$left'"
+
+    # reverse output
+    out=(${(Oa)out})
+    echo "${(j.\n.)out}"
+    IFS=$_ifs
+}
+
+
+_ifs=$IFS
+IFS=
+if [[ -n "$1" ]]; then
+    zmodload zsh/mapfile
+    tmpl=${mapfile[$1]}
+else
+    while read -r line; do
+	src+=$line
+    done
+    src+=''
+    IFS=$'\n'
+    tmpl="${src[*]}"
+fi
+
+
 local re_inner='(.*)(\{%-?)[ \t\n]+(.+)[ \t\n]+(-?%\})(.*)'
-local -a stack=() out
-local -i i=0
+while [[ $tmpl =~ $re_inner ]]; do
+    tmpl=${match[1]}
+    begin=${match[2]}
+    stmnt=${match[3]}
+    end=${match[4]}
+    tail=${match[5]}
 
-push_ifs ''
-mapfile line
-line="${line[*]}"
-while [[ $line =~ $re_inner ]]; do
-    line=${BASH_REMATCH[1]}
-    begin=${BASH_REMATCH[2]}
-    stmnt=${BASH_REMATCH[3]}
-    end=${BASH_REMATCH[4]}
-    tail=${BASH_REMATCH[5]}
-
-    if [ $begin == '{%-' ]; then
-	line="${line%${line##*[![:space:]]}}"
+    if [[ $begin == '{%-' ]]; then
+	tmpl="${tmpl%${tmpl##*[![:space:]]}}"
     fi
-    if [ $end == '-%}' ]; then
+    if [[ $end == '-%}' ]]; then
 	tail="${tail#${tail%%[![:space:]]*}}"
     fi
 
-    stack[i++]=$(__template_expand_expr "${tail}")
-    stack[i++]="${stmnt}"
+    stack+=$(__template_expand_expr "${tail}")
+    stack+="${stmnt}"
 done
-stack[i++]=$(__template_expand_expr "${line}")
-array_reverse stack out
+stack+=$(__template_expand_expr "${tmpl}")
+out=(${(Oa)stack})
 
 IFS=$'\n'
 code="${out[*]}"
 IFS=$' \t\n'
+# echo "----------------------------------------" >&2
+# echo $code >&2
+# echo "----------------------------------------" >&2
 eval "( $code )"
-pop_ifs
 
+IFS=$_ifs
+
+return 0
 
 # }

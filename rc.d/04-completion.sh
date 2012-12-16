@@ -1,7 +1,7 @@
 #
 #
 autoload -Uz compinit
-compinit
+compinit -d $ZDOTDIR/.zsh_compdump
 
 setopt auto_list               # 補完候補が複数ある場合、一覧を表示します。
 setopt auto_menu               # 補完キー (Tab, Ctrl+I) を連打した場合、補完候補順に補完します。
@@ -33,7 +33,11 @@ zstyle ':completion:*:default' list-colors ${(s.:.)LS_COLORS}
 # autoload -Uz bashcompinit
 # bashcompinit
 
-# emulate ksh
+# emulate sh
+# setopt bash_rematch
+# . /usr/share/bash-completion/bash_completion
+# unsetopt bash_rematch
+
 # setopt null_glob
 # for i in /etc/bash_completion.d/[0-9a-zA-Z]*.(sh|bash); do
 #     if [[ -r "$i" ]]; then
@@ -42,9 +46,12 @@ zstyle ':completion:*:default' list-colors ${(s.:.)LS_COLORS}
 #     fi
 # done
 # unsetopt null_glob
-# emulate zsh
+emulate zsh
 
 
 # if [[ -r ${HOME}/.private/etc/bash_aliases ]]; then
 # 	. ${HOME}/.private/etc/bash_aliases
 # fi
+
+zstyle ':completion:*' use-cache on
+zstyle ':completion:*' cache-path $ZDOTDIR/.zsh_cache

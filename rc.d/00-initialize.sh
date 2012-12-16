@@ -6,12 +6,6 @@
 autoload -Uz add-zsh-hook
 
 #
-# fpath の設定
-#
-fpath=( $ZDOTDIR/functions $fpath )
-
-
-#
 # PATH の設定
 #
 

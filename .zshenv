@@ -6,7 +6,15 @@
 # 3.    ~/.zshrc     O     O
 # 4.    ~/.zlogin    O
 
+
+
 setopt No_GLOBAL_RCS
-ZDOTDIR=${HOME}/.zkit
+ZDOTDIR=$(dirname $(readlink -f ${HOME}/.zshenv))
+
+#
+# fpath の設定
+#
+fpath=( $ZDOTDIR/functions $fpath )
+
 
 #PATH=$PATH:$HOME/.rvm/bin # Add RVM to PATH for scripting
