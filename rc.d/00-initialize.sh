@@ -27,7 +27,7 @@ fi
 path=(
     /usr/local/bin
     /usr/local/sbin
-    $ZDOTDIR/scripts
+    $ZDOTDIR/bin
     $HOME/.private/bin
     $HOME/.private/tools
     $path

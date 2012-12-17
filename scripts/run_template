@@ -1,5 +1,0 @@
-#!/usr/bin/env zsh
-# -*- shell-script -*-
-
-autoload -Uz template
-template $@
