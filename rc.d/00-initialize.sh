@@ -19,9 +19,9 @@ if [[ -f /etc/redhat-release ]]; then
 	    ;;
     esac
 elif [[ $(uname -s ) == Darwin ]]; then
-    export PATH=/usr/sbin:/usr/bin:/sbin:/usr/sbin
+    export PATH=/usr/sbin:/usr/bin:/sbin:/bin
 else
-    export PATH=/usr/sbin:/usr/bin:/sbin:/usr/sbin
+    export PATH=/usr/sbin:/usr/bin:/sbin:/bin
 fi
 
 path=(

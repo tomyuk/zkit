@@ -9,7 +9,11 @@
 
 
 setopt No_GLOBAL_RCS
-ZDOTDIR=$(dirname $(readlink -f ${HOME}/.zshenv))
+zshenv=$(readlink ${HOME}/.zshenv)
+if [[ ${zshenv:0:1} != '/' ]]; then
+  zshenv="${HOME}/${zshenv}"
+fi
+ZDOTDIR=$(dirname $zshenv)
 
 #
 # fpath の設定
