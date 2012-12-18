@@ -25,11 +25,11 @@ else
 fi
 
 path=(
-    /usr/local/bin
-    /usr/local/sbin
+    $HOME/.local/private/bin
+    $HOME/.local/bin
     $ZDOTDIR/bin
-    $HOME/.private/bin
-    $HOME/.private/tools
+    /usr/local/sbin
+    /usr/local/bin
     $path
     )
 

@@ -14,8 +14,8 @@ PRIVATE=${HOME}/.local/private
 function install_private () {
 
     if [[ -r ${PRIVATE}/$1 ]]; then
-	if [[ -f ${HOME}/$2 ]]; then
-	    rm ${HOME}/$2
+	if [[ -a ${HOME}/$2 ]]; then
+	    rm -rf ${HOME}/$2
 	fi
 	ln -s ${PRIVATE}/$1 ${HOME}/$2
 	echo "Linked ${PRIVATE}/$1 -> ${HOME}/$2"
