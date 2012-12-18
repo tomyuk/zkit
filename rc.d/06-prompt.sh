@@ -3,23 +3,27 @@
 #
 setopt prompt_subst transientr_prompt
 
-local lc=$'\e['
+local csi=$'\e['
 
-c0="%{${lc}m%}"		# reset
-c1="%{${lc}38;5;33m%}"  # []$
-c2="%{${lc}32m%}"	# %n
-c3="%{${lc}38;5;21m%}"	# %m
-c4="%{${lc}38;5;94m%}"  # %l
-c5="%{${lc}38;5;168m%}" # %!
-c6="%{${lc}38;5;196m%}" # %#
-c7="%{${lc}38;5;33;48;5;222m%}"	# right
+c0="%{${csi}m%}"		# reset
+c1="%{${csi}38;5;33m%}" 	# []$
+c2="%{${csi}32m%}"		# %n
+ca="%{${csi}38;5;21m%}"		# @
+c3="%{${csi}38;5;196m%}"	# %m
+c4="%{${csi}38;5;94m%}" 	# %l
+c5="%{${csi}38;5;168m%}"	# %!
+c6="%{${csi}38;5;196m%}"	# %#
+c7="%{${csi}38;5;33;48;5;222m%}" # right
 
 PS1="${c4}(%l) ${c5}%!${c6}%(!.${c6}#.${c1}%%)${c0} "
 if [ "${SSH_CONNECTION}" ]; then
-    PS1="${c1}[${c2}%n${c3}@%m${c1}]$PS1"
+    PS1="${c1}[${c2}%n${ca}@${c3}%m${c1}]$PS1"
 else
     PS1="${c1}[${c2}%n${c1}]$PS1"
 fi
+PS1="${c7} %~ ${c0}
+$PS1"
+
 # SHLVL の調整
 # TODO Mac の場合
 if [[ -n "$DISPLAY" ]]; then
@@ -32,12 +36,13 @@ else
     shlvl=$SHLVL
 fi
 if [[ $shlvl > 1 ]]; then
-    PS1="$PS1%{${lc}38;5;143m%}[$shlvl] "
+    PS1="$PS1%{${csi}38;5;143m%}[$shlvl] "
 fi
-unset shlvl
 
-PS2="%B%{${lc}38;5;10m%}%_>%{${lc}m%}%b "
-RPROMPT="${c7} %~${c0}"
+PS2="%B%{${csi}38;5;10m%}%_>%{${csi}m%}%b "
+#RPROMPT="${c7} %~${c0}"
+RPROMPT=
+unset csi shlvl
 
 case $TERM in
     xterm*)
