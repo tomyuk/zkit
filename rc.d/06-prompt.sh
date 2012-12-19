@@ -56,7 +56,7 @@ case $TERM in
 	if [[ -n "$SSH_TTY" ]]; then
 	    function __zkit_icon_title () {
 		printf "\033]0;%s%s@%s(%s):%s\007" \
-		    $(__zkit_icon_title_prefix) \
+		    "$(__zkit_icon_title_prefix)" \
 		    "${USER}" "${HOST%%.*}" \
 		    "${SSH_TTY/#\/dev\/}" "${PWD/#$HOME/~}"
 	    }
@@ -64,7 +64,7 @@ case $TERM in
 	    function __zkit_icon_title () {
 		local tty=$(tty)
 		printf "\033]0;%s%s(%s):%s\007" \
-		    $(__zkit_icon_title_prefix) \
+		    "$(__zkit_icon_title_prefix)" \
 		    "${USER}" "${TTY/#\/dev\/}" "${PWD/#$HOME/~}"
 	    }
 	fi
