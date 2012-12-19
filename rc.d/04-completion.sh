@@ -48,10 +48,14 @@ zstyle ':completion:*:default' list-colors ${(s.:.)LS_COLORS}
 # unsetopt null_glob
 emulate zsh
 
-
 # if [[ -r ${HOME}/.private/etc/bash_aliases ]]; then
 # 	. ${HOME}/.private/etc/bash_aliases
 # fi
 
 zstyle ':completion:*' use-cache on
 zstyle ':completion:*' cache-path $ZDOTDIR/.zsh_cache
+
+# Completing process IDs with menu selection:
+
+zstyle ':completion:*:*:kill:*' menu yes select
+zstyle ':completion:*:kill:*'   force-list always
