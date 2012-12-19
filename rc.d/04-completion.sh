@@ -15,7 +15,7 @@ setopt magic_equal_subst       # コマンドラインの引数で --prefix=/usr
 setopt print_eightbit          # 8ビット目を通すようになり、日本語のファイル名などを見られる。
 
 # 大文字小文字を区別しません。大文字入力時のみ区別します。 
-zstyle ':completion:*' matcher-list 'm:{a-z}={A-Z}'
+#zstyle ':completion:*' matcher-list 'm:{a-z}={A-Z}'
 
 # 補完候補が3個以上のときタブ補完をカーソル移動できます。
 zstyle ':completion:*:default' menu select=3

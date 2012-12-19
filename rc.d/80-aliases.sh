@@ -18,7 +18,7 @@ alias ls="ls -CF ${lscolor}"
 alias sl="ls -CF"
 alias la="ls -aF ${lscolor}"
 alias lla="ls -alF ${lscolor}"
-
+alias lz="ls -aZF ${lscolor}"
 alias top='nice -10 top'
 
 alias svnaddall='svn status | awk "/^\?/ {print \$(NF)}" | xargs svn add'

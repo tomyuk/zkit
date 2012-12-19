@@ -27,11 +27,12 @@ else
 fi
 
 path=(
-    $HOME/.local/private/bin
-    $HOME/.local/bin
+    $HOME/.private/bin
+    $HOME/.local
     $ZDOTDIR/bin
     /usr/local/sbin
     /usr/local/bin
     $path
     )
 
+cdpath=( $HOME )
