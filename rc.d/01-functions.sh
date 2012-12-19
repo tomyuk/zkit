@@ -1,4 +1,6 @@
-
+#
+# 01-functions
+#
 
 #{{ pathmerge [-a] <newpath>
 #
@@ -29,7 +31,7 @@ function pathmunge () {
 #   ディレクトリ <path> と <path>/bin が存在する場合に
 #   環境変数 <name>=<path> を設定し PATH に $path/bin を追加する
 #   ディレクトリが存在しない場合には、変数 <name> を削除する
-# }}
+#}}
 
 function envpathmunge() {
     if [[ -d "$2" && -d "$2/bin" ]]; then
@@ -39,3 +41,5 @@ function envpathmunge() {
 	eval unset $1
     fi
 }
+
+#

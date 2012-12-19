@@ -5,6 +5,8 @@
 
 autoload -Uz add-zsh-hook
 
+USE_RPROMPT=true
+
 #
 # PATH の設定
 #

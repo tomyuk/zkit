@@ -1,0 +1,2 @@
+#!/usr/bin/env zsh
+exec emacs -q -nw --eval '(setq backup-inhibited t)' $@

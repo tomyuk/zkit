@@ -26,8 +26,9 @@ alias svncommit='svn commit -m ""'
 alias svnlost='svn status | awk "/^\!/ {print \$(NF)}"'
 alias svn_ps_kw='svn ps -R svn:keywords "Id Head URL" .'
 
-alias rmbackup='rm -f `find . -name "*~"`'
-alias rmpyc='rm -f `find . -name "*.pyc"`'
+alias rmbackup='rm -f $(find . -name "*~")'
+alias rmpyc='rm -f $(find . -name "*.pyc")'
+alias cleanup='rm -f $( find . \( -name "*.pyc" -o -name "*~" \) )'
 
 alias sudologin='sudo -i'
 

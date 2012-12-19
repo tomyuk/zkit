@@ -3,7 +3,7 @@
 #
 setopt prompt_subst transientr_prompt
 
-local csi=$'\e['
+local csi=$'\e[' nl=$'\n'
 
 c0="%{${csi}m%}"		# reset
 c1="%{${csi}38;5;33m%}" 	# []$
@@ -21,8 +21,9 @@ if [ "${SSH_CONNECTION}" ]; then
 else
     PS1="${c1}[${c2}%n${c1}]$PS1"
 fi
-PS1="${c7} %~ ${c0}
-$PS1"
+if ! $USE_RPROMPT; then
+    PS1="${c7} %~ ${c0}${nl}$PS1"
+fi
 
 # SHLVL の調整
 # TODO Mac の場合
@@ -40,21 +41,30 @@ if [[ $shlvl > 1 ]]; then
 fi
 
 PS2="%B%{${csi}38;5;10m%}%_>%{${csi}m%}%b "
-#RPROMPT="${c7} %~${c0}"
-RPROMPT=
-unset csi shlvl
+if $USE_RPROMPT; then
+    RPROMPT="${c7} %~${c0}"
+else
+    RPROMPT=
+fi
+unset csi nl shlvl
+
+function __zkit_icon_title_prefix () {
+}
 
 case $TERM in
     xterm*)
 	if [[ -n "$SSH_TTY" ]]; then
 	    function __zkit_icon_title () {
-		printf "\033]0;%s@%s(%s):%s\007" \
-		    "${USER}" "${HOST%%.*}" "${SSH_TTY/#\/dev\/}" "${PWD/#$HOME/~}"
+		printf "\033]0;%s%s@%s(%s):%s\007" \
+		    $(__zkit_icon_title_prefix) \
+		    "${USER}" "${HOST%%.*}" \
+		    "${SSH_TTY/#\/dev\/}" "${PWD/#$HOME/~}"
 	    }
 	else
 	    function __zkit_icon_title () {
 		local tty=$(tty)
-		printf "\033]0;%s(%s):%s\007" \
+		printf "\033]0;%s%s(%s):%s\007" \
+		    $(__zkit_icon_title_prefix) \
 		    "${USER}" "${TTY/#\/dev\/}" "${PWD/#$HOME/~}"
 	    }
 	fi
@@ -63,6 +73,5 @@ case $TERM in
 	function __zkit_icon_title () { }
 	;;
 esac
-# typeset -ag precmd_functions
-# precmd_functions+=__zkit_icon_title
+
 add-zsh-hook precmd __zkit_icon_title

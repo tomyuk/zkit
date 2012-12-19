@@ -1,10 +1,19 @@
 ######################################################################
 # for python
 
-if type -p python >/dev/null; then
+python=$(whence python)
+if [[ -n "$python" ]]; then
     # デフォルトの ~/.local から ~/.private に変更
     PYTHONUSERBASE="${HOME}"/.private
     export PYTHONUSERBASE
+
+    pver=$(python -c "from sys import version_info as v; print '%d.%d' % (v.major, v.minor)")
+    plib=${HOME}/.private/lib/python${pver}
+    pbin=${plib}/bin
+
+    if [[ -d $pbin ]]; then
+	path=( $pbin $path )
+    fi
 
     ######################################################################
     # python virtualenv
@@ -32,4 +41,4 @@ if type -p python >/dev/null; then
         fi
     fi
 fi
-unset vw
+unset python pver plib pbin vw
