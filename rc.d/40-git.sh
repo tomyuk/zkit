@@ -17,7 +17,7 @@ zstyle ":vcs_info:git:*" check-for-changes true			# commitしていない変更�
 zstyle ":vcs_info:git:*" formats "%c%u[%b:%r]"			# 変更情報とリポジトリ情報を表示
 zstyle ":vcs_info:git:*" actionformats "%c%u<%a>[%b:%r]"	# コンフリクトなどの情報を表示
 zstyle ":vcs_info:git:*" unstagedstr "*"			# addしていない変更がある
-zstyle ":vcs_info:git:*" stagedstr "+"			# commitしていないstageがある
+zstyle ":vcs_info:git:*" stagedstr "+"				# commitしていないstageがある
 
 # git：まだpushしていないcommitあるかチェックする
 function my_git_info_push () {
@@ -43,7 +43,7 @@ my_git_info_stash () {
 # vcs_infoの出力に独自の出力を付加する
 my_vcs_info () {
 	vcs_info
-	echo $(my_git_info_stash)$(my_git_info_push)$vcs_info_msg_0_
+	echo "$(my_git_info_stash)$(my_git_info_push)$vcs_info_msg_0_"
 }
 
 
