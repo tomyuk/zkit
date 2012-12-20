@@ -1,8 +1,4 @@
 #
-# その他の対話的動作の設定
-#
-
-
 # 対話環境時の設定
 
 HISTSIZE=10000
@@ -17,21 +13,12 @@ bindkey ' ' magic-space
 
 #
 autoload -Uz select-word-style
-select-word-style default
+select-word-style normal
+WORDCHARS='*?_-.[]~=&;!#$%^(){}<>'
+
 zstyle ':zle:*' word-chars ' _-.,/;@:$='
 zstyle ':zle:*' word-style unspecified
-zstyle ':zle:*' skip-whitespace-first false
-
-setopt no_check_jobs no_hup notify
-setopt ignore_eof
-
-setopt short_loops           # 制御構文で短縮形を使用する
-
-# for cd
-setopt auto_cd                 # 指定したコマンドが存在せず、ディレクトリ名と一致した場合 cd します。
-#setopt autopushd               # cd したディレクトリをディレクトリスタックに push します。
-
-setopt extended_glob
+zstyle ':zle:*' skip-whitespace-first false	# wordに後続する空白はまずとばす
 
 # autojump
 . $ZDOTDIR/lib/autojump.zsh

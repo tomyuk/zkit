@@ -21,27 +21,17 @@ if [ "${SSH_CONNECTION}" ]; then
 else
     PS1="${c1}[${c2}%n${c1}]$PS1"
 fi
-if ! $USE_RPROMPT; then
+if ! $(zstyle -t ':zkit:' rprompt); then
     PS1="${c7} %~ ${c0}${nl}$PS1"
 fi
 
-# SHLVL の調整
-# TODO Mac の場合
-if [[ -n "$DISPLAY" ]]; then
-    if [[ -n "$GJS_DEBUG_OUTPUT" ]]; then
-	shlvl=$(( $SHLVL - 1 ))  # Gnome Desktop から起動した場合
-    else
-	shlvl=$(( $SHLVL - 2 ))  # その他のランチャーから起動した場合
-    fi
-else
-    shlvl=$SHLVL
-fi
+shlvl=$SHLVL
 if [[ $shlvl > 1 ]]; then
-    PS1="$PS1%{${csi}38;5;143m%}[$shlvl] "
+    PS1="$PS1%{${csi}38;5;143m%}[$shlvl]%{${csi}m%} "
 fi
 
 PS2="%B%{${csi}38;5;10m%}%_>%{${csi}m%}%b "
-if $USE_RPROMPT; then
+if $(zstyle -t ':zkit:' rprompt); then
     RPROMPT="${c7} %~${c0}"
 else
     RPROMPT=

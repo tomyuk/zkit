@@ -1,14 +1,17 @@
 #
 #
 autoload -Uz compinit
+
 compinit -d $ZDOTDIR/.zsh_compdump
+# ディレクトリについてセキュリティ・チェックをしない場合
+# compinit -d $ZDOTDIR/.zsh_compdump -u
 
 setopt auto_list               # 補完候補が複数ある場合、一覧を表示します。
 setopt auto_menu               # 補完キー (Tab, Ctrl+I) を連打した場合、補完候補順に補完します。
 setopt auto_param_keys         # カッコの対応などを自動的に補完します。
 setopt auto_param_slash        # ディレクトリ名の補完のとき / を自動的に付加します。
 setopt auto_resume             # サスペンド中のプロセスと同じコマンド名を実行した場合、レジュームします。
-setopt NO_beep                 # ビープ音を無効にします。
+setopt No_beep                 # ビープ音を無効にします。
 setopt correct                 # コマンドのスペルチェックを行います。
 setopt list_types              # auto_list の補完候補一覧で、ls -F のようにファイルの種別をマーク表示。
 setopt magic_equal_subst       # コマンドラインの引数で --prefix=/usr などの = 以降でも補完できる。
@@ -21,6 +24,19 @@ setopt print_eightbit          # 8ビット目を通すようになり、日本�
 zstyle ':completion:*:default' menu select=3
 
 zstyle ':completion:*:default' list-colors ${(s.:.)LS_COLORS}
+
+# if [[ -r ${HOME}/.private/etc/bash_aliases ]]; then
+# 	. ${HOME}/.private/etc/bash_aliases
+# fi
+
+zstyle ':completion:*' use-cache on
+zstyle ':completion:*' cache-path $ZDOTDIR/.zsh_cache
+
+# Completing process IDs with menu selection:
+
+zstyle ':completion:*:*:kill:*' menu yes select
+zstyle ':completion:*:kill:*'   force-list always
+
 
 # if [[ -r /etc/bash_completion ]]; then
 # 	. /etc/bash_completion
@@ -46,16 +62,9 @@ zstyle ':completion:*:default' list-colors ${(s.:.)LS_COLORS}
 #     fi
 # done
 # unsetopt null_glob
-emulate zsh
-
-# if [[ -r ${HOME}/.private/etc/bash_aliases ]]; then
-# 	. ${HOME}/.private/etc/bash_aliases
-# fi
-
-zstyle ':completion:*' use-cache on
-zstyle ':completion:*' cache-path $ZDOTDIR/.zsh_cache
-
-# Completing process IDs with menu selection:
-
-zstyle ':completion:*:*:kill:*' menu yes select
-zstyle ':completion:*:kill:*'   force-list always
+# emulate zsh
+zstyle ':completion:*:my-accounts' users-hosts \
+    git@repo repo@repo \
+    tomo@ \
+    root@ \
+    hostmaster@
