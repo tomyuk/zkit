@@ -2,6 +2,26 @@
 # 基本的な初期化
 #
 
+### for Zkit
+zstyle ':zkit:*' rprompt on
+zstyle ':zkit:*' compinit_secure off
+zstyle ':zkit:*' vcs_info off
+
+if [[ -z $ZKIT ]]; then
+    ZKIT=${ZDOTDIR}
+fi
+if [[ -r ${ZKIT}/zkit_local ]]; then
+    source ${ZKIT}/zkit_local
+fi
+
+if [[ ! -d ${ZKIT}/var ]]; then
+    mkdir -p ${ZKIT}/var
+fi
+if [[ ! -d ${ZKIT}/temp ]]; then
+    mkdir -p ${ZKIT}/temp
+fi
+TMPPREFIX=${ZKIT}/temp/zsh
+
 ### オプション
 
 # Glob
@@ -25,9 +45,6 @@ setopt auto_cd			# 指定したコマンドが存在せずディレクトリ名�
 # Hook
 autoload -Uz add-zsh-hook
 
-### for Zkit
-zstyle ':zkit:*' rprompt on
-
 #
 # PATH の設定
 #
@@ -50,7 +67,7 @@ fi
 path=(
     $HOME/.private/bin
     $HOME/.local
-    $ZDOTDIR/bin
+    $ZKIT/bin
     /usr/local/sbin
     /usr/local/bin
     $path

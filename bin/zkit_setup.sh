@@ -2,27 +2,16 @@
 
 ZKIT=${HOME}/.zkit
 
-if [[ -f ${HOME}/.zshenv ]]; then
-    rm ${HOME}/.zshenv
+if [[ -a ${HOME}/.zshenv ]]; then
+    rm -f ${HOME}/.zshenv
 fi
 ln -s ${ZKIT}/.zshenv ${HOME}/.zshenv
 
+if [[ ! -d ${ZKIT}/var ]]; then
+    mkdir ${ZKIT}/var
+fi
+
 ###
 
-PRIVATE=${HOME}/.local/private
+PRIVATE=${HOME}/.private
 
-function install_private () {
-
-    if [[ -r ${PRIVATE}/$1 ]]; then
-	if [[ -a ${HOME}/$2 ]]; then
-	    rm -rf ${HOME}/$2
-	fi
-	ln -s ${PRIVATE}/$1 ${HOME}/$2
-	echo "Linked ${PRIVATE}/$1 -> ${HOME}/$2"
-    fi
-}
-
-
-install_private fwknoprc .fwknoprc
-install_private gitconfig .gitconfig
-install_private ssh_config .ssh/config

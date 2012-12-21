@@ -2,18 +2,14 @@
 # 40-git
 #
 
-# if [[ -r $ZDOTDIR/lib/git-completion.bash ]]; then
-#     . $ZDOTDIR/lib/git-completion.bash
-# fi
-
 ######################################################################
 
 local csi=$'\e['
 
 if zstyle -t ':zkit:' vcs_info; then
-    if [[ -r $ZDOTDIR/lib/git-prompt.sh ]]; then
+    if [[ -r $ZKIT/lib/git-prompt.sh ]]; then
 
-	. $ZDOTDIR/lib/git-prompt.sh
+	. $ZKIT/lib/git-prompt.sh
 	GIT_PS1_SHOWDIRTYSTATE=yes
 	GIT_PS1_SHOWSTASHSTATE=yes
 	GIT_PS1_SHOWUNTRACKEDFILES=yes

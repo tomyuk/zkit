@@ -2,5 +2,7 @@
 .#*
 *~
 temp
+var
 .zsh_*
 .zcompdump
+zkit_local

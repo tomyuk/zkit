@@ -2,9 +2,12 @@
 #
 autoload -Uz compinit
 
-compinit -d $ZDOTDIR/.zsh_compdump
-# ディレクトリについてセキュリティ・チェックをしない場合
-# compinit -d $ZDOTDIR/.zsh_compdump -u
+if zstyle -t ':zkit:' compinit_secure; then
+    compinit -d $ZKIT/var/.zsh_compdump
+else
+    # ディレクトリについてセキュリティ・チェックをしない場合
+    compinit -d $ZKIT/var/.zsh_compdump -u
+fi
 
 setopt auto_list               # 補完候補が複数ある場合、一覧を表示します。
 setopt auto_menu               # 補完キー (Tab, Ctrl+I) を連打した場合、補完候補順に補完します。
@@ -30,7 +33,7 @@ zstyle ':completion:*:default' list-colors ${(s.:.)LS_COLORS}
 # fi
 
 zstyle ':completion:*' use-cache on
-zstyle ':completion:*' cache-path $ZDOTDIR/.zsh_cache
+zstyle ':completion:*' cache-path $ZKIT/var/.zsh_cache
 
 # Completing process IDs with menu selection:
 

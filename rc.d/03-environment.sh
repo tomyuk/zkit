@@ -51,6 +51,6 @@ case $(uname -s); in
 	;;
 esac
 
-export VISUAL=${ZDOTDIR}/bin/zkit_emacs
+export VISUAL=${ZKIT}/bin/zkit_emacs
 export EDITOR=$VISUAL
 FCEDIT="emacs -nw -Q --eval '(setq backup-inhibited t)'"

@@ -21,7 +21,7 @@ zstyle ':zle:*' word-style unspecified
 zstyle ':zle:*' skip-whitespace-first false	# wordに後続する空白はまずとばす
 
 # autojump
-. $ZDOTDIR/lib/autojump.zsh
+. $ZKIT/lib/autojump.zsh
 
 # run-help
 unalias run-help

@@ -1,7 +1,7 @@
 #
 #
 setopt hist_expire_dups_first
-HISTFILE=${ZDOTDIR}/.zsh_history
+HISTFILE=${ZKIT}/var/.zsh_history
 HISTSIZE=12000
 SAVEHIST=10000
 

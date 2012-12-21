@@ -21,7 +21,7 @@ if [ "${SSH_CONNECTION}" ]; then
 else
     PS1="${c1}[${c2}%n${c1}]$PS1"
 fi
-if ! $(zstyle -t ':zkit:' rprompt); then
+if ! zstyle -t ':zkit:' rprompt; then
     PS1="${c7} %~ ${c0}${nl}$PS1"
 fi
 
@@ -31,7 +31,7 @@ if [[ $shlvl > 1 ]]; then
 fi
 
 PS2="%B%{${csi}38;5;10m%}%_>%{${csi}m%}%b "
-if $(zstyle -t ':zkit:' rprompt); then
+if zstyle -t ':zkit:' rprompt; then
     RPROMPT="${c7} %~${c0}"
 else
     RPROMPT=
