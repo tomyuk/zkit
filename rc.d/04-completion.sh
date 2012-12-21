@@ -33,7 +33,7 @@ zstyle ':completion:*:default' list-colors ${(s.:.)LS_COLORS}
 # fi
 
 zstyle ':completion:*' use-cache on
-zstyle ':completion:*' cache-path $ZKIT/var/.zsh_cache
+zstyle ':completion:*' cache-path ${ZKIT}/var/cache
 
 # Completing process IDs with menu selection:
 
@@ -49,8 +49,8 @@ zstyle ':completion:*:kill:*'   force-list always
 # 	. ${HOME}/.private/etc/bash_completion
 # fi
 
-# autoload -Uz bashcompinit
-# bashcompinit
+autoload -Uz bashcompinit
+bashcompinit
 
 # emulate sh
 # setopt bash_rematch

@@ -2,32 +2,34 @@
 # 基本的な初期化
 #
 
+umask 027
+
 ### for Zkit
 zstyle ':zkit:*' rprompt on
 zstyle ':zkit:*' compinit_secure off
 zstyle ':zkit:*' vcs_info off
 
-if [[ -z $ZKIT ]]; then
-    ZKIT=${ZDOTDIR}
-fi
 if [[ -r ${ZKIT}/zkit_local ]]; then
     source ${ZKIT}/zkit_local
 fi
 
-if [[ ! -d ${ZKIT}/var ]]; then
-    mkdir -p ${ZKIT}/var
-fi
-if [[ ! -d ${ZKIT}/temp ]]; then
-    mkdir -p ${ZKIT}/temp
-fi
-TMPPREFIX=${ZKIT}/temp/zsh
+for d in cache tmp; do
+    if [[ ! -d ${ZKIT}/var/$d ]]; then
+	mkdir -p ${ZKIT}/var/$d
+    fi
+done
+TMPPREFIX=${ZKIT}/var/tmp/zsh
 
-### オプション
+### fpath の設定
+fpath=( $ZDOTDIR/functions $fpath )
+
+### zsh オプション
 
 # Glob
 
 setopt extended_glob
-setopt nonomatch
+#setopt nonomatch		# globが失敗してもエラーにせずそのまま返す
+setopt null_glob			# globが失敗したら空を返す (rvm で必要)
 
 # Job Control
 setopt No_check_jobs		# exitするときにjobの状態をチェックしない
@@ -52,22 +54,22 @@ autoload -Uz add-zsh-hook
 if [[ -f /etc/redhat-release ]]; then
     case $(cat /etc/redhat-release); in
 	"Fedora release 18 *")
-	    export PATH=/usr/sbin:/usr/sbin:
+	    path=( /usr/sbin /usr/bin )
 	    ;;
 	*)
-	    export PATH=/usr/sbin:/usr/bin:/sbin:/usr/sbin
+	    path=( /usr/sbin /usr/bin /sbin /bin )
 	    ;;
     esac
 elif [[ $(uname -s ) == Darwin ]]; then
-    export PATH=/usr/sbin:/usr/bin:/sbin:/bin
+    path=( /usr/sbin /usr/bin /sbin /bin )
 else
-    export PATH=/usr/sbin:/usr/bin:/sbin:/bin
+    path=( /usr/sbin /usr/bin /sbin /bin )
 fi
 
 path=(
-    $HOME/.private/bin
-    $HOME/.local
-    $ZKIT/bin
+    ${HOME}/.private/bin
+    ${HOME}/.local
+    ${ZKIT}/bin
     /usr/local/sbin
     /usr/local/bin
     $path

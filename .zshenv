@@ -8,17 +8,15 @@
 
 
 
-setopt No_GLOBAL_RCS
+setopt No_GLOBAL_RCS	# /etc/zsh* は読み込まない
+
 zshenv=$(readlink ${HOME}/.zshenv)
-if [[ ${zshenv:0:1} != '/' ]]; then
+if [[ ${zshenv:0:1} != '/' ]]; then	# 絶対パスに
   zshenv="${HOME}/${zshenv}"
 fi
 ZDOTDIR=$(dirname $zshenv)
 
-#
-# fpath の設定
-#
-fpath=( $ZDOTDIR/functions $fpath )
-
-
-#PATH=$PATH:$HOME/.rvm/bin # Add RVM to PATH for scripting
+if [[ -z $ZKIT ]]; then
+    ZKIT=${ZDOTDIR}
+fi
+export ZKIT
