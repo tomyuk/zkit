@@ -14,7 +14,7 @@ function pathmunge () {
 	shift
     fi
 
-    for i in $@; do
+    for i in ${(Oa)@}; do
 	for (( j = 1; j <= $#path; j++ )); do
 	    if [[ $path[j] == $i ]] { path[j]=() }
 	done

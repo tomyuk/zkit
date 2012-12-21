@@ -66,13 +66,17 @@ else
     path=( /usr/sbin /usr/bin /sbin /bin )
 fi
 
-path=(
+__private_path=(
     ${HOME}/.private/bin
-    ${HOME}/.local
+    ${HOME}/.local/bin
     ${ZKIT}/bin
+)
+
+path=(
+    $__private_path
     /usr/local/sbin
     /usr/local/bin
     $path
     )
 
-cdpath=( $HOME )
+cdpath=( $HOME ${HOME}/Projects )
