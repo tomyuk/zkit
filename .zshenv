@@ -10,13 +10,13 @@
 
 setopt No_GLOBAL_RCS	# /etc/zsh* は読み込まない
 
-zshenv=$(readlink ${HOME}/.zshenv)
-if [[ ${zshenv:0:1} != '/' ]]; then	# 絶対パスに
-  zshenv="${HOME}/${zshenv}"
-fi
-ZDOTDIR=$(dirname $zshenv)
+# zshenv=$(readlink ${HOME}/.zshenv)
+# if [[ ${zshenv:0:1} != '/' ]]; then	# 絶対パスに
+#   zshenv="${HOME}/${zshenv}"
+# fi
+# ZDOTDIR=$(dirname $zshenv)
 
-if [[ -z $ZKIT ]]; then
-    ZKIT=${ZDOTDIR}
-fi
+ZKIT=${HOME}/.zkit
+ZDOTDIR=${ZKIT}
+
 export ZKIT
