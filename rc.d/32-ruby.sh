@@ -2,10 +2,12 @@
 # ruby rvm
 
 function __zkit_rvm_prompt () {
-    local prompt=$(${rvm_bin_path}/rvm-prompt i v g)
-    if [[ -n $prompt ]]; then
-	local csi=$'\e['
-	echo "%{${csi}48;5;88;38;5;15m%}$prompt%{${csi}33m%}"
+    if [[ -n $rvm_bin_path && -x ${rvm_bin_path}/rvm-prompt ]]; then
+	local prompt=$(${rvm_bin_path}/rvm-prompt i v g)
+	if [[ -n $prompt ]]; then
+	    local csi=$'\e['
+	    echo "%{${csi}48;5;88;38;5;15m%}$prompt%{${csi}33m%}"
+	fi
     fi
 }
 
