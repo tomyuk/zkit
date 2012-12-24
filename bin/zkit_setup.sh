@@ -18,8 +18,8 @@ if [[ ! -d ${ZKIT}/var ]]; then
     mkdir ${ZKIT}/var
 fi
 
-###
+chmod -R og-rwx ${ZKIT}
 
-PRIVATE=${HOME}/.private
+###
 
 echo "Zkit setuped."

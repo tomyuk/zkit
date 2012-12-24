@@ -12,6 +12,7 @@ function __zkit_rvm_prompt () {
 }
 
 if [[ -r "${HOME}/.rvm/scripts/rvm" ]] ; then
+    export rvm_path=${HOME}/.rvm
     source "${HOME}/.rvm/scripts/rvm"
     pathmunge "${HOME}/.rvm/bin"
 
