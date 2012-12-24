@@ -5,7 +5,7 @@
 umask 027
 
 ### for Zkit
-zstyle ':zkit:*' rprompt on
+zstyle ':zkit:*' rprompt off
 zstyle ':zkit:*' compinit_secure off
 zstyle ':zkit:*' vcs_info off
 
