@@ -9,16 +9,16 @@ zstyle ':zkit:*' rprompt on
 zstyle ':zkit:*' compinit_secure off
 zstyle ':zkit:*' vcs_info off
 
-if [[ -r ${ZKIT}/zkit_local ]]; then
-    source ${ZKIT}/zkit_local
-fi
-
 for d in cache tmp; do
     if [[ ! -d ${ZKIT}/var/$d ]]; then
 	mkdir -p ${ZKIT}/var/$d
     fi
 done
 TMPPREFIX=${ZKIT}/var/tmp/zsh
+
+if [[ -r ${ZKIT}/var/zkit_local ]]; then
+    source ${ZKIT}/var/zkit_local
+fi
 
 ### fpath の設定
 fpath=( $ZDOTDIR/functions $fpath )

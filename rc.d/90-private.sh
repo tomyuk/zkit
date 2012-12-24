@@ -8,7 +8,7 @@ __rc=${HOME}/.private/zsh/zshrc-$(hostname)
 if [[ -r $__rc ]]; then
     source $__rc
 fi
-__rc=${HOME}/.private/zsh/zshrc-${USER}
+__rc=${HOME}/.private/zsh/zshrc-user-${USER}
 if [[ -r $__rc ]]; then
     source $__rc
 fi

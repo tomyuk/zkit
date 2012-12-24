@@ -52,6 +52,7 @@ alias rmbackup='rm -f $(find . -name "*~")'
 alias rmpyc='rm -f $(find . -name "*.pyc")'
 alias cleanup='rm -f $( find . \( -name "*.pyc" -o -name "*~" \) )'
 
+alias suz='sudo zsh'
 alias sudologin='sudo -i'
 
 if [[ -x /usr/bin/colordiff ]]; then

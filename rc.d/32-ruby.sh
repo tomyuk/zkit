@@ -22,7 +22,12 @@ if [[ -r "${HOME}/.rvm/scripts/rvm" ]] ; then
     if [[ -n "$RUBY_VERSION" ]]; then
     	rvm use >/dev/null
     fi
-    RPROMPT="\$(__zkit_rvm_prompt) $RPROMPT"
+    if zstyle -t ':zkit:' rprompt; then
+	RPROMPT="\$(__zkit_rvm_prompt) $RPROMPT"
+    else
+	PS1="\$(__zkit_rvm_prompt) $PS1"
+    fi
+
 fi
 
 # eof

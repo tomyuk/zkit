@@ -16,11 +16,11 @@ c6="%{${csi}38;5;196m%}"	# %#
 c7="%{${csi}38;5;33;48;5;222m%}" # right
 
 PS1="${c4}(%l) ${c5}%!${c6}%(!.${c6}#.${c1}%%)${c0} "
-if [ "${SSH_CONNECTION}" ]; then
-    PS1="${c1}[${c2}%n${ca}@${c3}%m${c1}]$PS1"
-else
-    PS1="${c1}[${c2}%n${c1}]$PS1"
-fi
+# if [ "${SSH_CONNECTION}" ]; then
+PS1="${c1}[${c2}%n${ca}@${c3}%m${c1}]$PS1"
+# else
+#     PS1="${c1}[${c2}%n${c1}]$PS1"
+# fi
 if ! zstyle -t ':zkit:' rprompt; then
     PS1="${c7} %~ ${c0}${nl}$PS1"
 fi
@@ -43,21 +43,21 @@ function __zkit_icon_title_prefix () {
 
 case $TERM in
     xterm*)
-	if [[ -n "$SSH_TTY" ]]; then
-	    function __zkit_icon_title () {
-		printf "\033]0;%s%s@%s(%s):%s\007" \
-		    "$(__zkit_icon_title_prefix)" \
-		    "${USER}" "${HOST%%.*}" \
-		    "${SSH_TTY/#\/dev\/}" "${PWD/#$HOME/~}"
-	    }
-	else
-	    function __zkit_icon_title () {
-		local tty=$(tty)
-		printf "\033]0;%s%s(%s):%s\007" \
-		    "$(__zkit_icon_title_prefix)" \
-		    "${USER}" "${TTY/#\/dev\/}" "${PWD/#$HOME/~}"
-	    }
-	fi
+	# if [[ -n "$SSH_TTY" ]]; then
+	function __zkit_icon_title () {
+	    printf "\033]0;%s%s@%s(%s):%s\007" \
+		"$(__zkit_icon_title_prefix)" \
+		"${USER}" "${HOST%%.*}" \
+		"${SSH_TTY/#\/dev\/}" "${PWD/#$HOME/~}"
+	}
+	# else
+	#     function __zkit_icon_title () {
+	# 	local tty=$(tty)
+	# 	printf "\033]0;%s%s(%s):%s\007" \
+	# 	    "$(__zkit_icon_title_prefix)" \
+	# 	    "${USER}" "${TTY/#\/dev\/}" "${PWD/#$HOME/~}"
+	#     }
+	# fi
 	;;
     *)
 	function __zkit_icon_title () { }
