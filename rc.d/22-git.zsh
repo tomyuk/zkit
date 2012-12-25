@@ -56,6 +56,6 @@ if [[ -n $PS1 ]]; then
 	    fi
 	}
 
-	GIT_RPROMPT="%{${csi}48;5;224m%}\$(__vcs_info \"(%s)\")%{${csi}m%}"
+	GIT_PROMPT="%{${csi}48;5;224m%}\$(__vcs_info \"(%s)\")%{${csi}m%}"
     fi
 fi

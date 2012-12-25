@@ -21,8 +21,11 @@ if [[ -n $PS1 ]]; then
 
     PS1="${c8} %T ${c0}"                                   # time
     if zstyle -t ':zkit:' rprompt; then
-	RPROMPT="${c7} %~${c0}"                            # current directory
+	RPROMPT=""
+	RPROMPT+="${c7} %~${c0}"                            # current directory
     else
+	echo XX "${RVM_PROMPT}${GIT_PROMPT}"
+	PS1+="${RVM_PROMPT}${GIT_PROMPT}"
 	PS1+="${c7} %~ ${c0}${nl}"
 	RPROMPT=
     fi

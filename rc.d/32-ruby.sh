@@ -26,7 +26,7 @@ if [[ -r "${HOME}/.rvm/scripts/rvm" ]] ; then
     if [[ -n $ZSH_VERSION ]]; then
 	fpath=( ${HOME}/.rvm/scripts/zsh/Completion $fpath )
     fi
-    RVM_RPROMPT="\$(__zkit_rvm_prompt)"
+    RVM_PROMPT="\$(__zkit_rvm_prompt)"
 fi
 
 # eof
