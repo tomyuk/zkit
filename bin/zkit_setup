@@ -1,0 +1,77 @@
+#!/usr/bin/env bash
+
+#{{
+# Setup zkit environment
+#}}
+
+set -e
+
+export ZKIT=${ZKIT=${HOME}/.zkit}
+rc="${HOME}/.zkitrc"
+if [[ -r $rc ]]; then
+    source $rc
+fi
+if [[ ! -d ${ZKIT} ]]; then
+    echo "Cannot find ZKIT directory: $ZKIT"
+    exit 1
+fi
+
+## load functions
+source ${ZKIT}/lib/zkit_utils.sh
+
+## default settings
+zkit_setups="bash zsh"
+: ${zkit_autoupdate:=true}
+
+zkit_private="${HOME}/.zkit_private"
+zkit_private_repo=
+
+debug=false
+
+
+if $zkit_autoupdate && [[ -d ${ZKIT}/.git ]]; then
+    __zkit_msg "++ Updating ZKIT:" $name
+    ( cd ${ZKIT} ; __zkit_run git pull )
+    chmod -R og-rwx ${ZKIT}
+fi
+
+## make var directories
+mkdir -p ${ZKIT}/var/{cache,temp}
+
+## pull private settings
+if [[ -n ${zkit_private_repo} ]]; then
+    if [[ -d ${zkit_private}/.git ]]; then
+	__zkit_msg "++ Updating private"
+	( cd ${zkit_private} ; __zkit_run git pull )
+    else
+	__zkit_err "++ Downloading private from ${zkit_private_repo}"
+	__zkit_run git clone ${zkit_private_repo} ${zkit_private} || exit 1
+    fi
+    chmod -R og-rwx ${zkit_private}
+fi
+
+## get host intrinsic params 
+zkit_intrinsics=${zkit_private}/intrinsics
+zkit_host_intrinsic=${zkit_intrinsics}/host-${HOSTNAME}.sh
+if [[ ! -r ${zkit_host_intrinsic} ]]; then
+    zkit_host_intrinsic=${zkit_intrinsics}/host-${HOSTNAME%%.[[:alnum:]]*}.sh
+    if [[ ! -r ${zkit_host_intrinsic} ]]; then
+	zkit_host_intrinsic=
+    fi
+fi
+if [[ -n ${zkit_host_instrinsic} ]]; then
+    __zkit_msg "++ Applying host intrinsic:" ${zkit_host_intrinsic}
+    source ${zkit_host_intrinsic}
+fi
+
+for __zkit_setup_name in $zkit_setups; do
+    if [[ -r ${ZKIT}/setup.d/${__zkit_setup_name}.sh ]]; then
+	__zkit_msg "++ Loading setup:" ${__zkit_setup_name}
+	source ${ZKIT}/setup.d/${__zkit_setup_name}.sh
+    else
+	__zkit_err "-- Cannot load setup:" ${__zkit_setup_name}
+    fi
+done
+
+
+#EOF

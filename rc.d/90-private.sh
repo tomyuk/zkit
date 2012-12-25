@@ -1,15 +1,22 @@
+#!/usr/bin/env zsh
 #
 # 90-private.sh
 #
 
-pathmunge "${__private_path[@]}"
+pathmunge "${__zkit_path[@]}"
 
-__rc=${HOME}/.private/zsh/zshrc-$(hostname)
-if [[ -r $__rc ]]; then
-    source $__rc
+if [[ -n $ZSH_VERSION ]]; then
+    suffix=.zsh
+else
+    suffix=.bash
 fi
-__rc=${HOME}/.private/zsh/zshrc-user-${USER}
-if [[ -r $__rc ]]; then
-    source $__rc
+
+__rc=${zkit_private}/rc.d/host-${HOST}${suffix}
+if [[ ! -r $__rc ]]; then
+    __rc=${zkit_private}/rc.d/host-${HOST%%.[[:alnum:]]*}${suffix}
+    if [[ ! -r $__rc ]]; then
+	__rc=
+    fi
 fi
+[[ -n $__rc ]] && source $__rc
 unset __rc

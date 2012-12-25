@@ -1,23 +1,23 @@
+#!/usr/bin/env zsh
 ######################################################################
 # for python
 
-python=$(whence python)
+python=$(__zkit_whence python)
 if [[ -n "$python" ]]; then
-    # デフォルトの ~/.local から ~/.private に変更
-    PYTHONUSERBASE="${HOME}"/.private
-    export PYTHONUSERBASE
+    # デフォルトの ~/.local から ${ZKIT} に変更
+    # PYTHONUSERBASE=${ZKIT}
+    # export PYTHONUSERBASE
+    _pver=$(python -c "from sys import version_info as v; print '%d.%d' % (v.major, v.minor)")
 
-    pver=$(python -c "from sys import version_info as v; print '%d.%d' % (v.major, v.minor)")
-    plib=${HOME}/.private/lib/python${pver}
-    pbin=${plib}/bin
+    #_pbin=${ZKIT}/lib/python${_pver}/bin
+    _pbin=${HOME}/.local/lib/python${_pver}/bin
 
-    if [[ -d $pbin ]]; then
-	path=( $pbin $path )
+    if [[ -d $_pbin ]]; then
+	pathmunge $_pbin
     fi
 
     ######################################################################
     # python virtualenv
-
     # ~/.virtualenvs/postactivate で以下を設定し、
     # ~/.virtualenvs/postdeactivate で削除する
     # VIRTUAL_ENV_NAME - 仮想環境名 (export)
@@ -26,19 +26,19 @@ if [[ -n "$python" ]]; then
     #
     VIRTUAL_ENV_DISABLE_PROMPT=yes
 
-    vw=$(whence -p virtualenvwrapper.sh 2>/dev/null)
-    if [[ -n $vw && $EUID -ne 0 ]]; then
+    _vw=$(__zkit_whence virtualenvwrapper.sh)
+    if [[ -n ${_vw} ]]; then
         # システムの標準 python を VIRTUALENVWRAPPER_PYTHON に設定する
         if [ -z "$VIRTUALENVWRAPPER_PYTHON" ]; then
-            VIRTUALENVWRAPPER_PYTHON=$(whence -p python 2>/dev/null)
+            VIRTUALENVWRAPPER_PYTHON=${python}
         fi
         export VIRTUALENVWRAPPER_PYTHON
-        source $vw
+        source ${_vw}
 
-        export PROJECT_HOME=/home/tomo/Projects
+        export PROJECT_HOME=${HOME}/Projects
         if [[ -n "$VIRTUAL_ENV" ]]; then
             workon $(basename $VIRTUAL_ENV)
         fi
     fi
 fi
-unset python pver plib pbin vw
+unset python _pver _pbin _vw

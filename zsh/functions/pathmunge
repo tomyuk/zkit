@@ -1,0 +1,25 @@
+#!/usr/bin/env zsh
+#{{ pathmerge [-a] <newpath>
+#
+#}}
+
+emulate -L zsh
+
+after=false
+if [[ $1 == -a ]]; then
+    after=true
+    shift
+fi
+
+for i in ${(Oa)@}; do
+    for (( j = 1; j <= $#path; j++ )); do
+	if [[ $path[j] == $i ]] { path[j]=() }
+    done
+    if $after; then
+	path=( $path $i )
+    else
+	path=( $i $path )
+    fi
+done
+
+# eof

@@ -8,10 +8,12 @@ if [[ $TERM == xterm* ]]; then
 fi
 
 # SSH_ASKPASS
-SSH_ASKPASS=/usr/libexec/openssh/gnome-ssh-askpass
-export SSH_ASKPASS
+if [[ -x /usr/libexec/openssh/gnome-ssh-askpass ]]; then
+    SSH_ASKPASS=/usr/libexec/openssh/gnome-ssh-askpass
+    export SSH_ASKPASS
+fi
 
-case $(uname -s); in
+case $(uname -s) in
     Linux)
 	if type -p dircolors >/dev/null; then
 	    eval $(dircolors --sh)
@@ -53,4 +55,3 @@ esac
 
 export VISUAL=${ZKIT}/bin/zkit_emacs
 export EDITOR=$VISUAL
-FCEDIT="emacs -nw -Q --eval '(setq backup-inhibited t)'"

@@ -1,3 +1,4 @@
+#!/usr/bin/env zsh
 ######################################################################
 # GPG Agent の設定
 
@@ -7,10 +8,10 @@
 
 # 外部ssh serverホストには private key を置かないことが前提
 
-#gpg_agent_options="--debug-level basic"
+# gpg_agent_options="--debug-level basic"
 
 # ログインシェルの場合のみ
-if [[ -o login ]]; then
+if $zkit_login_shell; then
     if [[ -z "$GNOME_KEYRING_CONTROL" && -z "$GPG_AGENT_INFO" ]]; then
         # gpg-agent がすでに起動済みであれば gpg_agent_info_file は上書きされ
         # ないので、起動済みか否かに関わらずこの内容で環境を設定する。
@@ -35,14 +36,6 @@ if [[ -o login ]]; then
 	unset gpg_agent_info_file
     fi
 
-    # もし ssh-agent が稼働していなければ起動する
-    if [[ -z "$SSH_AUTH_SOCK" ]]; then
-	eval $(ssh-agent -s)
-	if [[ -z "$DISPLAY" ]]; then
-	    SSH_ASKPASS=
-	fi
-    fi
-
     function kill_gpg_agent () {
 	if [[ -n "$GPG_AGENT_INFO" ]]; then
 	    x=(${GPG_AGENT_INFO//:/ })
@@ -56,4 +49,13 @@ if [[ -o login ]]; then
 	    fi
 	fi
     }
+
+    # もし ssh-agent が稼働していなければ起動する
+    if [[ -z "$SSH_AUTH_SOCK" ]]; then
+	eval $(ssh-agent -s)
+	if [[ -z "$DISPLAY" ]]; then
+	    SSH_ASKPASS=
+	fi
+    fi
+
 fi

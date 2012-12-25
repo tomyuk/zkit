@@ -1,0 +1,27 @@
+#!/usr/bin/env bash
+
+ZKIT="${HOME}/.zkit"
+rc="${HOME}/.zkitrc"
+
+if [[ ! -a $rc ]]; then
+    cat <<EOF >$rc
+# -*- shell-script -*-
+
+zkit_repo="https://github.com/tomyuk/zkit.git"
+private_repo=
+EOF
+elif [[ ! -r $rc ]]; then
+    echo "Cannot find or read $rc"
+    exit 1
+fi
+
+source $rc
+
+if [[ -d ${ZKIT}/.git ]]; then
+    ( cd ${ZKIT} ; git pull )
+else
+    git clone ${zkit_repo} ${ZKIT} || exit 1
+fi
+
+zkit_autoupdate=false
+source ${ZKIT}/bin/zkit_setup

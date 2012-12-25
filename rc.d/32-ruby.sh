@@ -1,3 +1,4 @@
+# -*- shell-script -*-
 ######################################################################
 # ruby rvm
 
@@ -12,22 +13,20 @@ function __zkit_rvm_prompt () {
 }
 
 if [[ -r "${HOME}/.rvm/scripts/rvm" ]] ; then
-    export rvm_path=${HOME}/.rvm
+    export rvm_path=${rvm_path=${HOME}/.rvm}
+    _bash_env=$BASH_ENV
+    unset BASH_ENV
     source "${HOME}/.rvm/scripts/rvm"
+    BASH_ENV=$_bash_env
     pathmunge "${HOME}/.rvm/bin"
-
-    fpath=( ${HOME}/.rvm/scripts/zsh/Completion $fpath )
-    compinit
 
     if [[ -n "$RUBY_VERSION" ]]; then
     	rvm use >/dev/null
     fi
-    if zstyle -t ':zkit:' rprompt; then
-	RPROMPT="\$(__zkit_rvm_prompt) $RPROMPT"
-    else
-	PS1="\$(__zkit_rvm_prompt) $PS1"
+    if [[ -n $ZSH_VERSION ]]; then
+	fpath=( ${HOME}/.rvm/scripts/zsh/Completion $fpath )
     fi
-
+    RVM_RPROMPT="\$(__zkit_rvm_prompt)"
 fi
 
 # eof

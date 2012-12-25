@@ -1,0 +1,2 @@
+#
+source ${ZDOTDIR}/startup.sh

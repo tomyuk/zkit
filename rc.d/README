@@ -1,0 +1,9 @@
+rc.d
+====
+
+0?-*	basic setups
+2?-*	tools
+3?-*	languages
+6?-*	applications
+8?-*	interactive functionalities
+9?-*	private
