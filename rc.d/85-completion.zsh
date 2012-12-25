@@ -38,14 +38,6 @@ zstyle ':completion:*:*:kill:*' menu yes select
 zstyle ':completion:*:kill:*'   force-list always
 
 
-# if [[ -r /etc/bash_completion ]]; then
-# 	. /etc/bash_completion
-# fi
-
-# if [[ -r ${HOME}/.private/etc/bash_completion ]]; then
-# 	. ${HOME}/.private/etc/bash_completion
-# fi
-
 autoload -Uz bashcompinit
 bashcompinit
 
