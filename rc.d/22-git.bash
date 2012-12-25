@@ -12,6 +12,6 @@ if [[ $PS1 ]]; then
 	GIT_PS1_SHOWSTASHSTATE=yes
 	GIT_PS1_SHOWUNTRACKEDFILES=yes
 	GIT_PS1_SHOWUPSTREAM=auto
-	GIT_PROMPT="%{${csi}48;5;224m%}\$(__git_ps1 \"(%s)\")%{${csi}m%}"
+	GIT_PROMPT="${csi}48;5;224m\$(__git_ps1 \"(%s)\")${csi}m"
     fi
 fi

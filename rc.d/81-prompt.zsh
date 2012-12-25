@@ -2,29 +2,28 @@
 #
 # setting prompt
 #
-echo "ZSH PROMPT [$PS1]"
+
 if [[ -n $PS1 ]]; then
     setopt prompt_subst transientr_prompt
 
     local csi=$'\e[' nl=$'\n'
 
-    c0="%{${csi}m%}"		# reset
-    c1="%{${csi}38;5;33m%}" 	# []$
-    c2="%{${csi}32m%}"		# %n
-    ca="%{${csi}38;5;21m%}"	# @
-    c3="%{${csi}38;5;196m%}"	# %m
-    c4="%{${csi}38;5;94m%}" 	# %l
-    c5="%{${csi}38;5;168m%}"	# %!
-    c6="%{${csi}38;5;196m%}"	# %#
-    c7="%{${csi}38;5;33;48;5;222m%}" # right
-    c8="%{${csi}48;5;0;38;5;15m%B%}" # time
+    local c0="%{${csi}m%}"		# reset
+    local c1="%{${csi}38;5;33m%}" 	# []$
+    local c2="%{${csi}32m%}"		# %n
+    local ca="%{${csi}38;5;21m%}"	# @
+    local c3="%{${csi}38;5;196m%}"	# %m
+    local c4="%{${csi}38;5;94m%}" 	# %l
+    local c5="%{${csi}38;5;168m%}"	# %!
+    local c6="%{${csi}38;5;196m%}"	# %#
+    local c7="%{${csi}38;5;33;48;5;222m%}" # right
+    local c8="%{${csi}48;5;0;38;5;15m%B%}" # time
 
-    PS1="${c8} %T ${c0}"                                   # time
+    PS1="${c8} %T ${c0}"				# time
     if zstyle -t ':zkit:' rprompt; then
-	RPROMPT=""
-	RPROMPT+="${c7} %~${c0}"                            # current directory
+	RPROMPT="${RVM_PROMPT}${GIT_PROMPT}"
+	RPROMPT+="${c7} %~${c0}"                        # current directory
     else
-	echo XX "${RVM_PROMPT}${GIT_PROMPT}"
 	PS1+="${RVM_PROMPT}${GIT_PROMPT}"
 	PS1+="${c7} %~ ${c0}${nl}"
 	RPROMPT=

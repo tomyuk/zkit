@@ -7,15 +7,17 @@ function __zkit_rvm_prompt () {
 	local prompt=$(${rvm_bin_path}/rvm-prompt i v g)
 	if [[ -n $prompt ]]; then
 	    local csi=$'\e['
-	    echo "%{${csi}48;5;88;38;5;15m%}$prompt%{${csi}33m%}"
+	    if [[ -n $ZSH_VERSION ]]; then
+		echo "%{${csi}48;5;88;38;5;15m%}$prompt%{${csi}33m%}"
+	    else
+		echo "${csi}48;5;88;38;5;15m$prompt${csi}33m"
+	    fi
 	fi
     fi
 }
 
 if [[ -r "${HOME}/.rvm/scripts/rvm" ]] ; then
     export rvm_path=${rvm_path=${HOME}/.rvm}
-    _bash_env=$BASH_ENV
-    unset BASH_ENV
     source "${HOME}/.rvm/scripts/rvm"
     BASH_ENV=$_bash_env
     pathmunge "${HOME}/.rvm/bin"

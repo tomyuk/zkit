@@ -1,3 +1,7 @@
+#
+
+source ${ZKIT}/bash/lib/array.sh
+
 #--------------------
 # pathmerge <newpath> ['after']
 #   <newpath> で指定したディレクトリをPATH に追加する。
@@ -6,20 +10,29 @@
 #   そうでなければ PATH の先頭に <newpath> を追加する
 
 pathmunge () {
-    while [[ $PATH =~ :$1: ]]; do
-	PATH=${PATH/:$1:/:}
-    done
-    while [[ $PATH =~ ^$1: ]]; do
-	PATH=${PATH/#$1:/}
-    done
-    while [[ $PATH =~ :$1$ ]]; do
-	PATH=${PATH/%:$1/}
-    done
-    if [[ "$2" == "after" ]]; then
-        PATH=$PATH:$1
-    else
-        PATH=$1:$PATH
+    local after=false i args
+    if [[ "$1" == "-a" ]]; then
+	after=true
+	shift
     fi
+    args=("$@")
+    array_reverse args
+    for i in "${args[@]}"; do
+	while [[ $PATH =~ :$i: ]]; do
+	    PATH=${PATH/:$i:/:}
+	done
+	while [[ $PATH =~ ^$i: ]]; do
+	    PATH=${PATH/#$i:/}
+	done
+	while [[ $PATH =~ :$i$ ]]; do
+	    PATH=${PATH/%:$i/}
+	done
+	if $after; then
+            PATH=$PATH:$i
+	else
+            PATH=$i:$PATH
+	fi
+    done
 }
 
 #--------------------
@@ -36,3 +49,4 @@ function envpathmunge() {
 	eval unset $1
     fi
 }
+

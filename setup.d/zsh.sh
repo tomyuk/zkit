@@ -4,5 +4,5 @@
 
 zsh=$(type -p zsh)
 if [[ -n $zsh ]]; then
-    __zkit_install zsh/zshenv ${HOME}/.zshenv
+    __zkit_install zsh/.zshenv ${HOME}/.zshenv
 fi

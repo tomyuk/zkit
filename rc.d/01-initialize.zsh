@@ -59,12 +59,6 @@ else
     path=( /usr/sbin /usr/bin /sbin /bin )
 fi
 
-# 90-private.zsh reuse this
-__zkit_path=(
-    ${zkit_private}/bin
-    ${ZKIT}/bin
-)
-
 path=(
     $__zkit_path
     /usr/local/sbin
