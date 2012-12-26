@@ -29,37 +29,24 @@ if [[ -n $PS1 ]]; then
 	fi
     }
 
-    local csi=$'\e[' nl=$'\n'
-
-    local c0="%{${csi}m%}"			# reset
-    local c1="%{${csi}38;5;33m%}" 		# []$
-    local c2="%{${csi}32m%}"			# %n
-    local ca="%{${csi}38;5;21m%}"		# @
-    local c3="%{${csi}38;5;196m%}"		# %m
-    local c4="%{${csi}38;5;94m%}" 		# %l
-    local c5="%{${csi}38;5;168m%}"		# %!
-    local c6="%{${csi}38;5;196m%}"		# %#
-    local c7="%{${csi}38;5;33;48;5;222m%}"	# right
-    local c8="%{${csi}38;5;143m%}"		# shlvl
-
-    PS1="%{${csi}48;5;220;38;5;58m%}Zsh"				# Bash
-    PS1+="%{${csi}48;5;250;38;5;255m%} %T "				# time
-    PS1+="%{${csi}48;5;219;38;5;242m%}\$($VIRTUALENV_PROMPT_COMMAND)"	# virtualenv
-    PS1+="%{${csi}48;5;223;38;5;197m%}\$($RVM_PROMPT_COMMAND)"		# rvm
-    PS1+="%{${csi}48;5;224;38;5;8m%}\$($GIT_PROMPT_COMMAND)"		# git
-    PS1+="${c7} %~ "							# pwd
-    PS1+="${c0}${nl}"
+    PS1="${pc1}Zsh"				# Bash
+    PS1+="${pc2} %T "				# time
+    PS1+="${pc3}\$($VIRTUALENV_PROMPT_COMMAND)"	# virtualenv
+    PS1+="${pc4}\$($RVM_PROMPT_COMMAND)"	# rvm
+    PS1+="${pc5}\$($GIT_PROMPT_COMMAND)"	# git
+    PS1+="${pc6} %~ "				# pwd
+    PS1+="${pc0}${nl}"
 
     if zstyle -t ':zkit:' rprompt; then
 	RPROMPT=
     else
 	RPROMPT=
     fi
-    PS1+="${c2}%n${ca}@${c3}%m "				# user@host
-    PS1+="${c4}(%l)"						# (tty)
-    PS1+="${c8}$(__zkit_shlvl_prompt)"				# shlvl
-    PS1+="${c5}%!"						# history
-    PS1+="${c6}%(!.${c6}#.${c1}%%)${c0} "			# %
+    PS1+="${cc1}%n${cc2}@${cc3}%m "		# user@host
+    PS1+="${cc4}(%l)"				# (tty)
+    PS1+="${cc5}$(__zkit_shlvl_prompt)"		# shlvl
+    PS1+="${cc6}%!"				# history
+    PS1+="%(!.${cc8}#.${cc7}%%)${pc0} "		# #/%
 
     PS2="%B%{${csi}38;5;10m%}%_>%{${csi}m%}%b "
 

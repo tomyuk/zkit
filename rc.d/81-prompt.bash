@@ -25,32 +25,21 @@ if [[ -n $PS1 ]]; then
     PROMPT_COMMAND="__zkit_title_command"
     PROMPT_DIRTRIM=0
 
-    csi=$'\e[' nl=$'\n'
-    c0="\\[${csi}m\\]"				# reset
-    c1="\\[${csi}38;5;33m\\]" 			# []$
-    c2="\\[${csi}32m\\]"			# user
-    ca="\\[${csi}38;5;21m\\]"			# @
-    c3="\\[${csi}38;5;196m\\]"			# machine
-    c4="\\[${csi}38;5;94m\\]" 			# tty
-    c5="\\[${csi}38;5;168m\\]"			# history
-    c7="\\[${csi}38;5;33;48;5;222m\\]"		# pwd
-    c8="\\[${csi}38;5;143m\\]"			# shlvl
-
-    PS1="\[${csi}48;5;150;38;5;58m\]Bash"				# Bash
-    PS1+="\[${csi}48;5;250;38;5;255m\] \D{%R} "				# time
-    PS1+="\[${csi}48;5;219;38;5;242m\]\$($VIRTUALENV_PROMPT_COMMAND)"	# virtualenv
-    PS1+="\[${csi}48;5;223;38;5;197m\]\$($RVM_PROMPT_COMMAND)"		# rvm
-    PS1+="\[${csi}48;5;224;38;5;8m\]\$($GIT_PROMPT_COMMAND)"		# git
-    PS1+="${c7} \w "							# pwd
-    PS1+="${c0}${nl}"
+    PS1="${pc1}Bash"				# Bash
+    PS1+="${pc2} \D{%R} "			# time
+    PS1+="${pc3}$($VIRTUALENV_PROMPT_COMMAND)"	# virtualenv
+    PS1+="${pc4}\$($RVM_PROMPT_COMMAND)"	# rvm
+    PS1+="${pc5}\$($GIT_PROMPT_COMMAND)"	# git
+    PS1+="${pc6} \w "				# pwd
+    PS1+="${pc0}${nl}"
 
     tty=$(tty)
 
-    PS1+="${c2}\u${ca}@${c3}\h "				# user@host
-    PS1+="${c4}(${tty/#\/dev\/})"				# (tty)
-    PS1+="${c8}$(__zkit_shlvl_prompt)"				# shlvl
-    PS1+="\[${csi}31m\]\!"					# history
-    PS1+="${c1}\$${c0} "
+    PS1+="${cc1}\u${cc2}@${cc3}\h "				# user@host
+    PS1+="${cc4}(${tty/#\/dev\/})"				# (tty)
+    PS1+="${cc5}$(__zkit_shlvl_prompt)"				# shlvl
+    PS1+="${cc6}\!"						# history
+    PS1+="${cc7}\$${pc0} "					# %
     unset tty
 
     PS2='> '
