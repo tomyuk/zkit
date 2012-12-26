@@ -1,3 +1,4 @@
+# -*- bash-script -*-
 #
 
 function __zkit_color () {

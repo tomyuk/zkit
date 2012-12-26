@@ -1,0 +1,70 @@
+# -*- mode: shell-script; sh-shell: bash -*-
+#
+# Zkit utilities
+
+require colors
+require expand_template
+
+#{{
+# 
+#}}
+
+function __zkit_install () {
+    if [[ -z "$1" || -z "$2" ]]; then
+	__zkit_err "!! install: missing args:" $@
+    elif [[ ${2:0:1} != / ]]; then
+	__zkit_err "-- template destination must be a absolute path"
+    else
+	if [[ -r ${zkit_private}/$1 ]]; then
+	    src=${zkit_private}/$1
+	elif [[ -r ${ZKIT}/$1 ]]; then
+	    src=${ZKIT}/$1
+	fi
+	if [[ -n $src ]]; then
+	    if [[ -a $2 ]]; then
+		rm -f $2
+	    fi
+	    cp ${ZKIT}/$1 $2
+	    __zkit_msg "++ Copied: $1 -> $2"
+	else
+	    __zkit_err "-- Missing or cannot read $1"
+	fi
+    fi
+}
+
+function __zkit_template () {
+    local temp=${ZKIT}/var/tmp/$(basename $1).out src
+
+    if [[ ${2:0:1} != / ]]; then
+	__zkit_err "-- template destination must be a absolute path"
+
+    else
+	if [[ -r ${zkit_private}/$1 ]]; then
+	    src=${zkit_private}/$1
+	elif [[ -r ${ZKIT}/$1 ]]; then
+	    src=${ZKIT}/$1
+	fi
+	if [[ -n $src ]]; then
+	    expand_template <$src >$temp
+	    if [[ -a $2 ]]; then
+		rm -f $2
+	    fi
+	    cp $temp $2
+	    rm $temp
+	    if [[ -n "$3" ]]; then
+		chmod $3 $2
+	    fi
+	    __zkit_msg "++ Template: $1 -> $2"
+	else
+	    __zkit_err "-- Cannot read template $1"
+	fi
+    fi
+}
+
+function __zkit_whence () {
+    type -P $1
+}
+
+function __zkit_have () {
+    type -P $1 >/dev/null
+}

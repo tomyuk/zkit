@@ -10,7 +10,7 @@ if [[ -n "$python" ]]; then
     _pver=$(python -c "from sys import version_info as v; print '%d.%d' % (v.major, v.minor)")
 
     #_pbin=${ZKIT}/lib/python${_pver}/bin
-    _pbin=${HOME}/.local/lib/python${_pver}/bin
+    _pbin=${HOME}/.local/bin
 
     if [[ -d $_pbin ]]; then
 	pathmunge $_pbin
@@ -40,5 +40,13 @@ if [[ -n "$python" ]]; then
             workon $(basename $VIRTUAL_ENV)
         fi
     fi
+
+    function __zkit_virtualenv_prompt () {
+	if [[ -n $VIRTUAL_ENV_NAME ]]; then
+	    echo "[${VIRTUAL_ENV_NAME}]"
+	fi
+    }
+    VIRTUALENV_PROMPT_COMMAND=__zkit_virtualenv_prompt
+
 fi
 unset python _pver _pbin _vw

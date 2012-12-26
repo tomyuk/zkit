@@ -10,8 +10,9 @@ zkit_private=${zkit_private=${HOME}/.zkit_private}
 
 umask ${zkit_umask:=0077}
 
-source ${ZKIT}/lib/zkit_utils.sh
-source ${ZKIT}/bash/lib/pathmunge.sh
+source ${ZKIT}/bash/functions/zkit_core
+require utils
+require pathmunge
 
 function __zkit_sort_rc () {
     for rc in $(shopt -s nullglob; echo $*); do

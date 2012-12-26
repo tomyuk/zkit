@@ -2,23 +2,8 @@
 ######################################################################
 ## python staff
 
-python=$(type -p python)
+python=$(__zkit_whence python)
 if [[ $python ]]; then
-    python_version=$(python -c "from sys import version_info as v; print '%d.%d' % (v.major, v.minor)")
-    PYTHONUSERBASE="${HOME}"/.private
-    export PYTHONUSERBASE
-
-    python_private=${HOME}/.private/lib/python${python_version}
-    python_bin=${python_private}/bin
-    PATH=$python_bin:$PATH
-
-    if [[ ! -d $python_bin ]]; then
-	mkdir -p $python_bin
-    fi
-    if [[ ! -d ${python_private}/site-packages ]]; then
-	mkdir -p ${python_private}/site-packages
-    fi
-
     case $(uname) in
 	'Darwin')
 	    EASY_INSTALL=/usr/local/share/python/easy_install
@@ -30,7 +15,24 @@ if [[ $python ]]; then
 
     if [[ -x $EASY_INSTALL ]]; then
 
-	install_private etc/pydistutils.cfg .pydistutils.cfg
+	python_version=$(python -c \
+	    "from sys import version_info as v; print '%d.%d' % (v.major, v.minor)")
+
+	# PYTHONUSERBASE="${HOME}"/.private
+	# export PYTHONUSERBASE
+	# python_private=${HOME}/.private/lib/python${python_version}
+	python_private=${HOME}/.local/lib/python${python_version}
+	python_bin=${HOME}/.local/bin
+	PATH=$python_bin:$PATH
+
+	if [[ ! -d $python_bin ]]; then
+	    mkdir -p $python_bin
+	fi
+	if [[ ! -d ${python_private}/site-packages ]]; then
+	    mkdir -p ${python_private}/site-packages
+	fi
+
+	__zkit_install templates/pydistutils.cfg ${HOME}/.pydistutils.cfg
 
 	if [[ ! -x ${python_bin}/pip ]]; then
 	    $EASY_INSTALL pip
@@ -62,7 +64,8 @@ if [[ $python ]]; then
 	mkdir -p ${HOME}/.virtualenvs
 	# virtualenvwrapper global hooks
 	for f in postactivate postdeactivate; do
-	    install_private lib/virtualenvwrapper/$f .virtualenvs/$f
+	    __zkit_install templates/virtualenvs_$f ${HOME}/.virtualenvs/$f
+	    chmod 0755 ${HOME}/.virtualenvs/$f
 	done
 
 	source ${python_bin}/virtualenvwrapper.sh

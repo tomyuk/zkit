@@ -6,15 +6,25 @@ autoload -Uz __zkit_msg
 autoload -Uz __zkit_err
 autoload -Uz __zkit_die
 
+local src
+
 if [[ -z "$1" || -z "$2" ]]; then
-    __zkit_die "!! install_private: missing args:" $@
-fi
-if [[ -r ${ZKIT}/$1 ]]; then
-    if [[ -a $2 ]]; then
-	rm -f $2
-    fi
-    cp ${ZKIT}/$1 $2
-    __zkit_msg "++ Copied: $1 -> $2"
+    __zkit_err "!! install: missing args:" $@
+elif [[ ${2:0:1} != / ]]; then
+    __zkit_err "-- template destination must be a absolute path"
 else
-    __zkit_err "-- Missing or cannot read $1"
+    if [[ -r ${zkit_private}/$1 ]]; then
+	src=${zkit_private}/$1
+    elif [[ -r ${ZKIT}/$1 ]]; then
+	src=${ZKIT}/$1
+    fi
+    if [[ -n $src ]]; then
+	if [[ -a $2 ]]; then
+	    rm -f $2
+	fi
+	cp ${ZKIT}/$1 $2
+	__zkit_msg "++ Copied: $1 -> $2"
+    else
+	__zkit_err "-- Missing or cannot read $1"
+    fi
 fi

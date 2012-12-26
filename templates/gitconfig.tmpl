@@ -1,0 +1,27 @@
+# -*- conf -*-
+
+[user]
+	name = {= $FULLNAME =}
+	email = {= $EMAIL =}
+	signingkey = {= $GPG_SIGNER =}
+[color]
+	ui = auto
+	branch = true
+	diff = true
+	grep = true
+	pager = true
+	showbranch = true
+	status = true
+
+# [color "branch"]
+# 	 current = red yellow bold
+[alias]
+	co = checkout
+	br = branch
+	st = status
+	ci = commit
+	unstage = reset HEAD --
+	headless = !sh -c 'git symbolic-ref HEAD refs/heads/$0 && rm .git/index && git clean -fdx'
+
+[push]
+	default = simple

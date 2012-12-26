@@ -7,4 +7,5 @@ nl=$'\n'
 __zkit_path=(
     ${zkit_private}/bin
     ${ZKIT}/bin
+    ${HOME}/.local/bin
 )

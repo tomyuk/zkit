@@ -1,0 +1,4 @@
+# -*- shell-script -*-
+# This hook is run after every virtualenv is activated.
+
+export VIRTUAL_ENV_NAME=$(basename $VIRTUAL_ENV)

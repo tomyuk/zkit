@@ -1,4 +1,5 @@
 #
 # setup.d/git.sh
 #
-install_template gitconfig .gitconfig 600
+
+__zkit_template templates/gitconfig.tmpl ${HOME}/.gitconfig 600

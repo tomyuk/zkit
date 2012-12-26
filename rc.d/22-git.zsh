@@ -6,17 +6,7 @@
 if [[ -n $PS1 ]]; then
 
     # git prompt
-    if ! zstyle -t ':zkit:' vcs_info; then
-	if [[ -r $ZKIT/lib/git-prompt.sh ]]; then
-	    source $ZKIT/lib/git-prompt.sh
-	    GIT_PS1_SHOWDIRTYSTATE=yes
-	    GIT_PS1_SHOWSTASHSTATE=yes
-	    GIT_PS1_SHOWUNTRACKEDFILES=yes
-	    GIT_PS1_SHOWUPSTREAM=auto
-
-	    GIT_RPROMPT="%{${csi}48;5;224m%}\$(__git_ps1 \"(%s)\")%{${csi}m%}"
-	fi
-    else
+    if zstyle -t ':zkit:' vcs_info; then
 	# vcs_info
 	autoload -Uz vcs_info
 
@@ -55,7 +45,14 @@ if [[ -n $PS1 ]]; then
 		echo "(${vcs_info_msg_0_}$(__git_info_stash)$(__git_info_push))"
 	    fi
 	}
+	GIT_PROMPT_COMMAND="__vcs_info '(%s)'"
 
-	GIT_PROMPT="%{${csi}48;5;224m%}\$(__vcs_info \"(%s)\")%{${csi}m%}"
+    elif [[ -r $ZKIT/lib/git-prompt.sh ]]; then
+	source $ZKIT/lib/git-prompt.sh
+	GIT_PS1_SHOWDIRTYSTATE=yes
+	GIT_PS1_SHOWSTASHSTATE=yes
+	GIT_PS1_SHOWUNTRACKEDFILES=yes
+	GIT_PS1_SHOWUPSTREAM=auto
+	GIT_PROMPT_COMMAND="__git_ps1 '(%s)'"
     fi
 fi

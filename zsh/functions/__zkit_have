@@ -2,4 +2,4 @@
 #{{ __zkit_whence name
 #}}
 
-whence -p $1
+whence -p $1 >/dev/null

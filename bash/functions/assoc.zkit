@@ -1,11 +1,11 @@
-# -*- shell-script -*-
+# -*- bash-script -*-
 
 function assoc_new () {
     local _ifs i n
     local -a src
     declare -gA $1
+    push_ifs
     if [ $# -eq 3 ]; then
-	_ifs=$IFS
 	IFS=$2
 	src=($3)
     else
@@ -15,9 +15,7 @@ function assoc_new () {
     for (( i = 0; i < $n; i += 2 )); do
 	eval "$1[\${src[$i]}]=\${src[$(($i+1))]}"
     done
-    if [ "$_ifs" ]; then
-	IFS=$_ifs
-    fi
+    pop_ifs
 }
 
 function assoc_map () {

@@ -4,7 +4,8 @@
 
 if [[ -d ${HOME}/.config/autostart ]]; then
     # gnome autostart
-    rm -f ${HOME}/.config/autostart/mystartup.desktop
-    ln -s ${PRIVATE}/share/autostart/mystartup.desktop ${HOME}/.config/autostart/mystartup.desktop
+    for tmpl in "${GNOME_AUTOSTART_TEMPLATES[@]}"; do
+	__zkit_template ${tmpl} ${HOME}/.config/autostart/$(basename $tmpl .tmpl)
+    done
 fi
 

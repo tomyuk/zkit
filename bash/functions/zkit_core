@@ -1,0 +1,194 @@
+# -*- bash-script -*-
+#{{
+#   ============================
+#   Zkit core functions for bash
+#   ============================
+#   :Author: Tomoyuki Kano <tomo@appletz.jp>
+#   :Copyright: 2012 TomoyukiKano
+#   :License: GPL3
+#   :Abstract: Provides functions of common usage in shell code.
+#       This module is always imported by Lure interpreter at startup.
+#
+#   .. contents::
+#}}
+
+declare -rx ZKIT_VERSION='0.1'
+
+declare -a __zkit_modules__
+if [[ ${#__zkit_modules__[@]} -eq 0 ]];then
+    __zkit_modules__=( core )
+fi
+
+declare -a __zkit_ifs_stack
+function push_ifs () {
+    __zkit_ifs_stack[${#__zkit_ifs_stack[@]}]=$IFS
+    if [[ $# -eq 0 ]]; then
+	IFS=$' \t\n'
+    else
+	IFS=$1
+    fi
+}
+
+function pop_ifs () {
+    local n=$(( ${#__zkit_ifs_stack[@]} - 1 ))
+    if [[ $n -lt 0 ]]; then
+	echo "IFS stack underflow" >&2
+	exit 1
+    fi
+    IFS=${__zkit_ifs_stack[$n]}
+    unset __zkit_ifs_stack[$n]
+}
+
+push_ifs '.'
+declare -ar ZKIT_VERSINFO=(${ZKIT_VERSION})
+pop_ifs
+
+zkit_debug=${zkit_debug=false}
+
+function __zkit_run () {
+    if ${zkit_debug}; then
+	$@
+    else
+	$@ >/dev/null
+    fi
+}
+
+function __zkit_msg () {
+    if ${zkit_debug}; then
+	if [[ $TERM == xterm* ]]; then
+	    echo "${fg[green]}$@$reset_color"
+	else
+	    echo "$@"
+	fi
+    fi
+}
+
+#{{ error message
+#
+#   Prints a error message to the standard error stream.
+#}}
+function __zkit_err () {
+    if [[ $TERM == xterm* ]]; then
+	echo "${fg[red]}$@$reset_color" >&2
+    else
+	echo "$@" >&2
+    fi
+}
+
+#{{ die [ message ]
+#
+#   Exits running process with a non-zero status, optionally printing an
+#   error message before exiting.
+#}}
+function __zkit_die () {
+    if [[ -n $1 ]]; then
+	if [[ $TERM == xterm* ]]; then
+	    echo "${bg[red]}${fg_bold[white]}$*$reset_color" >&2
+	else
+	    echo $* >&2
+	fi
+    fi
+    if ! $__zkit_interactive; then
+	exit 1
+    fi
+}
+
+#{{ depends tool1 [ tool2 [ ... [ toolN ] ] ]
+#
+#   Checks whether a list of commands are available on the system and can be
+#   accessed by means of the current ``$PATH`` setting. If one of the
+#   dependencies is not met, return status will be non-zero. If you want to
+#   know exactly which tool was not found then check the tools one at
+#   a time:
+#
+#   .. sourcecode:: bash
+#
+#       need openssl || die "openssl not found"
+#       need convert || die "ImageMagick is not installed"
+#}}
+function depends () {
+    local prog err=false
+    for prog in "$@"; do
+	type -P $prog || {
+	    echo "cannot find dependency command '$prog'" >&2
+	    err=true
+	}
+    done
+    if $err; then
+	exit 1
+    fi
+}
+
+#{{ require module
+#
+#}}
+export ZKITPATH=${ZKITPATH=${ZKIT}/bash/functions}
+
+function require () {
+    local modname path funcname
+
+    # Check whether the module is already loaded.
+    for modname in "${__zkit_modules__[@]}"; do
+        # Skip it if already loaded.
+        [[ $modname = $1 ]] && return
+    done
+
+    funcname="__zkit_module__${1//\//__}"
+    if [[ $(type -t "$funcname") == function ]]; then
+        # The module is an inline piece of preloaded code. All defs are
+        # inside the function, so we just execute the function.
+        __zkit_reuired__=true $funcname
+    else
+        local found=false
+	push_ifs :
+        for d in $ZKITPATH; do
+            if [[ -r "$d/$1.zkit" ]]; then
+                __zkit_imported__=true source "$d/$1.zkit"
+		found=true
+                break
+            fi
+        done
+	pop_ifs
+        if ! $found; then
+            echo "Could not find module '$1' in ZKITPATH=$ZKITPATH" >&2
+            exit 1
+	fi
+    fi
+    __zkit_modules__=( "${__zkit_modules__[@]}" "$1" )
+}
+
+function __zkit_comp_require () {
+    local cur=$2 i j n=0
+    COMPREPLY=()
+    compopt -o filenames
+    for i in ${ZKITPATH//:/$'\n'}; do
+	for j in $( compgen -f $i/$cur ); do
+	    if [[ $j == *.zkit ]]; then
+		j=${j%.zkit}
+		COMPREPLY[n++]=${j#$i/}
+	    fi
+	done
+    done
+}
+complete -F __zkit_comp_require require
+
+
+#++ main
+#
+#   Checks whether a module is running as a standalone script and runs the
+#   supplied function with a set of arguments. This allows modules both being
+#   imported and for acting as a script. For example.
+#
+#   .. sourcecode:: bash
+#
+#       foo () {
+#           echo "I am foo"
+#       }
+#
+#       main foo
+#--
+function main () {
+    [[ "$__zkit_imported__" ]] || "$@"
+}
+
+declare -xf push_ifs pop_ifs depends require main

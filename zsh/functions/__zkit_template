@@ -9,19 +9,29 @@ autoload -Uz template
 
 emulate -L zsh
 
-temp=${ZKIT}/var/tmp/$1.out
+local temp=${ZKIT}/var/tmp/$1.out
+local src
 
-if [[ -r ${ZKIT}/$1 ]]; then
-    template <${ZKIT}/$1 >$temp
-    if [[ -a $2 ]]; then
-	rm -f $2
-    fi
-    cp $temp $2
-    rm $temp
-    if [[ -n "$3" ]]; then
-	chmod $3 $2
-    fi
-    __zkit_msg "++ Template: $1 -> $2"
+if [[ ${2:0:1} != / ]]; then
+    __zkit_err "-- template destination must be a absolute path"
 else
-    __zkit_err "-- Cannot read template: $tmpl"
+    if [[ -r ${zkit_private}/$1 ]]; then
+	src=${zkit_private}/$1
+    elif [[ -r ${ZKIT}/$1 ]]; then
+	src=${ZKIT}/$1
+    fi
+    if [[ -n $src ]]; then
+	template <$src >$temp
+	if [[ -a $2 ]]; then
+	    rm -f $2
+	fi
+	cp $temp $2
+	rm $temp
+	if [[ -n "$3" ]]; then
+	    chmod $3 $2
+	fi
+	__zkit_msg "++ Template: $1 -> $2"
+    else
+	__zkit_err "-- Cannot read template: $tmpl"
+    fi
 fi

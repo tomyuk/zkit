@@ -82,12 +82,10 @@ function __template_expand_expr () {
     IFS=$' \t\n'
     while [[ $left =~ $re_expr ]]; do
 	left=${match[1]}
-	expr=${match[2]}
-	right=${match[3]}
-	out+="echo -n '$right'"
-	out+="(echo ${expr})|ripnl"
+	out+="echo -n ${(q)match[3]}"
+	out+="(echo ${match[2]})|ripnl"
     done
-    out+="echo -n '$left'"
+    out+="echo -n ${(q)left}"
 
     # reverse output
     out=(${(Oa)out})

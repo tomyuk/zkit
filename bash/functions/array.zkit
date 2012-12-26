@@ -1,4 +1,4 @@
-# -*- shell-script -*-
+# -*- bash-script -*-
 #
 
 # array_reverse array-name [ dest-name ]

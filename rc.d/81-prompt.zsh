@@ -6,52 +6,62 @@
 if [[ -n $PS1 ]]; then
     setopt prompt_subst transientr_prompt
 
+    function __zkit_shlvl_prompt () {
+	if [[ $SHLVL > 1 ]]; then
+	    echo "[$SHLVL]"
+	fi
+    }
+
+    function __zkit_title_command () {
+	if [[ $TERM == xterm* ]]; then
+	    local TTY P
+	    if [[ -n "$SSH_TTY" ]]; then
+		TTY="${SSH_TTY/#\/dev\/}"
+	    else
+		TTY=$(tty)
+		TTY="${TTY/#\/dev\/}"
+	    fi
+	    if [[ -n $VIRTUAL_ENV_NAME ]]; then
+		P+="(${VIRTUAL_ENV_NAME}) - "
+	    fi
+	    P+="${USER}@${HOSTNAME%%.*} (${TTY}) : ${PWD/#$HOME/~}"
+	    printf "\033]0;%s\007" "$P"
+	fi
+    }
+
     local csi=$'\e[' nl=$'\n'
 
-    local c0="%{${csi}m%}"		# reset
-    local c1="%{${csi}38;5;33m%}" 	# []$
-    local c2="%{${csi}32m%}"		# %n
-    local ca="%{${csi}38;5;21m%}"	# @
-    local c3="%{${csi}38;5;196m%}"	# %m
-    local c4="%{${csi}38;5;94m%}" 	# %l
-    local c5="%{${csi}38;5;168m%}"	# %!
-    local c6="%{${csi}38;5;196m%}"	# %#
-    local c7="%{${csi}38;5;33;48;5;222m%}" # right
-    local c8="%{${csi}48;5;0;38;5;15m%B%}" # time
+    local c0="%{${csi}m%}"			# reset
+    local c1="%{${csi}38;5;33m%}" 		# []$
+    local c2="%{${csi}32m%}"			# %n
+    local ca="%{${csi}38;5;21m%}"		# @
+    local c3="%{${csi}38;5;196m%}"		# %m
+    local c4="%{${csi}38;5;94m%}" 		# %l
+    local c5="%{${csi}38;5;168m%}"		# %!
+    local c6="%{${csi}38;5;196m%}"		# %#
+    local c7="%{${csi}38;5;33;48;5;222m%}"	# right
+    local c8="%{${csi}38;5;143m%}"		# shlvl
 
-    PS1="${c8} %T ${c0}"				# time
+    PS1="%{${csi}48;5;220;38;5;58m%}Zsh"				# Bash
+    PS1+="%{${csi}48;5;250;38;5;255m%} %T "				# time
+    PS1+="%{${csi}48;5;219;38;5;242m%}\$($VIRTUALENV_PROMPT_COMMAND)"	# virtualenv
+    PS1+="%{${csi}48;5;223;38;5;197m%}\$($RVM_PROMPT_COMMAND)"		# rvm
+    PS1+="%{${csi}48;5;224;38;5;8m%}\$($GIT_PROMPT_COMMAND)"		# git
+    PS1+="${c7} %~ "							# pwd
+    PS1+="${c0}${nl}"
+
     if zstyle -t ':zkit:' rprompt; then
-	RPROMPT="${RVM_PROMPT}${GIT_PROMPT}"
-	RPROMPT+="${c7} %~${c0}"                        # current directory
+	RPROMPT=
     else
-	PS1+="${RVM_PROMPT}${GIT_PROMPT}"
-	PS1+="${c7} %~ ${c0}${nl}"
 	RPROMPT=
     fi
-    PS1+="${c1}[${c2}%n${ca}@${c3}%m${c1}]"                # user@host
-    PS1+="${c4}(%l) ${c5}%!${c6}%(!.${c6}#.${c1}%%)${c0} " # (tty) hist%
-    if [[ $SHLVL > 1 ]]; then
-	PS1="$PS1%{${csi}38;5;143m%}[$SHLVL]%{${csi}m%} " # SHLVL
-    fi
+    PS1+="${c2}%n${ca}@${c3}%m "				# user@host
+    PS1+="${c4}(%l)"						# (tty)
+    PS1+="${c8}$(__zkit_shlvl_prompt)"				# shlvl
+    PS1+="${c5}%!"						# history
+    PS1+="${c6}%(!.${c6}#.${c1}%%)${c0} "			# %
 
     PS2="%B%{${csi}38;5;10m%}%_>%{${csi}m%}%b "
 
-    function __zkit_icon_title_prefix () {
-    }
-
-    case $TERM in
-	xterm*)
-	    function __zkit_icon_title () {
-		printf "\033]0;%s%s@%s(%s):%s\007" \
-		    "$(__zkit_icon_title_prefix)" \
-		    "${USER}" "${HOST%%.*}" \
-		    "${SSH_TTY/#\/dev\/}" "${PWD/#$HOME/~}"
-	    }
-	    ;;
-	*)
-	    function __zkit_icon_title () { }
-	    ;;
-    esac
-
-    add-zsh-hook precmd __zkit_icon_title
+    add-zsh-hook precmd __zkit_title_command
 fi

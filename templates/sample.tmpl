@@ -1,0 +1,6 @@
+# [color "branch"]
+	headless = !sh -c 'git symbolic-ref HEAD refs/heads/$0 && rm .git/index && git clean -fdx'
+	'{= $FULLNAME =}'
+	"{= $FULLNAME =}"
+	"{= '$FULLNAME' =}"
+	"{= "$FULLNAME" =}"

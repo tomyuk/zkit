@@ -1,6 +1,6 @@
-#
+# -*- bash-script -*-
 
-source ${ZKIT}/bash/lib/array.sh
+require array
 
 #--------------------
 # pathmerge <newpath> ['after']

@@ -1,5 +1,8 @@
+# -*- bash-script -*-
 #
-# 11-fwknop.sh
+# setup.d/fwknop.sh
 #
 
-install_template fwknoprc .fwknoprc 600
+: ${FWKNOP_PASSWD_FILE:=${zkit_private}/secrets/fwknop_passwd}
+
+__zkit_template templates/fwknoprc.tmpl ${HOME}/.fwknoprc 600

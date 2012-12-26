@@ -1,0 +1,37 @@
+# -*- conf -*-
+# ssh_config
+
+ForwardAgent {= $SSH_FORWARD_AGENT =}
+HashKnownHosts no
+
+Host repo
+Hostname repo.appletz.net
+ProxyCommand run_pre_fwknop -p repo %h %p
+
+Host newton
+Hostname newton.appletz.net
+ProxyCommand run_pre_fwknop -p newton %h %p
+
+Host mersenne
+Hostname mersenne.appletz.net
+ProxyCommand run_pre_fwknop -p mersenne %h %p
+
+Host fermat
+Hostname fermat.appletz.net
+#ProxyCommand run_pre_fwknop -p fermat %h %p
+ProxyCommand run_pre_fwknop fermat %h %p
+
+Host descartes
+Hostname descartes.appletz.net
+ProxyCommand run_pre_fwknop descartes %h %p
+
+Host galileo
+Hostname galileo.appletz.net
+ProxyCommand run_pre_fwknop -p galileo %h %p
+
+Host hawking
+Hostname hawking.appletz.net
+
+Host penrose
+Host p1-srv01
+Host c242-037
