@@ -2,7 +2,7 @@
 .#*
 *~
 temp
-var
+var/*
 .zsh_*
 .zcompdump
 zkit_local
