@@ -8,7 +8,7 @@ if [[ -z $FULLNAME ]]; then
 fi
 
 if [[ -z $EMAIL ]]; then
-    EMAIL="${USER}@${$HOSTNAME}"
+    EMAIL="${USER}@${HOSTNAME}"
 fi
 
 if [[ -z $GPG_SIGNER ]]; then
