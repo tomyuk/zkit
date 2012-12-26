@@ -1,0 +1,5 @@
+# -*- mode: shell-script; sh-shell: zsh -*-
+#{{ __zkit_whence name
+#}}
+
+whence $1

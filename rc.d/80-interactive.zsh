@@ -18,6 +18,7 @@ if [[ -n $PS1 ]]; then
 
     # autojump
     source ${ZKIT}/lib/autojump.zsh
+    array_pack -r fpath			# 追加された重複するものを後方優先で取り除く
 
     # run-help
     unalias run-help

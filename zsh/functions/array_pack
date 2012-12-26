@@ -1,0 +1,20 @@
+# -*- mode: shell-script; sh-shell: zsh -*-
+
+emulate -L zsh
+
+local -a temp
+if [[ $1 == -r ]]; then
+    shift
+    for i in ${(POa)1}; do
+	if [[ -z ${temp[(r)$i]} ]]; then
+	    temp=($i $temp)
+	fi
+    done
+else
+    for i in ${(P)1}; do
+	if [[ -z ${temp[(r)$i]} ]]; then
+	    temp+=$i
+	fi
+    done
+fi
+eval "$1=(\$temp[@])"

@@ -7,13 +7,18 @@ zkit_private=${zkit_private=${HOME}/.zkit_private}
 
 ### fpath の設定
 fpath=( ${ZDOTDIR}/functions $fpath )
+autoload -Uz pathmunge
+autoload -Uz envpathmunge
+autoload -Uz array_pack
+autoload -Uz zkit_utils
+zkit_utils
+
+#source ${ZKIT}/lib/zkit_utils.sh
 
 umask ${zkit_umask:=0077}
 
-source ${ZKIT}/lib/zkit_utils.sh
 
-autoload -Uz pathmunge
-autoload -Uz envpathmunge
+
 
 function __zkit_sort_rc () {
     emulate -L zsh

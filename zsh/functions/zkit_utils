@@ -1,0 +1,14 @@
+# -*- mode: shell-script; sh-shell: zsh -*-
+
+autoload -Uz colors
+colors
+
+zkit_debug=${zkit_debug=false}
+
+autoload -Uz __zkit_run
+autoload -Uz __zkit_msg
+autoload -Uz __zkit_err
+autoload -Uz __zkit_die
+autoload -Uz __zkit_install
+autoload -Uz __zkit_template
+autoload -Uz __zkit_whence

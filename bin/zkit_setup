@@ -36,7 +36,7 @@ if $zkit_autoupdate && [[ -d ${ZKIT}/.git ]]; then
 fi
 
 ## make var directories
-mkdir -p ${ZKIT}/var/{cache,temp}
+mkdir -p ${ZKIT}/var/{cache,tmp}
 
 ## pull private settings
 if [[ -n ${zkit_private_repo} ]]; then

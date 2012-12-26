@@ -1,0 +1,12 @@
+# -*- mode: shell-script; sh-shell: zsh -*-
+#{{ __zkit_err
+#}}
+
+autoload -Uz colors
+colors
+
+if [[ $TERM == xterm* ]]; then
+    echo "${fg[red]}$*$reset_color"
+else
+    echo $*
+fi

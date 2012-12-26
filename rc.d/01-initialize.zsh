@@ -14,7 +14,7 @@ zstyle ':zkit:*' rprompt off
 zstyle ':zkit:*' compinit_secure off
 zstyle ':zkit:*' vcs_info on
 
-TMPPREFIX=${ZKIT}/var/tmp/zsh
+TMPPREFIX=${ZKIT}/var/tmp/zsh_
 
 ### zsh オプション
 

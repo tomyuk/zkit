@@ -70,18 +70,21 @@ function __zkit_install () {
 }
 
 function __zkit_template () {
-    local tmpl=${PRIVATE}/templates/$1.tmpl
-    local dest=${PRIVATE}/local/$1
+    local temp=${ZKIT}/var/tmp/$1.out
 
-    if [[ -r $tmpl ]]; then
-	expand_template <$tmpl >$dest
-	echo "Installed: $tmpl"
+    if [[ -r ${ZKIT}/$1 ]]; then
+	expand_template <${ZKIT}/$1 >$temp
+	if [[ -a $2 ]]; then
+	    rm -f $2
+	fi
+	cp $temp $2
+	rm $temp
+	if [[ -n "$3" ]]; then
+	    chmod $3 $2
+	fi
+	__zkit_msg "++ Template: $1 -> $2"
     else
-	echo "from_template: Cannot read template $tmpl"
-    fi
-    install_private local/$1 $2
-    if [[ -n "$3" ]]; then
-	chmod $3 ${HOME}/$2
+	__zkit_err "-- Cannot read template $1"
     fi
 }
 

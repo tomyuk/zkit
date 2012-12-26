@@ -1,0 +1,20 @@
+# -*- mode: shell-script; sh-shell: zsh -*-
+#{{ __zkit_install source dest
+#}}
+
+autoload -Uz __zkit_msg
+autoload -Uz __zkit_err
+autoload -Uz __zkit_die
+
+if [[ -z "$1" || -z "$2" ]]; then
+    __zkit_die "!! install_private: missing args:" $@
+fi
+if [[ -r ${ZKIT}/$1 ]]; then
+    if [[ -a $2 ]]; then
+	rm -f $2
+    fi
+    cp ${ZKIT}/$1 $2
+    __zkit_msg "++ Copied: $1 -> $2"
+else
+    __zkit_err "-- Missing or cannot read $1"
+fi
