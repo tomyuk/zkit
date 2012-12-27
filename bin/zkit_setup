@@ -44,7 +44,7 @@ fi
 
 ## update zkit
 if $ZKIT_AUTOUPDATE && [[ -d ${ZKIT}/.git ]]; then
-    __zkit_msg "++ Updating ZKIT:" $name
+    __zkit_msg "++ Pulling ZKIT" 
     ( cd ${ZKIT} && __zkit_run git pull )
     chmod -R og-rwx ${ZKIT}
 fi
@@ -56,11 +56,12 @@ mkdir -p ${ZKIT}/var/{cache,tmp}
 if [[ -d ${ZKIT_PRIVATE}/.git ]]; then
     __zkit_msg "++ Updating private"
     ( cd ${ZKIT_PRIVATE} && __zkit_run git pull )
+elif [[ -n ${ZKIT_PRIVATE_REPO} ]]; then
+    __zkit_msg "++ Downloading private from ${ZKIT_PRIVATE_REPO}"
+    __zkit_run git clone ${ZKIT_PRIVATE_REPO} ${ZKIT_PRIVATE} || exit 1
 else
-    if [[ -n ${ZKIT_PRIVATE_REPO} ]]; then
-	__zkit_msg "++ Downloading private from ${ZKIT_PRIVATE_REPO}"
-	__zkit_run git clone ${ZKIT_PRIVATE_REPO} ${ZKIT_PRIVATE} || exit 1
-    fi
+    __zkit_msg "++ Maked " ${ZKIT_PRIVATE}
+    mkdir -p ${ZKIT_PRIVATE}
 fi
 chmod -R og-rwx ${ZKIT_PRIVATE}
 
