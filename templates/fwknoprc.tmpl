@@ -6,15 +6,10 @@
 DIGEST_TYPE		sha256
 SPA_SERVER_PORT		62201
 SPA_SERVER_PROTO	udp
-# GPG_HOMEDIR		{= $GNUPGHOME =}
 {%- if [[ -n $GPG_SIGNER ]]; then %}
 GPG_SIGNER		{= $GPG_SIGNER =}
 {%- fi %}
-{%- if [[ -n $MYIP ]]; then %}
-ALLOW_IP		{= $MYIP =}
-{%- else %}
-ALLOW_IP		0.0.0.0
-{%- fi %}
+ALLOW_IP		{= $FWKNOP_ALLOW_IP =}
 
 [repo]
 SPA_SERVER		180.37.181.83
@@ -27,13 +22,6 @@ SPA_SERVER		133.242.147.77
 ACCESS			tcp/22
 SPOOF_USER		{= $FWKNOP_USER =}
 KEY_FILE		{= $FWKNOP_PASSWD_FILE =}
-
-# this is a public server
-# [p1-srv01]
-# SPA_SERVER		133.242.24.196
-# ACCESS			tcp/22
-# SPOOF_USER		{= $FWKNOP_USER =}
-# KEY_FILE		{= $FWKNOP_PASSWD_FILE =}
 
 [descartes]
 SPA_SERVER              219.94.245.139
@@ -49,27 +37,11 @@ GPG_RECIPIENT           1A6831DD
 ACCESS                  tcp/22
 ALLOW_IP                0.0.0.0
 
-# [fermat]
-# SPA_SERVER      59.106.176.49
-# ACCESS          tcp/22
-# USE_GPG         N
-# SPOOF_USER      tinydns
-# SPOOF_USER		{= $FWKNOP_USER =}
-# KEY_FILE		{= $FWKNOP_PASSWD_FILE =}
-
-
 [mersenne]
 SPA_SERVER		180.37.181.83
 ACCESS			tcp/22
 SPOOF_USER		{= $FWKNOP_USER =}
 KEY_FILE		{= $FWKNOP_PASSWD_FILE =}
-
-# [mersenne]
-# SPA_SERVER              180.37.181.83
-# USE_GPG                 Y
-# GPG_RECIPIENT           5647B8B3
-# ACCESS                  tcp/22
-# ALLOW_IP                0.0.0.0
 
 [galileo]
 SPA_SERVER		180.37.181.83
