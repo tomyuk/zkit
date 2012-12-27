@@ -6,10 +6,11 @@
 
 ## default_settings
 export ZKIT=${ZKIT=${HOME}/.zkit}
-ZKIT_DEBUG=false
-ZKIT_AUTOUPDATE=true
-ZKIT_PRIVATE=${HOME}/.zkit_private
-ZKIT_PRIVATE_REPO=
+export ZKIT_PRIVATE=${ZKIT_PRIVATE=${HOME}/.zkit_private}
+
+: ${ZKIT_DEBUG:=false}
+: ${ZKIT_AUTOUPDATE:=true}
+: ${ZKIT_PRIVATE_REPO:=}
 
 ## import user settings
 rc="${HOME}/.zkitrc"
