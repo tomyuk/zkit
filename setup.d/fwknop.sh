@@ -4,7 +4,7 @@
 #
 
 : ${FWKNOP_ALLOW_IP:=0.0.0.0}
-: ${FWKNOP_USER:=fwkopclient}
+: ${FWKNOP_USER:=fwknopclient}
 : ${FWKNOP_PASSWD_FILE:=${ZKIT_PRIVATE}/secrets/fwknop_passwd}
 
 # TODO: auto generate
