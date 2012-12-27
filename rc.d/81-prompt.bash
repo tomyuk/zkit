@@ -39,7 +39,7 @@ if [[ -n $PS1 ]]; then
     PS1+="${cc4}(${tty/#\/dev\/})"				# (tty)
     PS1+="${cc5}$(__zkit_shlvl_prompt)"				# shlvl
     PS1+="${cc6}\!"						# history
-    PS1+="${cc7}\$${pc0} "					# %
+    PS1+="${cc7}\\\$${pc0} "					# %
     unset tty
 
     PS2='> '

@@ -1,5 +1,0 @@
-#!/usr/bin/env bash
-
-echo Hello Bash
-echo RUBY_VERSION $RUBY_VERSION
-which ruby

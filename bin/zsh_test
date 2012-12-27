@@ -1,5 +1,0 @@
-#!/usr/bin/env zsh
-
-echo Hello Zsh
-echo RUBY_VERSION $RUBY_VERSION
-which ruby
