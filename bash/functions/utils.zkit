@@ -9,29 +9,58 @@ require expand_template
 # 
 #}}
 
+function __zkit_check_src () {
+    if [[ $1 == /* ]]; then
+	if [[ -r $1 ]]; then
+	    echo $1
+	    return
+	fi
+    else
+	if [[ -r ${ZKIT_PRIVATE}/$1 ]]; then
+	    echo ${ZKIT_PRIVATE}/$1
+	    return
+	elif [[ -r ${ZKIT}/$1 ]]; then
+	    echo ${ZKIT}/$1
+	    return
+	fi
+    fi
+    return 1
+}
+
+function __zkit_safe_install () {
+    if [[ -L $2 ]]; then
+	rm -f $2 || return 1
+	cp $1 $2 || return 1
+    elif [[ -e $2 ]]; then
+	if ! cmp $1 $2; then
+	    mv $2 $2.$$.bak || return 1
+	    cp $1 $2 || return 1
+	fi
+    fi
+    if [[ -n "$3" ]]; then
+	chmod $3 $2 || return 1
+    fi
+}
+
 function __zkit_install () {
     if [[ -z "$1" || -z "$2" ]]; then
 	__zkit_err "!! install: missing args:" $@
     elif [[ ${2:0:1} != / ]]; then
 	__zkit_err "-- template destination must be a absolute path"
     else
-	## TODO: if $1 is abspath ...
-	if [[ -r ${ZKIT_PRIVATE}/$1 ]]; then
-	    src=${ZKIT_PRIVATE}/$1
-	elif [[ -r ${ZKIT}/$1 ]]; then
-	    src=${ZKIT}/$1
-	fi
+	src=$(__zkit_check_src $1)
 	if [[ -n $src ]]; then
-	    if [[ -a $2 || -L $2 ]]; then
-		## TODO: backup??
-		rm -f $2
+	    if __zkit_safe_install $src $2 $3; then
+		__zkit_msg "++ Copied: $1 -> $2"
+		return
+	    else
+		__zkit_err "-- Install error: $1 -> $2"
 	    fi
-	    cp ${ZKIT}/$1 $2
-	    __zkit_msg "++ Copied: $1 -> $2"
 	else
 	    __zkit_err "-- Missing or cannot read $1"
 	fi
     fi
+    return 1
 }
 
 function __zkit_template () {
@@ -41,26 +70,25 @@ function __zkit_template () {
 	__zkit_err "-- template destination must be a absolute path"
 
     else
-	if [[ -r ${ZKIT_PRIVATE}/$1 ]]; then
-	    src=${ZKIT_PRIVATE}/$1
-	elif [[ -r ${ZKIT}/$1 ]]; then
-	    src=${ZKIT}/$1
-	fi
+	src=$(__zkit_check_src $1)
 	if [[ -n $src ]]; then
-	    expand_template <$src >$temp
-	    if [[ -a $2 || -L $2 ]]; then
-		rm -f $2
+	    if ! expand_template <$src >$temp; then
+		__zkit_err "-- Template error: $1"
+		return 1
 	    fi
-	    cp $temp $2
+	    if __zkit_safe_install $src $2 $3; then
+		__zkit_msg "++ Template: $1 -> $2"
+		rm $temp
+		return
+	    else
+		__zkit_err "-- Install error: $1 -> $2"
+	    fi
 	    rm $temp
-	    if [[ -n "$3" ]]; then
-		chmod $3 $2
-	    fi
-	    __zkit_msg "++ Template: $1 -> $2"
 	else
 	    __zkit_err "-- Cannot read template $1"
 	fi
     fi
+    return 1
 }
 
 function __zkit_whence () {

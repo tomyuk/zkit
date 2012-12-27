@@ -14,8 +14,8 @@ if [[ -n $PS1 ]]; then
     pc1="${eb}${csi}48;5;22;38;5;16m${ee}"		# prog.
     pc2="${eb}${csi}48;5;236;38;5;244m${ee}"		# time
     pc3="${eb}${csi}48;5;54;38;5;244m${ee}"		# virtualenv
-    pc4="${eb}${csi}48;5;240;38;5;124m${ee}"		# rvm
-    pc5="${eb}${csi}48;5;58;38;5;8m${ee}"		# git
+    pc4="${eb}${csi}48;5;240;38;5;52m${ee}"		# rvm
+    pc5="${eb}${csi}48;5;58;38;5;232m${ee}"		# git
     pc6="${eb}${csi}48;5;235;38;5;242m${ee}"		# pwd
 
     cc1="${eb}${csi}32m${ee}"				# user

@@ -101,6 +101,7 @@ for name in "${zkit_setups[@]}" "${zkit_setups_local[@]}"; do
 	for s in ${runlist[@]}; do
     	    __zkit_msg "++ Loading setup:" ${name}
     	    source $s
+	done
     fi
 done
 
