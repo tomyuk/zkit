@@ -5,6 +5,8 @@
 autoload -Uz __zkit_msg
 autoload -Uz __zkit_err
 autoload -Uz __zkit_die
+autoload -Uz __zkit_install__check_src
+autoload -Uz __zkit_install__safe_copy
 
 local src
 
@@ -13,18 +15,18 @@ if [[ -z "$1" || -z "$2" ]]; then
 elif [[ ${2:0:1} != / ]]; then
     __zkit_err "-- template destination must be a absolute path"
 else
-    if [[ -r ${ZKIT_PRIVATE}/$1 ]]; then
-	src=${ZKIT_PRIVATE}/$1
-    elif [[ -r ${ZKIT}/$1 ]]; then
-	src=${ZKIT}/$1
-    fi
+    src=$(__zkit_install__check_src $1)
     if [[ -n $src ]]; then
-	if [[ -a $2 ]]; then
-	    rm -f $2
-	fi
-	cp ${ZKIT}/$1 $2
-	__zkit_msg "++ Copied: $1 -> $2"
+	__zkit_install__safe_copy $src $2 $3
+	case $? in 
+	    0)  __zkit_msg "++ Copied: $1 -> $2" ;;
+	    2)  __zkit_msg "== Skip: $2" ;;
+	    *)  ret=$?
+		__zkit_err "-- Install error: $1 -> $2"
+		;;
+	esac
     else
 	__zkit_err "-- Missing or cannot read $1"
     fi
 fi
+return 1

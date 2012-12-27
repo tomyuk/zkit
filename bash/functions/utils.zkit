@@ -9,17 +9,17 @@ require expand_template
 # 
 #}}
 
-function __zkit_check_src () {
+function __zkit_install__check_src () {
     if [[ $1 == /* ]]; then
 	if [[ -r $1 ]]; then
 	    echo $1
 	    return
 	fi
     else
-	if [[ -r ${ZKIT_PRIVATE}/$1 ]]; then
+	if [[ -r ${ZKIT_PRIVATE}/$1 && -f ${ZKIT_PRIVATE}/$1 ]]; then
 	    echo ${ZKIT_PRIVATE}/$1
 	    return
-	elif [[ -r ${ZKIT}/$1 ]]; then
+	elif [[ -r ${ZKIT}/$1 && -f ${ZKIT}/$1 ]]; then
 	    echo ${ZKIT}/$1
 	    return
 	fi
@@ -27,7 +27,7 @@ function __zkit_check_src () {
     return 1
 }
 
-function __zkit_safe_install () {
+function __zkit_install__safe_copy () {
     local ret=0
     if [[ -L $2 ]]; then
 	rm -f $2 || return 1
@@ -49,14 +49,16 @@ function __zkit_safe_install () {
 }
 
 function __zkit_install () {
+    local src
+
     if [[ -z "$1" || -z "$2" ]]; then
 	__zkit_err "!! install: missing args:" $@
     elif [[ ${2:0:1} != / ]]; then
 	__zkit_err "-- template destination must be a absolute path"
     else
-	src=$(__zkit_check_src $1)
+	src=$(__zkit_install__check_src $1)
 	if [[ -n $src ]]; then
-	    __zkit_safe_install $src $2 $3
+	    __zkit_install__safe_copy $src $2 $3
 	    case $? in 
 		0)  __zkit_msg "++ Copied: $1 -> $2" ;;
 		2)  __zkit_msg "== Skip: $2" ;;
@@ -77,13 +79,13 @@ function __zkit_template () {
     if [[ ${2:0:1} != / ]]; then
 	__zkit_err "-- template destination must be a absolute path"
     else
-	src=$(__zkit_check_src $1)
+	src=$(__zkit_install__check_src $1)
 	if [[ -n $src ]]; then
 	    if ! expand_template <$src >$temp; then
 		__zkit_err "-- Template error: $1"
 		return 1
 	    fi
-	    __zkit_safe_install $temp $2 $3
+	    __zkit_install__safe_copy $temp $2 $3
 	    case $? in
 		0)  __zkit_msg "++ Installed: $1 -> $2" ;;
 		2)  __zkit_msg "== Skip: $2" ;;

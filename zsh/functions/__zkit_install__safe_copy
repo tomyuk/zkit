@@ -1,0 +1,22 @@
+# -*- zsh-script -*-
+#{{ __zkit_install__safe_copy
+#}}
+
+local ret=0
+if [[ -L $2 ]]; then
+    rm -f $2 || return 1
+    cp $1 $2 || return 1
+elif [[ -e $2 ]]; then
+    if ! cmp -s $1 $2; then
+	mv $2 $2.$$.bak || return 1
+	cp $1 $2 || return 1
+    else
+	ret=2
+    fi
+else
+    cp $1 $2 || return 1
+fi
+if [[ -n "$3" ]]; then
+    chmod $3 $2 || return 1
+fi
+return $ret

@@ -1,0 +1,19 @@
+# -*- zsh-script -*-
+#{{ __zkit_install__check_src
+#}}
+
+if [[ $1 == /* ]]; then
+    if [[ -r $1 ]]; then
+	echo $1
+	return
+    fi
+else
+    if [[ -r ${ZKIT_PRIVATE}/$1 && -f ${ZKIT_PRIVATE}/$1 ]]; then
+	echo ${ZKIT_PRIVATE}/$1
+	return
+    elif [[ -r ${ZKIT}/$1 && -f ${ZKIT}/$1 ]]; then
+	echo ${ZKIT}/$1
+	return
+    fi
+fi
+return 1

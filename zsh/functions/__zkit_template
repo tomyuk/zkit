@@ -5,33 +5,35 @@
 autoload -Uz __zkit_msg
 autoload -Uz __zkit_err
 autoload -Uz __zkit_die
+autoload -Uz __zkit_install__check_src
+autoload -Uz __zkit_install__safe_copy
 autoload -Uz template
 
 emulate -L zsh
 
-local temp=${ZKIT}/var/tmp/$1.out
-local src
+local temp=${ZKIT}/var/tmp/$(basename $1).out src ret=0
 
 if [[ ${2:0:1} != / ]]; then
     __zkit_err "-- template destination must be a absolute path"
 else
-    if [[ -r ${ZKIT_PRIVATE}/$1 ]]; then
-	src=${ZKIT_PRIVATE}/$1
-    elif [[ -r ${ZKIT}/$1 ]]; then
-	src=${ZKIT}/$1
-    fi
+    src=$(__zkit_install__check_src $1)
     if [[ -n $src ]]; then
-	template <$src >$temp
-	if [[ -a $2 ]]; then
-	    rm -f $2
+	if ! template <$src >$temp; then
+	    __zkit_err "-- Template error: $1"
+	    return 1
 	fi
-	cp $temp $2
+	__zkit_install__safe_copy $temp $2 $3
+	case $? in
+	    0)  __zkit_msg "++ Installed: $1 -> $2" ;;
+	    2)  __zkit_msg "== Skip: $2" ;;
+	    *)  ret=$?
+		__zkit_err "-- Install error: $1 -> $2"
+		;;
+	esac
 	rm $temp
-	if [[ -n "$3" ]]; then
-	    chmod $3 $2
-	fi
-	__zkit_msg "++ Template: $1 -> $2"
+	return $ret
     else
-	__zkit_err "-- Cannot read template: $tmpl"
+	__zkit_err "-- Cannot read template $1"
     fi
 fi
+return 1

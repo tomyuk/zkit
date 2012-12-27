@@ -1,4 +1,4 @@
-#!/usr/bin/env bash
+#!/usr/bin/env zsh
 
 #{{
 # Setup zkit environment
@@ -31,8 +31,14 @@ if [[ ! -d ${ZKIT} ]]; then
 fi
 
 ## load functions
-source ${ZKIT}/bash/functions/zkit_core
-require utils
+fpath=( ${ZKIT}/zsh/functions $fpath )
+autoload -Uz __zkit_have
+autoload -Uz __zkit_msg
+autoload -Uz __zkit_err
+autoload -Uz __zkit_die
+autoload -Uz __zkit_run
+autoload -Uz __zkit_install
+autoload -Uz __zkit_template
 
 ## default setups
 if [[ -z ${ZKIT_SETUPS[*]} ]]; then
