@@ -3,7 +3,7 @@
 autoload -Uz colors
 colors
 
-zkit_debug=${zkit_debug=false}
+ZKIT_DEBUG=${ZKIT_DEBUG=false}
 
 autoload -Uz __zkit_run
 autoload -Uz __zkit_msg

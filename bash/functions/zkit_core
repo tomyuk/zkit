@@ -43,10 +43,10 @@ push_ifs '.'
 declare -ar ZKIT_VERSINFO=(${ZKIT_VERSION})
 pop_ifs
 
-zkit_debug=${zkit_debug=false}
+ZKIT_DEBUG=${ZKIT_DEBUG=false}
 
 function __zkit_run () {
-    if ${zkit_debug}; then
+    if ${ZKIT_DEBUG}; then
 	$@
     else
 	$@ >/dev/null
@@ -54,7 +54,7 @@ function __zkit_run () {
 }
 
 function __zkit_msg () {
-    if ${zkit_debug}; then
+    if ${ZKIT_DEBUG}; then
 	if [[ $TERM == xterm* ]]; then
 	    echo "${fg[green]}$@$reset_color"
 	else

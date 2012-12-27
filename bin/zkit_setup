@@ -6,8 +6,8 @@
 
 ## default_settings
 export ZKIT=${ZKIT=${HOME}/.zkit}
-zkit_debug=false
-zkit_autoupdate=true
+ZKIT_DEBUG=false
+ZKIT_AUTOUPDATE=true
 ZKIT_PRIVATE=${HOME}/.zkit_private
 ZKIT_PRIVATE_REPO=
 
@@ -34,16 +34,16 @@ source ${ZKIT}/bash/functions/zkit_core
 require utils
 
 ## default setups
-if [[ -z ${zkit_setups[*]} ]]; then
+if [[ -z ${ZKIT_SETUPS[*]} ]]; then
     if __zkit_have zsh; then
-	zkit_setups=( bash zsh )
+	ZKIT_SETUPS=( bash zsh )
     else
-	zkit_setups=( bash )
+	ZKIT_SETUPS=( bash )
     fi
 fi
 
 ## update zkit
-if $zkit_autoupdate && [[ -d ${ZKIT}/.git ]]; then
+if $ZKIT_AUTOUPDATE && [[ -d ${ZKIT}/.git ]]; then
     __zkit_msg "++ Updating ZKIT:" $name
     ( cd ${ZKIT} && __zkit_run git pull )
     chmod -R og-rwx ${ZKIT}
@@ -58,7 +58,7 @@ if [[ -d ${ZKIT_PRIVATE}/.git ]]; then
     ( cd ${ZKIT_PRIVATE} && __zkit_run git pull )
 else
     if [[ -n ${ZKIT_PRIVATE_REPO} ]]; then
-	__zkit_err "++ Downloading private from ${ZKIT_PRIVATE_REPO}"
+	__zkit_msg "++ Downloading private from ${ZKIT_PRIVATE_REPO}"
 	__zkit_run git clone ${ZKIT_PRIVATE_REPO} ${ZKIT_PRIVATE} || exit 1
     fi
 fi
@@ -79,29 +79,27 @@ if [[ -n ${host} ]]; then
 fi
 
 ## run setup scripts
-for name in "${zkit_setups[@]}" "${zkit_setups_local[@]}"; do
+typeset -a runlist
+for name in "${ZKIT_SETUPS[@]}" "${ZKIT_SETUPS_LOCAL[@]}"; do
+    runlist=()
     both=false
     if [[ $name == +* ]]; then
 	name=${name:1}
-	both=false
+	both=true
     fi
     private_setup=${ZKIT_PRIVATE}/setup.d/${name}.sh
     default_setup=${ZKIT}/setup.d/${name}.sh
-    typeset -a runlist
 
-    if [[ -r $private_setup ]]; then
-	runlist+=($private_setup)
+    if [[ ! -r $private_setup ]]; then
+	private_setup=
     fi
-    if [[ ( $both == true || ${#runlist[@]} -eq 0 ) && -r $default_setup ]]; then
-	runlist+=($default_setup)
+    if [[ ( -z $private_setup || $both == true ) && -r $default_setup ]]; then
+    	__zkit_msg "** Loading setup         [ ${name} ]"
+	source $default_setup
     fi
-    if [[ ${#runlist[@] -eq 0 ]]; then
-    	__zkit_err "-- Cannot load setup:" ${name}
-    else
-	for s in ${runlist[@]}; do
-    	    __zkit_msg "++ Loading setup:" ${name}
-    	    source $s
-	done
+    if [[ -n $private_setup ]]; then
+    	__zkit_msg "** Loading private setup [ ${name} ]"
+	source $private_setup
     fi
 done
 

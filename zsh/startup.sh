@@ -34,7 +34,7 @@ function __zkit_load_rc () {
 	if [[ -r "$__i" ]]; then
 	    # 対話型動作の場合のみ rc.d スクリプトの出力を表示する。
 	    __zkit_msg "load:" $__i
-            if [[ -n $PS1 ]] || $zkit_debug; then
+            if [[ -n $PS1 ]] || $ZKIT_DEBUG; then
 		source "$__i"
             else
 		source "$__i" >/dev/null 2>&1

@@ -25,7 +25,7 @@ function __zkit_load_rc () {
     for __i in $(__zkit_sort_rc $*); do
 	if [[ -r "$__i" ]]; then
 	    __zkit_msg "load:" $__i
-            if [[ -n "$PS1" ]]; then
+            if [[ -n $PS1 ]] || $ZKIT_DEBUG; then
 		source "$__i"
             else
 		source "$__i" >/dev/null 2>&1

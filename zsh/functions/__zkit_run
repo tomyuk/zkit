@@ -2,7 +2,7 @@
 #{{ __zkit_run
 #}}
 
-if ${zkit_debug}; then
+if ${ZKIT_DEBUG}; then
     $@
 else
     $@ >/dev/null

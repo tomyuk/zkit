@@ -28,18 +28,24 @@ function __zkit_check_src () {
 }
 
 function __zkit_safe_install () {
+    local ret=0
     if [[ -L $2 ]]; then
 	rm -f $2 || return 1
 	cp $1 $2 || return 1
     elif [[ -e $2 ]]; then
-	if ! cmp $1 $2; then
+	if ! cmp -s $1 $2; then
 	    mv $2 $2.$$.bak || return 1
 	    cp $1 $2 || return 1
+	else
+	    ret=2
 	fi
+    else
+	cp $1 $2 || return 1
     fi
     if [[ -n "$3" ]]; then
 	chmod $3 $2 || return 1
     fi
+    return $ret
 }
 
 function __zkit_install () {
@@ -50,12 +56,14 @@ function __zkit_install () {
     else
 	src=$(__zkit_check_src $1)
 	if [[ -n $src ]]; then
-	    if __zkit_safe_install $src $2 $3; then
-		__zkit_msg "++ Copied: $1 -> $2"
-		return
-	    else
-		__zkit_err "-- Install error: $1 -> $2"
-	    fi
+	    __zkit_safe_install $src $2 $3
+	    case $? in 
+		0)  __zkit_msg "++ Copied: $1 -> $2" ;;
+		2)  __zkit_msg "== Skip: $2" ;;
+		*)  ret=$?
+		    __zkit_err "-- Install error: $1 -> $2"
+		    ;;
+	    esac
 	else
 	    __zkit_err "-- Missing or cannot read $1"
 	fi
@@ -64,11 +72,10 @@ function __zkit_install () {
 }
 
 function __zkit_template () {
-    local temp=${ZKIT}/var/tmp/$(basename $1).out src
+    local temp=${ZKIT}/var/tmp/$(basename $1).out src ret=0
 
     if [[ ${2:0:1} != / ]]; then
 	__zkit_err "-- template destination must be a absolute path"
-
     else
 	src=$(__zkit_check_src $1)
 	if [[ -n $src ]]; then
@@ -76,14 +83,16 @@ function __zkit_template () {
 		__zkit_err "-- Template error: $1"
 		return 1
 	    fi
-	    if __zkit_safe_install $src $2 $3; then
-		__zkit_msg "++ Template: $1 -> $2"
-		rm $temp
-		return
-	    else
-		__zkit_err "-- Install error: $1 -> $2"
-	    fi
+	    __zkit_safe_install $temp $2 $3
+	    case $? in
+		0)  __zkit_msg "++ Installed: $1 -> $2" ;;
+		2)  __zkit_msg "== Skip: $2" ;;
+		*)  ret=$?
+		    __zkit_err "-- Install error: $1 -> $2"
+		    ;;
+	    esac
 	    rm $temp
+	    return $ret
 	else
 	    __zkit_err "-- Cannot read template $1"
 	fi
