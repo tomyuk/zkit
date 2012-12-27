@@ -4,15 +4,24 @@
 # Setup zkit environment
 #}}
 
-set -e
-
+## default_settings
 export ZKIT=${ZKIT=${HOME}/.zkit}
+zkit_debug=false
+zkit_autoupdate=true
+ZKIT_PRIVATE=${HOME}/.zkit_private
+ZKIT_PRIVATE_REPO=
 
 ## import user settings
 rc="${HOME}/.zkitrc"
 if [[ -r $rc ]]; then
     source $rc
 fi
+
+rc="${ZKIT_PRIVATE}/zkitrc"
+if [[ -r $rc ]]; then
+    source $rc
+fi
+
 
 ## check ZKIT
 if [[ ! -d ${ZKIT} ]]; then
@@ -24,18 +33,14 @@ fi
 source ${ZKIT}/bash/functions/zkit_core
 require utils
 
-## default settings
+## default setups
 if [[ -z ${zkit_setups[*]} ]]; then
     if __zkit_have zsh; then
-	zkit_setups=( default bash zsh )
+	zkit_setups=( bash zsh )
     else
-	zkit_setups=( default bash )
+	zkit_setups=( bash )
     fi
 fi
-: ${zkit_debug:=false}
-: ${zkit_autoupdate:=true}
-: ${zkit_private:=${HOME}/.zkit_private}
-: ${zkit_private_repo:=}
 
 ## update zkit
 if $zkit_autoupdate && [[ -d ${ZKIT}/.git ]]; then
@@ -48,24 +53,20 @@ fi
 mkdir -p ${ZKIT}/var/{cache,tmp}
 
 ## pull private settings
-if [[ -n ${zkit_private_repo} ]]; then
-    if [[ -d ${zkit_private}/.git ]]; then
+if [[ -n ${ZKIT_PRIVATE_REPO} ]]; then
+    if [[ -d ${ZKIT_PRIVATE}/.git ]]; then
 	__zkit_msg "++ Updating private"
-	( cd ${zkit_private} ; __zkit_run git pull )
+	( cd ${ZKIT_PRIVATE} ; __zkit_run git pull )
     else
-	__zkit_err "++ Downloading private from ${zkit_private_repo}"
-	__zkit_run git clone ${zkit_private_repo} ${zkit_private} || exit 1
+	__zkit_err "++ Downloading private from ${ZKIT_PRIVATE_REPO}"
+	__zkit_run git clone ${ZKIT_PRIVATE_REPO} ${ZKIT_PRIVATE} || exit 1
     fi
-    chmod -R og-rwx ${zkit_private}
+    chmod -R og-rwx ${ZKIT_PRIVATE}
 fi
 
-## get default setup params 
-d=${zkit_private}/setup
-if [[ -r ${d}/default ]]; then
-    source ${d}/default
-fi
 
 ## get host setup params 
+d=${ZKIT_PRIVATE}/intrinsics
 host=${d}/host-${HOSTNAME}
 if [[ ! -r ${host} ]]; then
     host=${d}/host-${HOSTNAME%%.*}

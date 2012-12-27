@@ -24,7 +24,7 @@ if [[ -n $PS1 ]]; then
 	    if [[ -n $VIRTUAL_ENV_NAME ]]; then
 		P+="(${VIRTUAL_ENV_NAME}) - "
 	    fi
-	    P+="${USER}@${HOSTNAME%%.*} (${TTY}) : ${PWD/#$HOME/~}"
+	    P+="${USER}@${HOST%%.*} (${TTY}) : ${PWD/#$HOME/~}"
 	    printf "\033]0;%s\007" "$P"
 	fi
     }

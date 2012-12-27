@@ -23,4 +23,4 @@ fi
 pathmunge /usr/local/bin
 pathmunge /usr/local/sbin
 pathmunge ${ZKIT}/bin
-pathmunge ${zkit_private}/bin
+pathmunge ${ZKIT_PRIVATE}/bin

@@ -5,7 +5,7 @@ nl=$'\n'
 
 # 90-private.zsh reuse this
 __zkit_path=(
-    ${zkit_private}/bin
+    ${ZKIT_PRIVATE}/bin
     ${ZKIT}/bin
     ${HOME}/.local/bin
 )

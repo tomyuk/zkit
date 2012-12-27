@@ -6,7 +6,7 @@ if [[ -r /etc/bashrc ]]; then
     . /etc/bashrc
 fi
 
-zkit_private=${zkit_private=${HOME}/.zkit_private}
+ZKIT_PRIVATE=${ZKIT_PRIVATE=${HOME}/.zkit_private}
 
 umask ${zkit_umask:=0077}
 
@@ -36,4 +36,4 @@ function __zkit_load_rc () {
 
 # 対話型動作の場合のみ rc.d スクリプトの出力を表示する。
 __zkit_load_rc ${ZKIT}/rc.d/*.sh ${ZKIT}/rc.d/*.bash
-__zkit_load_rc ${zkit_private}/rc.d/*.sh ${zkit_private}/rc.d/*.bash
+__zkit_load_rc ${ZKIT_PRIVATE}/rc.d/*.sh ${ZKIT_PRIVATE}/rc.d/*.bash

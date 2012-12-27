@@ -3,7 +3,7 @@
 # zsh/startup.sh
 #
 
-zkit_private=${zkit_private=${HOME}/.zkit_private}
+ZKIT_PRIVATE=${ZKIT_PRIVATE=${HOME}/.zkit_private}
 
 ### fpath の設定
 fpath=( ${ZDOTDIR}/functions $fpath )
@@ -44,6 +44,6 @@ function __zkit_load_rc () {
 }
 
 __zkit_load_rc ${ZKIT}/rc.d/*.sh ${ZKIT}/rc.d/*.zsh
-__zkit_load_rc ${zkit_private}/rc.d/*.sh ${zkit_private}/rc.d/*.zsh
+__zkit_load_rc ${ZKIT_PRIVATE}/rc.d/*.sh ${ZKIT_PRIVATE}/rc.d/*.zsh
 
 # eof

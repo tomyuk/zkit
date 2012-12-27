@@ -11,9 +11,9 @@ else
     suffix=.bash
 fi
 
-__rc=${zkit_private}/rc.d/host-${HOST}${suffix}
+__rc=${ZKIT_PRIVATE}/rc.d/host-${HOST}${suffix}
 if [[ ! -r $__rc ]]; then
-    __rc=${zkit_private}/rc.d/host-${HOST%%.[[:alnum:]]*}${suffix}
+    __rc=${ZKIT_PRIVATE}/rc.d/host-${HOST%%.[[:alnum:]]*}${suffix}
     if [[ ! -r $__rc ]]; then
 	__rc=
     fi
