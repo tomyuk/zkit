@@ -15,13 +15,15 @@ function __zkit_install () {
     elif [[ ${2:0:1} != / ]]; then
 	__zkit_err "-- template destination must be a absolute path"
     else
+	## TODO: if $1 is abspath ...
 	if [[ -r ${ZKIT_PRIVATE}/$1 ]]; then
 	    src=${ZKIT_PRIVATE}/$1
 	elif [[ -r ${ZKIT}/$1 ]]; then
 	    src=${ZKIT}/$1
 	fi
 	if [[ -n $src ]]; then
-	    if [[ -a $2 ]]; then
+	    if [[ -a $2 || -L $2 ]]; then
+		## TODO: backup??
 		rm -f $2
 	    fi
 	    cp ${ZKIT}/$1 $2
@@ -46,7 +48,7 @@ function __zkit_template () {
 	fi
 	if [[ -n $src ]]; then
 	    expand_template <$src >$temp
-	    if [[ -a $2 ]]; then
+	    if [[ -a $2 || -L $2 ]]; then
 		rm -f $2
 	    fi
 	    cp $temp $2

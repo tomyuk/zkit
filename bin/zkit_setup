@@ -45,7 +45,7 @@ fi
 ## update zkit
 if $zkit_autoupdate && [[ -d ${ZKIT}/.git ]]; then
     __zkit_msg "++ Updating ZKIT:" $name
-    ( cd ${ZKIT} ; __zkit_run git pull )
+    ( cd ${ZKIT} && __zkit_run git pull )
     chmod -R og-rwx ${ZKIT}
 fi
 
@@ -53,17 +53,16 @@ fi
 mkdir -p ${ZKIT}/var/{cache,tmp}
 
 ## pull private settings
-if [[ -n ${ZKIT_PRIVATE_REPO} ]]; then
-    if [[ -d ${ZKIT_PRIVATE}/.git ]]; then
-	__zkit_msg "++ Updating private"
-	( cd ${ZKIT_PRIVATE} ; __zkit_run git pull )
-    else
+if [[ -d ${ZKIT_PRIVATE}/.git ]]; then
+    __zkit_msg "++ Updating private"
+    ( cd ${ZKIT_PRIVATE} && __zkit_run git pull )
+else
+    if [[ -n ${ZKIT_PRIVATE_REPO} ]]; then
 	__zkit_err "++ Downloading private from ${ZKIT_PRIVATE_REPO}"
 	__zkit_run git clone ${ZKIT_PRIVATE_REPO} ${ZKIT_PRIVATE} || exit 1
     fi
-    chmod -R og-rwx ${ZKIT_PRIVATE}
 fi
-
+chmod -R og-rwx ${ZKIT_PRIVATE}
 
 ## get host setup params 
 d=${ZKIT_PRIVATE}/intrinsics
@@ -81,11 +80,27 @@ fi
 
 ## run setup scripts
 for name in "${zkit_setups[@]}" "${zkit_setups_local[@]}"; do
-    if [[ -r ${ZKIT}/setup.d/${name}.sh ]]; then
-    	__zkit_msg "++ Loading setup:" ${name}
-    	source ${ZKIT}/setup.d/${name}.sh
-    else
+    both=false
+    if [[ $name == +* ]]; then
+	name=${name:1}
+	both=false
+    fi
+    private_setup=${ZKIT_PRIVATE}/setup.d/${name}.sh
+    default_setup=${ZKIT}/setup.d/${name}.sh
+    typeset -a runlist
+
+    if [[ -r $private_setup ]]; then
+	runlist+=($private_setup)
+    fi
+    if [[ ( $both == true || ${#runlist[@]} -eq 0 ) && -r $default_setup ]]; then
+	runlist+=($default_setup)
+    fi
+    if [[ ${#runlist[@] -eq 0 ]]; then
     	__zkit_err "-- Cannot load setup:" ${name}
+    else
+	for s in ${runlist[@]}; do
+    	    __zkit_msg "++ Loading setup:" ${name}
+    	    source $s
     fi
 done
 
