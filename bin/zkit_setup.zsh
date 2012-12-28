@@ -50,17 +50,17 @@ if [[ -z ${ZKIT_SETUPS[*]} ]]; then
 fi
 
 ## update zkit
-local my=$(basename $1)
+local my=$(basename $0)
 function githash () {
     (cd $ZKIT && git show --quiet --pretty="format:%H" ${ZKIT}/bin/${my})
 }
 
-my_hash=$(githash $0)
+my_hash=$(githash)
 if $ZKIT_AUTOUPDATE && [[ -d ${ZKIT}/.git ]]; then
     __zkit_msg "++ Pulling ZKIT" 
     ( cd ${ZKIT} && __zkit_run git pull )
     chmod -R og-rwx ${ZKIT}
-    if [[ $my_hash != $(githash ${ZKIT}/bin/zkit_setup) ]]; then
+    if [[ $my_hash != $(githash) ]]; then
 	echo "zkit_setup Updated. Restart"
 	exec ${ZKIT}/bin/${my}
     fi
