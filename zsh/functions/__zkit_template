@@ -13,7 +13,7 @@ emulate -L zsh
 
 local temp=${ZKIT}/var/tmp/$(basename $1).out src ret=0
 
-if [[ ${2:0:1} != / ]]; then
+if [[ $2 != /* ]]; then
     __zkit_err "-- template destination must be a absolute path"
 else
     src=$(__zkit_install__check_src $1)

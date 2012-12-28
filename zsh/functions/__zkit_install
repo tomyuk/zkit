@@ -12,7 +12,7 @@ local src
 
 if [[ -z "$1" || -z "$2" ]]; then
     __zkit_err "!! install: missing args:" $@
-elif [[ ${2:0:1} != / ]]; then
+elif [[ $2 != /* ]]; then
     __zkit_err "-- template destination must be a absolute path"
 else
     src=$(__zkit_install__check_src $1)
