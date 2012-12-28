@@ -44,19 +44,16 @@ local out
 integer i=0
 typeset -a src
 
-
 function filter_upper () {
-    local __ifs=$IFS line
+    local IFS line
     IFS=
     while read -r line; do
 	echo "${(U)line}"
     done
-    IFS=$__ifs
 }
 
 function ripnl () {
-    local line
-    local _ifs=$IFS
+    local line IFS
     IFS=
     while read -r line; do
 	if declare -p lastline >/dev/null 2>&1; then
@@ -67,13 +64,12 @@ function ripnl () {
     if declare -p lastline >/dev/null 2>&1; then
 	echo -n "$lastline"
     fi
-    IFS=$_ifs
 }
 
 
 function __template_expand_expr () {
     # push_ifs $' \t\n'
-    local _ifs=$IFS
+    local IFS
     local re_expr='(.*)\{=(.*)=\}(.*)'
     local left=$1 expr right
     integer i n
@@ -90,12 +86,10 @@ function __template_expand_expr () {
     # reverse output
     out=(${(Oa)out})
     echo "${(j.\n.)out}"
-    IFS=$_ifs
 }
 
 
-_ifs=$IFS
-IFS=
+local IFS=
 if [[ -n "$1" ]]; then
     zmodload zsh/mapfile
     tmpl=${mapfile[$1]}
@@ -137,8 +131,6 @@ IFS=$' \t\n'
 # echo $code >&2
 # echo "----------------------------------------" >&2
 eval "( $code )"
-
-IFS=$_ifs
 
 return 0
 

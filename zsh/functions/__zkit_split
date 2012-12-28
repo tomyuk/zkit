@@ -1,0 +1,7 @@
+# -*- zsh-script -*-
+#{{ __zkit_split var sep string
+
+#}}
+
+local IFS=$2
+eval "$1=(\${=3})"

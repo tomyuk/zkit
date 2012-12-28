@@ -109,3 +109,8 @@ function __zkit_whence () {
 function __zkit_have () {
     type -P $1 >/dev/null
 }
+
+function __zkit_split () {
+    local IFS=$2
+    eval "$1=(\$3)"
+}
