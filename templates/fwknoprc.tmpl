@@ -11,42 +11,21 @@ GPG_SIGNER		{= $GPG_SIGNER =}
 {%- fi %}
 ALLOW_IP		{= $FWKNOP_ALLOW_IP =}
 
-[repo]
-SPA_SERVER		repo.appletz.net
+{% for spec in "${SSH_HOSTS[@]}"; do IFS=: ; set $spec %}
+{%-   if [[ $3 == fwknop-pw ]]; then %}
+[{= $4 =}]
+SPA_SERVER		{= $2 =}
 ACCESS			tcp/22
 SPOOF_USER		{= $FWKNOP_USER =}
 KEY_FILE		{= $FWKNOP_PASSWD_FILE =}
-
-[newton]
-SPA_SERVER		133.242.147.77
-ACCESS			tcp/22
-SPOOF_USER		{= $FWKNOP_USER =}
-KEY_FILE		{= $FWKNOP_PASSWD_FILE =}
-
-[descartes]
-SPA_SERVER              219.94.245.139
+{%   fi %}
+{%-   if [[ $3 == fwknop-gpg ]]; then %}
+[{= $4 =}]
+SPA_SERVER              {= $2 =}
 USE_GPG                 Y
-GPG_RECIPIENT           46D7107D
+GPG_RECIPIENT           {= $5 =}
 ACCESS                  tcp/22
-ALLOW_IP                0.0.0.0
-
-[fermat]
-SPA_SERVER              59.106.176.49
-USE_GPG                 Y
-GPG_RECIPIENT           1A6831DD
-ACCESS                  tcp/22
-ALLOW_IP                0.0.0.0
-
-[mersenne]
-SPA_SERVER		180.37.181.83
-ACCESS			tcp/22
-SPOOF_USER		{= $FWKNOP_USER =}
-KEY_FILE		{= $FWKNOP_PASSWD_FILE =}
-
-[galileo]
-SPA_SERVER		180.37.181.83
-ACCESS			tcp/22
-SPOOF_USER		{= $FWKNOP_USER =}
-KEY_FILE		{= $FWKNOP_PASSWD_FILE =}
+{%   fi %}
+{%- done %}
 
 ###EOF###
