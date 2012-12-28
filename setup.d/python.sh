@@ -3,7 +3,7 @@
 ## python staff
 
 python=$(__zkit_whence python)
-if [[ $python ]]; then
+if [[ -n $python ]]; then
     case $(uname) in
 	'Darwin')
 	    EASY_INSTALL=/usr/local/share/python/easy_install

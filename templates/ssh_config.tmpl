@@ -4,16 +4,20 @@
 ForwardAgent {= $SSH_FORWARD_AGENT =}
 HashKnownHosts no
 
-{%- for spec in "${SSH_HOSTS[@]}"; do IFS=: ; set $spec %}
-Host {= $1 =}
-{%- if [[ -n $2 ]]; then %}
-Hostname {= $2 =}
+{%- if [[ -n "${SSH_HOSTS[@]}" ]]; then -%}
+{%- for spec in "${SSH_HOSTS[@]}"; do 
+set $(echo $spec | sed 's/:/ /g')
+host=$1 hostname=$2 proxy=$3 stanza=$4 %}
+Host {= $host =}
+{%- if [[ -n $hostname ]]; then %}
+Hostname {= $hostname =}
 {%- fi %}
-{%- if [[ $3 == fwknop-pw ]]; then %}
-ProxyCommand {= $ZKIT =}/bin/run_pre_fwknop -p  {= $4 =} %h %p
+{%- if [[ $proxy == fwknop-pw ]]; then %}
+ProxyCommand {= $ZKIT =}/bin/run_pre_fwknop -p  {= $stanza =} %h %p
 {%- fi %}
 {%- if [[ $3 == fwknop-gpg ]]; then %}
-ProxyCommand {= $ZKIT =}/bin/run_pre_fwknop {= $4 =} %h %p
+ProxyCommand {= $ZKIT =}/bin/run_pre_fwknop {= $stanza =} %h %p
 {%- fi %}
 {% IFS=$' \t\n' %}
 {%- done %}
+{% fi %}

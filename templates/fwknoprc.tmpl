@@ -11,21 +11,29 @@ GPG_SIGNER		{= $GPG_SIGNER =}
 {%- fi %}
 ALLOW_IP		{= $FWKNOP_ALLOW_IP =}
 
-{% for spec in "${SSH_HOSTS[@]}"; do IFS=: ; set $spec %}
-{%-   if [[ $3 == fwknop-pw ]]; then %}
-[{= $4 =}]
-SPA_SERVER		{= $2 =}
+{% if [[ -n "${SSH_HOSTS[@]}" ]]; then -%}
+{%- for spec in "${SSH_HOSTS[@]}"; do
+set $(echo $spec | sed 's/:/ /g')
+host=$1
+hostname=$2
+proxy=$3
+stanza=$4
+key=$5 %}
+{%-   if [[ $proxy == fwknop-pw ]]; then %}
+[{= $stanza =}]
+SPA_SERVER		{= $hostname =}
 ACCESS			tcp/22
 SPOOF_USER		{= $FWKNOP_USER =}
 KEY_FILE		{= $FWKNOP_PASSWD_FILE =}
-{%   fi %}
-{%-   if [[ $3 == fwknop-gpg ]]; then %}
+{%   fi -%}
+{%-   if [[ $proxy == fwknop-gpg ]]; then %}
 [{= $4 =}]
-SPA_SERVER              {= $2 =}
+SPA_SERVER              {= $hostname =}
 USE_GPG                 Y
-GPG_RECIPIENT           {= $5 =}
+GPG_RECIPIENT           {= $key =}
 ACCESS                  tcp/22
-{%   fi %}
+{%   fi -%}
 {%- done %}
+{% fi %}
 
 ###EOF###

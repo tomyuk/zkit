@@ -41,6 +41,7 @@ autoload -Uz __zkit_die
 autoload -Uz __zkit_run
 autoload -Uz __zkit_install
 autoload -Uz __zkit_template
+autoload -Uz __zkit_whence
 
 ## default setups
 if [[ -z ${ZKIT_SETUPS[*]} ]]; then
