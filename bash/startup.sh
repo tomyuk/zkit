@@ -9,6 +9,9 @@ source ${ZKIT}/bash/functions/zkit_core
 require utils
 require pathmunge
 
+# bash<4.2 cannot declare global in function
+source ${ZKIT}/bash/functions/colors.zkit
+
 function __zkit_sort_rc () {
     for rc in $(shopt -s nullglob; echo $*); do
 	echo $(basename $rc) $rc
