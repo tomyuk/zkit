@@ -16,13 +16,14 @@ if [[ -n $python ]]; then
     if [[ -x $EASY_INSTALL ]]; then
 
 	python_version=$(python -c \
-	    "from sys import version_info as v; print '%d.%d' % (v.major, v.minor)")
+	    "from sys import version_info as v; print '%d.%d' % (v[0], v[1])")
 
 	# PYTHONUSERBASE="${HOME}"/.private
 	# export PYTHONUSERBASE
 	# python_private=${HOME}/.private/lib/python${python_version}
 	python_private=${HOME}/.local/lib/python${python_version}
 	python_bin=${HOME}/.local/bin
+	mkdir -p $python_private $python_bin
 	PATH=$python_bin:$PATH
 
 	if [[ ! -d $python_bin ]]; then
