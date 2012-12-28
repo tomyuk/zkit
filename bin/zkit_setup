@@ -44,14 +44,18 @@ if [[ -z ${ZKIT_SETUPS[*]} ]]; then
 fi
 
 ## update zkit
-my_ctime=$(stat -f '%c' $0)
+function githash () {
+    git show --quiet --pretty="format:%H" $1
+}
+
+my_hash=$(githash $0)
 if $ZKIT_AUTOUPDATE && [[ -d ${ZKIT}/.git ]]; then
     __zkit_msg "++ Pulling ZKIT" 
     ( cd ${ZKIT} && __zkit_run git pull )
     chmod -R og-rwx ${ZKIT}
-    if (( my_ctime < $(stat -f '%c' ${ZKIT}/bin/zkit_setup) )); then
+    if [[ $my_hash != $(githash ${ZKIT}/bin/zkit_setup) ]]; then
 	echo "zkit_setup Updated. Restart"
-	__zkit_msg ${ZKIT}/bin/zkit_setup
+	exec ${ZKIT}/bin/zkit_setup
     fi
 fi
 
