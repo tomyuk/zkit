@@ -51,7 +51,8 @@ fi
 
 ## update zkit
 function githash () {
-    git show --quiet --pretty="format:%H" $1
+    local my=$(basename $1)
+    (cd $ZKIT && git show --quiet --pretty="format:%H" ${ZKIT}/bin/${my})
 }
 
 my_hash=$(githash $0)
