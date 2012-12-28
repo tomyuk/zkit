@@ -3,13 +3,16 @@
 # zsh/startup.sh
 #
 
-ZKIT_PRIVATE=${ZKIT_PRIVATE=${HOME}/.zkit_private}
+export ZKIT_PRIVATE=${ZKIT_PRIVATE=${HOME}/.zkit_private}
 
 ### fpath の設定
 fpath=( ${ZDOTDIR}/functions $fpath )
+export FPATH
+autoload -Uz array_pack
+array_pack fpath
+
 autoload -Uz pathmunge
 autoload -Uz envpathmunge
-autoload -Uz array_pack
 autoload -Uz zkit_utils
 zkit_utils
 

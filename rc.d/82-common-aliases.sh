@@ -28,7 +28,7 @@ if [[ -n $PS1 ]]; then
 
     alias rmbackup='rm -f `find . -name "*~"`'
     alias rmpyc='rm -f `find . -name "*.pyc"`'
-    alias cleanup='rm -f $( find . \( -name "*.pyc" -o -name "*~" \) )'
+    alias cleanup='rm -f $( find . \( -name "*.pyc" -o -name "*~" -o -name ".#*" \) )'
 
     alias suz='sudo zsh'
     alias sudologin='sudo -i'

@@ -1,12 +1,7 @@
 # このファイルは通常対話環境時にのみ実行されるが、
 # 非対話的スクリプトが BASH_ENV の指定により読み込む場合も想定して記述する。
 
-# Source global definitions
-if [[ -r /etc/bashrc ]]; then
-    . /etc/bashrc
-fi
-
-ZKIT_PRIVATE=${ZKIT_PRIVATE=${HOME}/.zkit_private}
+export ZKIT_PRIVATE=${ZKIT_PRIVATE=${HOME}/.zkit_private}
 
 umask ${zkit_umask:=0077}
 
