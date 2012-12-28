@@ -101,7 +101,7 @@ for name in "${ZKIT_SETUPS[@]}" "${ZKIT_SETUPS_LOCAL[@]}"; do
     runlist=()
     both=false
     if [[ $name == +* ]]; then
-	name=${name:1}
+	name=${name#+}  # for zsh 4.x
 	both=true
     fi
     private_setup=${ZKIT_PRIVATE}/setup.d/${name}.sh
