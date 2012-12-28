@@ -7,7 +7,7 @@ if [[ -n "$python" ]]; then
     # デフォルトの ~/.local から ${ZKIT} に変更
     # PYTHONUSERBASE=${ZKIT}
     # export PYTHONUSERBASE
-    _pver=$(python -c "from sys import version_info as v; print '%d.%d' % (v.major, v.minor)")
+    _pver=$(python -c "from sys import version_info as v; print '%d.%d' % (v[0], v[1])")
 
     #_pbin=${ZKIT}/lib/python${_pver}/bin
     _pbin=${HOME}/.local/bin
