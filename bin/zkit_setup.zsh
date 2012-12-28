@@ -30,6 +30,8 @@ if [[ ! -d ${ZKIT} ]]; then
     exit 1
 fi
 
+path=( ${ZKIT_PRIVATE}/bin ${ZKIT}/bin $path )
+
 ## load functions
 fpath=( ${ZKIT}/zsh/functions $fpath )
 autoload -Uz __zkit_have
