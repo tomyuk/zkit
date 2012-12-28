@@ -5,7 +5,7 @@ typeset -A color=()
 typeset -A fg fg_bold fg_no_bold
 typeset -A bg bg_bold bg_no_bold
 
-lc=$'\e[' rc=m c
+lc=$'\e[' rc=m
 
 color[none]=0
 color[bold]=1
@@ -66,4 +66,4 @@ for k in ${!color[@]}; do
     fi
 done
 
-unset k lc rc
+unset k lc rc c
