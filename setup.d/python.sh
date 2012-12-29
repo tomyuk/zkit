@@ -7,7 +7,7 @@ DISTRIBUTE_URL="http://pypi.python.org/packages/source/d/distribute/distribute-$
 
 # virtualenvs 配下のものは除外して、 python の位置を調べる
 while [[ -z $python ]]; do
-    python=$(__zkit_whence python3)
+    python=$(__zkit_whence python)
     [[ $? -ne 0 ]] && break
     if [[ $python == */.virtualenvs/* ]]; then
 	PATH=${PATH#$(dirname $python)}
