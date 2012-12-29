@@ -1,9 +1,12 @@
-#!/usr/bin/env bash
+#!/usr/bin/env zsh
 ######################################################################
 ## python staff
 
+## ~/.local/bin には何も置かない
+
 DISTRIBUTE_VERSION=${DISTRIBUTE_VERSION=0.6.32}
 DISTRIBUTE_URL="http://pypi.python.org/packages/source/d/distribute/distribute-${DISTRIBUTE_VERSION}.tar.gz"
+
 
 # virtualenvs 配下のものは除外して、 python の位置を調べる
 while [[ -z $python ]]; do
@@ -18,7 +21,7 @@ done
 if [[ -n $python ]]; then
 
     python_version=$($python -c \
-	"from sys import version_info as v; print '%d.%d' % (v[0], v[1])")
+	"from sys import version_info as v; print('%d.%d' % (v[0], v[1]))")
 
     local_bin=${HOME}/.local/bin
     python_lib=${HOME}/.local/lib/python${python_version}
@@ -33,7 +36,7 @@ if [[ -n $python ]]; then
 	mkdir -p ${python_lib}/site-packages
     fi
 
-    # pydistutils.cfg あると python3 の virtualenv のインストールに失敗する
+    # pydistutils.cfg あると python3 の mkvirtualenv が失敗する
     #__zkit_install templates/pydistutils.cfg ${HOME}/.pydistutils.cfg
 
     ## distribute
@@ -47,16 +50,14 @@ if [[ -n $python ]]; then
 	)
 	rm -rf $tmpdir
     else
-	$python_bin/easy_install --upgrade distribute
-	mv ${local_bin}/easy_install{,-${python_version}} $python_bin/
+	$python_bin/easy_install --user --upgrade distribute
     fi
     if [[ -f ${local_bin}/easy_install ]]; then
 	mv ${local_bin}/easy_install{,-${python_version}} $python_bin/
     fi
 
-
     ## pip
-    $python_bin/easy_install --user --upgrade pip
+    $python_bin/easy_install --user -U pip
     if [[ -f ${local_bin}/pip ]]; then
 	mv ${local_bin}/pip{,-${python_version}} $python_bin/
     fi
@@ -65,12 +66,13 @@ if [[ -n $python ]]; then
     $python_bin/pip install --user --upgrade virtualenvwrapper
 
 
-    mkdir -p ${HOME}/.virtualenvs
-    # virtualenvwrapper global hooks
-    for f in postactivate postdeactivate; do
-	__zkit_install templates/virtualenvs_$f ${HOME}/.virtualenvs/$f
-	chmod 0755 ${HOME}/.virtualenvs/$f
-    done
+    # mkdir -p ${HOME}/.virtualenvs
+    # # virtualenvwrapper global hooks
+    # for f in postactivate postdeactivate; do
+    #     __zkit_install templates/virtualenvs_$f ${HOME}/.virtualenvs/$f
+    #     chmod 0755 ${HOME}/.virtualenvs/$f
+    # done
 
-    source ${python_bin}/virtualenvwrapper.sh
+    # source ${python_bin}/virtualenvwrapper.sh
+
 fi

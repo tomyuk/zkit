@@ -1,20 +1,13 @@
-#!/usr/bin/env zsh
+# -*- shell-script -*-
 ######################################################################
 # for python
 
 python=$(__zkit_whence python)
 if [[ -n "$python" ]]; then
-    # デフォルトの ~/.local から ${ZKIT} に変更
-    # PYTHONUSERBASE=${ZKIT}
-    # export PYTHONUSERBASE
-    _pver=$(python -c "from sys import version_info as v; print '%d.%d' % (v[0], v[1])")
+    python_version=$(python -c "from sys import version_info as v; print('%d.%d' % (v[0], v[1]))")
+    python_bin=${HOME}/.local/lib/python${python_version}/bin
 
-    #_pbin=${ZKIT}/lib/python${_pver}/bin
-    _pbin=${HOME}/.local/bin
-
-    if [[ -d $_pbin ]]; then
-	pathmunge $_pbin
-    fi
+    pathmunge $python_bin
 
     ######################################################################
     # python virtualenv
@@ -26,14 +19,13 @@ if [[ -n "$python" ]]; then
     #
     VIRTUAL_ENV_DISABLE_PROMPT=yes
 
-    _vw=$(__zkit_whence virtualenvwrapper.sh)
-    if [[ -n ${_vw} ]]; then
+    if [[ -r ${python_bin}/virtualenvwrapper.sh ]]; then
         # システムの標準 python を VIRTUALENVWRAPPER_PYTHON に設定する
         if [ -z "$VIRTUALENVWRAPPER_PYTHON" ]; then
             VIRTUALENVWRAPPER_PYTHON=${python}
         fi
         export VIRTUALENVWRAPPER_PYTHON
-        source ${_vw}
+        source ${python_bin}/virtualenvwrapper.sh
 
         export PROJECT_HOME=${HOME}/Projects
         if [[ -n "$VIRTUAL_ENV" ]]; then
@@ -49,4 +41,4 @@ if [[ -n "$python" ]]; then
     VIRTUALENV_PROMPT_COMMAND=__zkit_virtualenv_prompt
 
 fi
-unset python _pver _pbin _vw
+unset python python_virsion python_bin
