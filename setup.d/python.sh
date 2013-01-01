@@ -2,6 +2,7 @@
 ######################################################################
 ## python staff
 
+unset PYTHONUSERBASE
 DISTRIBUTE_VERSION=${DISTRIBUTE_VERSION=0.6.32}
 DISTRIBUTE_URL="http://pypi.python.org/packages/source/d/distribute/distribute-${DISTRIBUTE_VERSION}.tar.gz"
 
@@ -38,6 +39,9 @@ if [[ -n $python ]]; then
 
     # pydistutils.cfg あると python3 の virtualenv のインストールに失敗する
     #__zkit_install templates/pydistutils.cfg ${HOME}/.pydistutils.cfg
+    if [[ -f ${HOME}/.pydistutils.cfg ]]; then
+	rm -f ${HOME}/.pydistutils.cfg
+    fi
 
     ## distribute
     if [[ ! -x $python_bin/easy_install ]]; then
@@ -46,10 +50,12 @@ if [[ -n $python ]]; then
 	    cd $tmpdir
 	    curl -L ${DISTRIBUTE_URL} | tar zxf -
 	    cd distribute-${DISTRIBUTE_VERSION}
+	    echo "XXX" $python setup.py install --user --install-scripts $python_bin
 	    $python setup.py install --user --install-scripts $python_bin
 	)
 	rm -rf $tmpdir
     else
+	echo "XXX" $python_bin/easy_install --user -U -d $python_lib -s $python_bin distribute
 	$python_bin/easy_install --user -U -d $python_lib -s $python_bin distribute
 	mv ${local_bin}/easy_install{,-${python_version}} $python_bin/
     fi
@@ -59,6 +65,9 @@ if [[ -n $python ]]; then
 
 
     ## pip
+    echo "XXX" $python_bin/easy_install --user -U \
+	-d $python_lib -s $python_bin -S $python_lib/site-packages \
+	pip
     $python_bin/easy_install --user -U \
 	-d $python_lib -s $python_bin -S $python_lib/site-packages \
 	pip
@@ -67,9 +76,17 @@ if [[ -n $python ]]; then
     fi
 
     # Virtualenv
-    $python_bin/pip install --user \
+    echo "XXX" $python_bin/pip install --user \
+	--upgrade \
+	--force-reinstall \
 	--install-option="--user" \
-	--install-option="--install-scripts=/Users/tomo/.local/lib/python2.7/bin" \
+	--install-option="--install-scripts=$python_bin" \
+	virtualenvwrapper
+    $python_bin/pip install --user \
+	--upgrade \
+	--force-reinstall \
+	--install-option="--user" \
+	--install-option="--install-scripts=$python_bin" \
 	virtualenvwrapper
 
     mkdir -p ${HOME}/.virtualenvs
