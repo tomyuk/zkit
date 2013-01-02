@@ -61,16 +61,20 @@ if [[ -n $python ]]; then
 	mv ${local_bin}/pip{,-${python_version}} $python_bin/
     fi
 
-    # Virtualenv
+    ## Virtualenv
     $python_bin/pip install --user --upgrade virtualenvwrapper
-
+    for f in ${local_bin}/virtualenv*; do
+	[[ -e $f ]] && mv $f ${python_bin}
+    done
 
     mkdir -p ${HOME}/.virtualenvs
     # virtualenvwrapper global hooks
     for f in postactivate postdeactivate; do
 	__zkit_install templates/virtualenvs_$f ${HOME}/.virtualenvs/$f
-	chmod 0755 ${HOME}/.virtualenvs/$f
+	chmod 0700 ${HOME}/.virtualenvs/$f
     done
+
+    
 
     source ${python_bin}/virtualenvwrapper.sh
 fi

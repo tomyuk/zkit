@@ -1,0 +1,39 @@
+# -*- shell-script -*-
+# ログインシェルの場合のみ
+
+function ssh-add () {
+    local ssh_add=$(__zkit_whence ssh-add)
+    if [[ -z $ssh_add ]]; then
+	echo "Cannot find ssh-add" >&2
+	return 1
+    fi
+    $ssh_add -l >/dev/null 2>&1
+    if [[ $? -eq 2 ]]; then
+	eval $(ssh-agent -s)
+	if [[ -n $ZSH_VERSION ]]; then
+	    typeset -gx SSH_AUTH_SOCK SSH_AGENT_PID
+	fi
+    fi
+    $ssh_add $@
+}
+
+function ssh () {
+    local ssh_add=$(__zkit_whence ssh-add)
+    local ssh=$(__zkit_whence ssh)
+    if [[ -z $ssh ]]; then
+	echo "Cannot find ssh"
+	return 1
+    fi
+    if [[ -n $ssh_add ]]; then
+	$ssh_add -l >/dev/null 2>&1
+	if [[ $? -eq 2 ]]; then
+	    echo XX ADD
+	    eval $(ssh-agent -s)
+	    if [[ -n $ZSH_VERSION ]]; then
+		typeset -gx SSH_AUTH_SOCK SSH_AGENT_PID
+	    fi
+	    $ssh-add
+	fi
+    fi
+    $ssh $@
+}

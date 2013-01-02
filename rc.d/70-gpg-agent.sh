@@ -1,4 +1,4 @@
-#!/usr/bin/env zsh
+# -*- shell-script -*-
 ######################################################################
 # GPG Agent の設定
 
@@ -49,13 +49,5 @@ if $zkit_login_shell; then
 	    fi
 	fi
     }
-
-    # もし ssh-agent が稼働していなければ起動する
-    if [[ -z "$SSH_AUTH_SOCK" ]]; then
-	eval $(ssh-agent -s)
-	if [[ -z "$DISPLAY" ]]; then
-	    SSH_ASKPASS=
-	fi
-    fi
 
 fi
