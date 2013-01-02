@@ -3,7 +3,7 @@
 ## python staff
 
 unset PYTHONUSERBASE
-DISTRIBUTE_VERSION=${DISTRIBUTE_VERSION=0.6.32}
+DISTRIBUTE_VERSION=${DISTRIBUTE_VERSION=0.6.34}
 DISTRIBUTE_URL="http://pypi.python.org/packages/source/d/distribute/distribute-${DISTRIBUTE_VERSION}.tar.gz"
 
 # virtualenvs 配下のものは除外して、 python の位置を調べる
@@ -44,7 +44,7 @@ if [[ -n $python ]]; then
     fi
 
     ## distribute
-    if [[ ! -x $python_bin/easy_install ]]; then
+    # if [[ ! -x $python_bin/easy_install ]]; then
 	tmpdir=$(mktemp -d /tmp/zkit.XXXXXX )
 	(
 	    cd $tmpdir
@@ -54,11 +54,11 @@ if [[ -n $python ]]; then
 	    $python setup.py install --user --install-scripts $python_bin
 	)
 	rm -rf $tmpdir
-    else
-	echo "XXX" $python_bin/easy_install --user -U -d $python_lib -s $python_bin distribute
-	$python_bin/easy_install --user -U -d $python_lib -s $python_bin distribute
-	mv ${local_bin}/easy_install{,-${python_version}} $python_bin/
-    fi
+    # else
+    # 	echo "XXX" $python_bin/easy_install --user -U -d $python_lib -s $python_bin distribute
+    # 	$python_bin/easy_install --user -U -d $python_lib -s $python_bin distribute
+    # 	mv ${local_bin}/easy_install{,-${python_version}} $python_bin/
+    # fi
     if [[ -f ${local_bin}/easy_install ]]; then
 	mv ${local_bin}/easy_install{,-${python_version}} $python_bin/
     fi
@@ -78,13 +78,11 @@ if [[ -n $python ]]; then
     # Virtualenv
     echo "XXX" $python_bin/pip install --user \
 	--upgrade \
-	--force-reinstall \
 	--install-option="--user" \
 	--install-option="--install-scripts=$python_bin" \
 	virtualenvwrapper
     $python_bin/pip install --user \
 	--upgrade \
-	--force-reinstall \
 	--install-option="--user" \
 	--install-option="--install-scripts=$python_bin" \
 	virtualenvwrapper

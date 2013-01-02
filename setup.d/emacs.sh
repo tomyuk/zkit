@@ -17,5 +17,5 @@ fi
 
 __zkit_install ${HOME}/.emacs.d/dot.emacs ${HOME}/.emacs
 
-(cd $ZKIT_EMACS_D && git submodule update --init)
+#(cd $ZKIT_EMACS_D && git submodule update --init)
 
