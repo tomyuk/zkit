@@ -2,10 +2,12 @@
 ######################################################################
 ## python staff
 
-DISTRIBUTE_VERSION=${DISTRIBUTE_VERSION=0.6.32}
+unset PYTHONUSERBASE
+DISTRIBUTE_VERSION=${DISTRIBUTE_VERSION=0.6.34}
 DISTRIBUTE_URL="http://pypi.python.org/packages/source/d/distribute/distribute-${DISTRIBUTE_VERSION}.tar.gz"
 
 # virtualenvs 配下のものは除外して、 python の位置を調べる
+__PATH=$PATH
 while [[ -z $python ]]; do
     python=$(__zkit_whence python)
     [[ $? -ne 0 ]] && break
@@ -14,6 +16,7 @@ while [[ -z $python ]]; do
 	python=
     fi
 done
+PATH=$__PATH
 
 if [[ -n $python ]]; then
 
@@ -25,6 +28,7 @@ if [[ -n $python ]]; then
     python_bin=${python_lib}/bin
     mkdir -p $python_lib $python_bin
     PATH=$python_bin:$PATH
+    export PYTHONPATH=$python_lib/site-packages
 
     if [[ ! -d $python_bin ]]; then
 	mkdir -p $python_bin
@@ -35,37 +39,53 @@ if [[ -n $python ]]; then
 
     # pydistutils.cfg あると python3 の virtualenv のインストールに失敗する
     #__zkit_install templates/pydistutils.cfg ${HOME}/.pydistutils.cfg
+    if [[ -f ${HOME}/.pydistutils.cfg ]]; then
+	rm -f ${HOME}/.pydistutils.cfg
+    fi
 
     ## distribute
-    if [[ ! -x $python_bin/easy_install ]]; then
-	tmpdir=$(mktemp -d --tmpdir=/tmp zkit.XXXXXXXXXX)
+    # if [[ ! -x $python_bin/easy_install ]]; then
+	tmpdir=$(mktemp -d /tmp/zkit.XXXXXX )
 	(
 	    cd $tmpdir
 	    curl -L ${DISTRIBUTE_URL} | tar zxf -
 	    cd distribute-${DISTRIBUTE_VERSION}
-	    $python setup.py install --user
+	    echo "XXX" $python setup.py install --user --install-scripts $python_bin
+	    $python setup.py install --user --install-scripts $python_bin
 	)
 	rm -rf $tmpdir
-    else
-	$python_bin/easy_install --upgrade distribute
-	mv ${local_bin}/easy_install{,-${python_version}} $python_bin/
-    fi
+    # else
+    # 	echo "XXX" $python_bin/easy_install --user -U -d $python_lib -s $python_bin distribute
+    # 	$python_bin/easy_install --user -U -d $python_lib -s $python_bin distribute
+    # 	mv ${local_bin}/easy_install{,-${python_version}} $python_bin/
+    # fi
     if [[ -f ${local_bin}/easy_install ]]; then
 	mv ${local_bin}/easy_install{,-${python_version}} $python_bin/
     fi
 
 
     ## pip
-    $python_bin/easy_install --user --upgrade pip
+    echo "XXX" $python_bin/easy_install --user -U \
+	-d $python_lib -s $python_bin -S $python_lib/site-packages \
+	pip
+    $python_bin/easy_install --user -U \
+	-d $python_lib -s $python_bin -S $python_lib/site-packages \
+	pip
     if [[ -f ${local_bin}/pip ]]; then
 	mv ${local_bin}/pip{,-${python_version}} $python_bin/
     fi
 
-    ## Virtualenv
-    $python_bin/pip install --user --upgrade virtualenvwrapper
-    for f in ${local_bin}/virtualenv*; do
-	[[ -e $f ]] && mv $f ${python_bin}
-    done
+    # Virtualenv
+    echo "XXX" $python_bin/pip install --user \
+	--upgrade \
+	--install-option="--user" \
+	--install-option="--install-scripts=$python_bin" \
+	virtualenvwrapper
+    $python_bin/pip install --user \
+	--upgrade \
+	--install-option="--user" \
+	--install-option="--install-scripts=$python_bin" \
+	virtualenvwrapper
 
     mkdir -p ${HOME}/.virtualenvs
     # virtualenvwrapper global hooks
