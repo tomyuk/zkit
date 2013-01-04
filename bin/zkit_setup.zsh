@@ -104,10 +104,9 @@ if [[ -n ${host} ]]; then
 fi
 
 ## run setup scripts
-typeset -a runlist
 for name in "${ZKIT_SETUPS[@]}" "${ZKIT_SETUPS_LOCAL[@]}"; do
-    runlist=()
     both=false
+    ok=false
     if [[ $name == +* ]]; then
 	name=${name#+}  # for zsh 4.x
 	both=true
@@ -121,10 +120,15 @@ for name in "${ZKIT_SETUPS[@]}" "${ZKIT_SETUPS_LOCAL[@]}"; do
     if [[ ( -z $private_setup || $both == true ) && -r $default_setup ]]; then
     	__zkit_msg "** Loading setup         [ ${name} ]"
 	source $default_setup
+	ok=true
     fi
     if [[ -n $private_setup ]]; then
     	__zkit_msg "** Loading private setup [ ${name} ]"
 	source $private_setup
+	ok=true
+    fi
+    if ! $ok; then
+    	__zkit_err "!! Cannot find setup     [ ${name} ]"
     fi
 done
 
