@@ -1,6 +1,8 @@
 #!/usr/bin/env bash
 #
 # run_pre_fwknop
+echo "invoked $*" >> ~/.zkit/var/run_pre_fwknop.log
+
 opts=$(getopt p $*)
 if [ $? != 0 ]; then
     echo >&2 "Usage: $0 [-p] stanza host port
@@ -36,4 +38,5 @@ case $(uname -s) in
 	exit 1
 	;;
 esac
+echo "execute: fwknop -n $1 ${FWKNOP_OPTS} && ${WAIT} && exec ncat $2 $3" >> ~/.zkit/var/run_pre_fwknop.log
 LANG=C fwknop -n $1 ${FWKNOP_OPTS} && ${WAIT} && exec ncat $2 $3

@@ -26,4 +26,10 @@ if [[ -n $PS1 ]]; then
 
     autoload -Uz zmv          # 一括リネーム等に便利です。
     alias zmv="noglob zmv -W" # zmv を緩く指定できるようにします。 $ zmv *.txt file-*.txt
+
+    
+    function mosh () {
+	run_fwknop $1 && $(whence -p mosh) $1
+    }
+
 fi

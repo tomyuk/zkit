@@ -44,7 +44,7 @@ if [[ -n $python ]]; then
     fi
 
     ## distribute
-    # if [[ ! -x $python_bin/easy_install ]]; then
+    if [[ ! -x $python_bin/easy_install ]]; then
 	tmpdir=$(mktemp -d /tmp/zkit.XXXXXX )
 	(
 	    cd $tmpdir
@@ -58,43 +58,45 @@ if [[ -n $python ]]; then
     # 	echo "XXX" $python_bin/easy_install --user -U -d $python_lib -s $python_bin distribute
     # 	$python_bin/easy_install --user -U -d $python_lib -s $python_bin distribute
     # 	mv ${local_bin}/easy_install{,-${python_version}} $python_bin/
-    # fi
+    fi
     if [[ -f ${local_bin}/easy_install ]]; then
 	mv ${local_bin}/easy_install{,-${python_version}} $python_bin/
     fi
 
 
     ## pip
-    echo "XXX" $python_bin/easy_install --user -U \
-	-d $python_lib -s $python_bin -S $python_lib/site-packages \
-	pip
-    $python_bin/easy_install --user -U \
-	-d $python_lib -s $python_bin -S $python_lib/site-packages \
-	pip
-    if [[ -f ${local_bin}/pip ]]; then
-	mv ${local_bin}/pip{,-${python_version}} $python_bin/
+    if [[ ! -x $python_bin/pip ]]; then
+	echo "XXX" $python_bin/easy_install --user -U \
+	    -d $python_lib -s $python_bin -S $python_lib/site-packages \
+	    pip
+	$python_bin/easy_install --user -U \
+	    -d $python_lib -s $python_bin -S $python_lib/site-packages \
+	    pip
+	if [[ -f ${local_bin}/pip ]]; then
+	    mv ${local_bin}/pip{,-${python_version}} $python_bin/
+	fi
     fi
 
     # Virtualenv
-    echo "XXX" $python_bin/pip install --user \
-	--upgrade \
-	--install-option="--user" \
-	--install-option="--install-scripts=$python_bin" \
-	virtualenvwrapper
-    $python_bin/pip install --user \
-	--upgrade \
-	--install-option="--user" \
-	--install-option="--install-scripts=$python_bin" \
-	virtualenvwrapper
+    if [[ ! -r ${python_bin}/virtualenvwrapper.sh ]]; then
 
-    mkdir -p ${HOME}/.virtualenvs
-    # virtualenvwrapper global hooks
-    for f in postactivate postdeactivate; do
-	__zkit_install templates/virtualenvs_$f ${HOME}/.virtualenvs/$f
-	chmod 0700 ${HOME}/.virtualenvs/$f
-    done
-
-    
-
+	echo "XXX" $python_bin/pip install --user \
+	    --upgrade \
+	    --install-option="--user" \
+	    --install-option="--install-scripts=$python_bin" \
+	    virtualenvwrapper
+	$python_bin/pip install --user \
+	    --upgrade \
+	    --install-option="--user" \
+	    --install-option="--install-scripts=$python_bin" \
+	    virtualenvwrapper
+	
+	mkdir -p ${HOME}/.virtualenvs
+	# virtualenvwrapper global hooks
+	for f in postactivate postdeactivate; do
+	    __zkit_install templates/virtualenvs_$f ${HOME}/.virtualenvs/$f
+	    chmod 0700 ${HOME}/.virtualenvs/$f
+	done
+    fi
     source ${python_bin}/virtualenvwrapper.sh
 fi

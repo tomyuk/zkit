@@ -3,8 +3,8 @@
 
 ForwardAgent {= $SSH_FORWARD_AGENT =}
 HashKnownHosts no
-{%- if [[ -n "${SSH_HOSTS[@]}" ]]; then
-       for spec in "${SSH_HOSTS[@]}"; do
+{%- if [[ -n "${HOSTS_CONF[@]}" ]]; then
+       for spec in "${HOSTS_CONF[@]}"; do
            host= hostname= proxy= stanza= key=
 	   eval $spec
 	   if [[ -n $host ]]; then %}

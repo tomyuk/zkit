@@ -114,3 +114,7 @@ function __zkit_split () {
     local IFS=$2
     eval "$1=(\$3)"
 }
+
+function __zkit_readarray () {
+    eval "readarray $1"
+}

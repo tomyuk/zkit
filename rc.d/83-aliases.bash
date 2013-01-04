@@ -8,4 +8,9 @@ if [[ -n $PS1 ]]; then
 	    alias where='alias | /usr/bin/which --tty-only --read-alias --show-dot --show-tilde --all'
 	    ;;
     esac
+
+    function mosh () {
+	run_fwknop $1 && $(type -P mosh) $1
+    }
+
 fi

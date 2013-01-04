@@ -1,0 +1,42 @@
+#!/usr/bin/env bash
+#
+# run_fwknop
+
+if [[ -z $1 ]]; then
+    echo "Usage: $0 host"
+    exit 2
+fi
+
+use_pass=0
+conf=${ZKIT_PRIVATE}/share/hosts.conf
+if [[ -r $conf ]]; then
+   while read spec; do
+       host= hostname= proxy= stanza=
+       eval "$spec"
+       if [[ $host == $1 ]]; then
+	   if [[ $proxy == fwknop-pw ]]; then
+	       use_pass=1
+	   fi
+	   FWKNOP_OPTS=
+	   if [[ $use_pass == 0 && -n "$GPG_AGENT_INFO" ]]; then
+	       FWKNOP_OPTS=--gpg-agent
+	   fi
+	   case $(uname -s) in
+	       Linux)
+		   WAIT="usleep $((400*1000))"
+		   ;;
+	       Darwin)
+		   WAIT="sleep 0.4"
+		   ;;
+	       *)
+		   echo "Unknown system type: $(uname -s)"
+		   exit 1
+		   ;;
+	   esac
+	   LANG=C fwknop -n $stanza ${FWKNOP_OPTS} && ${WAIT}
+	   exit
+       fi
+   done < $conf
+fi	
+echo "$0: Cannot find desination $1"
+exit 1

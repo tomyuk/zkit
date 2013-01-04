@@ -9,9 +9,9 @@ SPA_SERVER_PROTO	udp
 GPG_SIGNER		{= $GPG_SIGNER =}
 {%- fi %}
 ALLOW_IP		{= $FWKNOP_ALLOW_IP =}
-{% if [[ -n "${SSH_HOSTS[@]}" ]]; then
+{% if [[ -n "${HOSTS_CONF[@]}" ]]; then
     declare -A STANZA_LIST
-    for spec in "${SSH_HOSTS[@]}"; do
+    for spec in "${HOSTS_CONF[@]}"; do
         host= hostname= proxy= stanza= key=
         eval $spec
         if [[ -z $hostname ]]; then hostname=$host ; fi

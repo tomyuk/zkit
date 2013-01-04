@@ -34,15 +34,18 @@ path=( ${ZKIT_PRIVATE}/bin ${ZKIT}/bin $path )
 
 ## load functions
 fpath=( ${ZKIT}/zsh/functions $fpath )
-autoload -Uz __zkit_have
-autoload -Uz __zkit_msg
-autoload -Uz __zkit_err
-autoload -Uz __zkit_die
-autoload -Uz __zkit_run
-autoload -Uz __zkit_install
-autoload -Uz __zkit_template
-autoload -Uz __zkit_whence
-autoload -Uz __zkit_split
+autoload -Uz zkit_utils
+zkit_utils
+# autoload -Uz __zkit_have
+# autoload -Uz __zkit_msg
+# autoload -Uz __zkit_err
+# autoload -Uz __zkit_die
+# autoload -Uz __zkit_run
+# autoload -Uz __zkit_install
+# autoload -Uz __zkit_template
+# autoload -Uz __zkit_whence
+# autoload -Uz __zkit_split
+# autoload -Uz __zkit_readarray
 
 ## default setups
 if [[ -z ${ZKIT_SETUPS[*]} ]]; then

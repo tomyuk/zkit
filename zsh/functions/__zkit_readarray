@@ -1,0 +1,7 @@
+# -*- mode: zsh-script  -*-
+#{{ __zkit_readallay name
+#}}
+
+while read line; do
+    eval "$1+=\$line"
+done
