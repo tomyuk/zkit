@@ -1,8 +1,15 @@
 # -*- shell-script -*-
-######################################################################
+#
 # ruby rvm
+#
 
-if [[ -r "${HOME}/.rvm/scripts/rvm" ]] ; then
+rvm=
+if [[ -r "${HOME}/.rvm/scripts/rvm" ]]; then
+    rvm="${HOME}/.rvm/scripts/rvm"
+elif [[ -r /etc/profile.d/rvm.sh ]]; then
+    rvm=/etc/profile.d/rvm.sh
+fi
+if [[ -n $rvm ]]; then    
 
     function __zkit_rvm_prompt () {
 	if [[ -n $rvm_bin_path && -x ${rvm_bin_path}/rvm-prompt ]]; then
@@ -13,8 +20,8 @@ if [[ -r "${HOME}/.rvm/scripts/rvm" ]] ; then
 
     RVM_PROMPT_COMMAND=__zkit_rvm_prompt
 
-    export rvm_path=${rvm_path=${HOME}/.rvm}
-    source "${HOME}/.rvm/scripts/rvm"
+    # export rvm_path=${rvm_path=${HOME}/.rvm}
+    source $rvm
     BASH_ENV=$_bash_env
     pathmunge "${HOME}/.rvm/bin"
 
@@ -22,7 +29,7 @@ if [[ -r "${HOME}/.rvm/scripts/rvm" ]] ; then
     	rvm use >/dev/null
     fi
     if [[ -n $ZSH_VERSION ]]; then
-	fpath=( ${HOME}/.rvm/scripts/zsh/Completion $fpath )
+	fpath=( ${rvm_path}/scripts/zsh/Completion $fpath )
     fi
 fi
 
