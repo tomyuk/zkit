@@ -105,9 +105,10 @@ chmod -R og-rwx ${ZKIT_PRIVATE}
 
 ## get host setup params 
 d=${ZKIT_PRIVATE}/intrinsics
-host=${d}/host-${HOSTNAME}
+hostname=$(hostname)
+host=${d}/host-${hostname}
 if [[ ! -r ${host} ]]; then
-    host=${d}/host-${HOSTNAME%%.*}
+    host=${d}/host-${hostname%%.*}
     if [[ ! -r ${host} ]]; then
 	host=
     fi
