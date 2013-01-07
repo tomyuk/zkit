@@ -10,7 +10,7 @@ if [[ -n $PS1 ]]; then
     esac
 
     function mosh () {
-	run_fwknop $1 && $(type -P mosh) $1
+	fwk $1 && $(type -P mosh) $1
     }
 
 fi

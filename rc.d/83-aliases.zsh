@@ -29,7 +29,7 @@ if [[ -n $PS1 ]]; then
 
     
     function mosh () {
-	run_fwknop $1 && $(whence -p mosh) $1
+	fwk $1 && $(whence -p mosh) $1
     }
 
 fi
