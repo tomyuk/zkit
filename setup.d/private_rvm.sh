@@ -3,8 +3,9 @@
 
 if [[ ! -r ${HOME}/.rvm/scripts/rvm ]]; then
 
+    # rvm stable には cdpath についてのバグがあるので master を使用
     \curl -L https://get.rvm.io | \
-	bash -s stable --ruby --ignore-dotfiles --user-install
+	bash -s master --ruby --ignore-dotfiles --user-install
     source ${HOME}/.rvm/scripts/rvm
     chmod -R og-w $rvm_path
 fi

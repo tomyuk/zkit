@@ -1,4 +1,4 @@
-#!/usr/bin/env zsh
+#!/usr/bin/env bash
 
 #{{
 # Setup zkit environment
@@ -11,6 +11,20 @@ export ZKIT_PRIVATE=${ZKIT_PRIVATE=${HOME}/.zkit_private}
 : ${ZKIT_DEBUG:=false}
 : ${ZKIT_AUTOUPDATE:=true}
 : ${ZKIT_PRIVATE_REPO:=}
+
+prog=$(basename $0)
+opts=($(getopt -n $prog -- v $*))
+if [[ $? -ne 0 ]]; then
+    echo >&2 "Usage: $prog [-v]
+  -v   verbose
+"
+    exit 2
+fi
+for opt in $opts; do
+    case $opt in
+	-v) ZKIT_DEBUG=true ;;
+    esac
+done
 
 ## import user settings
 rc="${HOME}/.zkitrc"
@@ -30,22 +44,12 @@ if [[ ! -d ${ZKIT} ]]; then
     exit 1
 fi
 
-path=( ${ZKIT_PRIVATE}/bin ${ZKIT}/bin $path )
-
 ## load functions
-fpath=( ${ZKIT}/zsh/functions $fpath )
-autoload -Uz zkit_utils
-zkit_utils
-# autoload -Uz __zkit_have
-# autoload -Uz __zkit_msg
-# autoload -Uz __zkit_err
-# autoload -Uz __zkit_die
-# autoload -Uz __zkit_run
-# autoload -Uz __zkit_install
-# autoload -Uz __zkit_template
-# autoload -Uz __zkit_whence
-# autoload -Uz __zkit_split
-# autoload -Uz __zkit_readarray
+source ${ZKIT}/bash/functions/zkit_core
+require utils
+
+# bash<4.2 cannot declare global in function
+source ${ZKIT}/bash/functions/colors.zkit
 
 ## default setups
 if [[ -z ${ZKIT_SETUPS[*]} ]]; then
@@ -57,19 +61,19 @@ if [[ -z ${ZKIT_SETUPS[*]} ]]; then
 fi
 
 ## update zkit
-local my=$(basename $0)
 function githash () {
+    local my=$(basename $1)
     (cd $ZKIT && git show --quiet --pretty="format:%H" ${ZKIT}/bin/${my})
 }
 
-my_hash=$(githash)
+my_hash=$(githash $0)
 if $ZKIT_AUTOUPDATE && [[ -d ${ZKIT}/.git ]]; then
     __zkit_msg "++ Pulling ZKIT" 
     ( cd ${ZKIT} && __zkit_run git pull )
     chmod -R og-rwx ${ZKIT}
-    if [[ $my_hash != $(githash) ]]; then
+    if [[ $my_hash != $(githash $0) ]]; then
 	echo "zkit_setup Updated. Restart"
-	exec ${ZKIT}/bin/${my}
+	exec ${ZKIT}/bin/zkit_setup
     fi
 fi
 
@@ -105,30 +109,32 @@ fi
 
 ## run setup scripts
 for name in "${ZKIT_SETUPS[@]}" "${ZKIT_SETUPS_LOCAL[@]}"; do
-    both=false
-    ok=false
-    if [[ $name == +* ]]; then
-	name=${name#+}  # for zsh 4.x
-	both=true
-    fi
-    private_setup=${ZKIT_PRIVATE}/setup.d/${name}.sh
-    default_setup=${ZKIT}/setup.d/${name}.sh
+    if [[ -n $name ]]; then
+	both=false
+	ok=false
+	if [[ $name == +* ]]; then
+	    name=${name:1}
+	    both=true
+	fi
+	private_setup=${ZKIT_PRIVATE}/setup.d/${name}.sh
+	default_setup=${ZKIT}/setup.d/${name}.sh
 
-    if [[ ! -r $private_setup ]]; then
-	private_setup=
-    fi
-    if [[ ( -z $private_setup || $both == true ) && -r $default_setup ]]; then
-    	__zkit_msg "** Loading setup         [ ${name} ]"
-	source $default_setup
-	ok=true
-    fi
-    if [[ -n $private_setup ]]; then
-    	__zkit_msg "** Loading private setup [ ${name} ]"
-	source $private_setup
-	ok=true
-    fi
-    if ! $ok; then
-    	__zkit_err "!! Cannot find setup     [ ${name} ]"
+	if [[ ! -r $private_setup ]]; then
+	    private_setup=
+	fi
+	if [[ ( -z $private_setup || $both == true ) && -r $default_setup ]]; then
+    	    __zkit_msg "** Loading setup         [ ${name} ]"
+	    source $default_setup
+	    ok=true
+	fi
+	if [[ -n $private_setup ]]; then
+    	    __zkit_msg "** Loading private setup [ ${name} ]"
+	    source $private_setup
+	    ok=true
+	fi
+	if ! $ok; then
+    	    __zkit_err "!! Cannot find setup     [ ${name} ]"
+	fi
     fi
 done
 
