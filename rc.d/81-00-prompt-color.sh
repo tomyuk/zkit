@@ -18,8 +18,8 @@ if [[ -n $PS1 ]]; then
     pc5="${eb}${csi}48;5;58;38;5;232m${ee}"		# git
     pc6="${eb}${csi}48;5;235;38;5;242m${ee}"		# pwd
 
-    cc1="${eb}${csi}32m${ee}"				# user
-    cc2="${eb}${csi}38;5;21m${ee}"			# @
+    cc1="${eb}${csi}38;5;77m${ee}"				# user
+    cc2="${eb}${csi}38;5;69m${ee}"			# @
     cc3="${eb}${csi}38;5;196m${ee}"			# machine
     cc4="${eb}${csi}38;5;94m${ee}" 			# tty
     cc5="${eb}${csi}38;5;143m${ee}"			# shlvl
