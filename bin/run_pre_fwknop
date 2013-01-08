@@ -47,4 +47,4 @@ if [[ -z $ncat ]]; then
     fi
 fi
 echo "execute: fwknop -n $1 ${FWKNOP_OPTS} && ${WAIT} && exec $ncat $2 $3" >> ~/.zkit/var/run_pre_fwknop.log
-LANG=C fwknop -n $1 ${FWKNOP_OPTS} && ${WAIT} && exec ncat $2 $3
+LANG=C fwknop -n $1 ${FWKNOP_OPTS} && ${WAIT} && exec $ncat $2 $3
