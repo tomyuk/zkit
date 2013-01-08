@@ -10,7 +10,9 @@ require utils
 require pathmunge
 
 # bash<4.2 cannot declare global in function
-source ${ZKIT}/bash/functions/colors.zkit
+if [[ $BASH_VERSION != 3.* ]];then
+    source ${ZKIT}/bash/functions/colors.zkit
+fi
 
 function __zkit_sort_rc () {
     for rc in $(shopt -s nullglob; echo $*); do
