@@ -7,18 +7,25 @@ if [[ ! -d $ssh_dir ]]; then
     mkdir $ssh_dir
 fi
 
+
 ## build ssh_config
 
-: ${SSH_FORWARD_AGENT:=no}
+if [[ $ZSH_VERSION != 4.* ]]; then
 
-typeset -a HOSTS
-HOSTS_CONF=()
+    : ${SSH_FORWARD_AGENT:=no}
 
-hosts_conf=${ZKIT_PRIVATE}/share/hosts.conf
-if [[ -r $hosts_conf ]]; then
-    __zkit_readarray HOSTS_CONF < ${hosts_conf}
+    typeset -a HOSTS
+    HOSTS_CONF=()
+
+    hosts_conf=${ZKIT_PRIVATE}/share/hosts.conf
+    if [[ -r $hosts_conf ]]; then
+	__zkit_readarray HOSTS_CONF < ${hosts_conf}
+    fi
+    __zkit_template templates/ssh_config.tmpl ${ssh_dir}/config 600
+
+elif [[ -s ${ZKIT_PRIVATE}/share/ssh_config ]]; then
+    install -m 600 ${ZKIT_PRIVATE}/share/ssh_config ${ssh_dir}/config
 fi
-__zkit_template templates/ssh_config.tmpl ${ssh_dir}/config 600
 
 ## place authorized_keys
 
