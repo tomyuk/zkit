@@ -38,5 +38,13 @@ case $(uname -s) in
 	exit 1
 	;;
 esac
-echo "execute: fwknop -n $1 ${FWKNOP_OPTS} && ${WAIT} && exec ncat $2 $3" >> ~/.zkit/var/run_pre_fwknop.log
+ncat=$(type -p ncat)
+if [[ -z $ncat ]]; then
+    ncat=$(type -p nc)
+    if [[ -z $ncat ]]; then
+	echo "Cannot find ncat nor nc" >&2
+	exit 1
+    fi
+fi
+echo "execute: fwknop -n $1 ${FWKNOP_OPTS} && ${WAIT} && exec $ncat $2 $3" >> ~/.zkit/var/run_pre_fwknop.log
 LANG=C fwknop -n $1 ${FWKNOP_OPTS} && ${WAIT} && exec ncat $2 $3
