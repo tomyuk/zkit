@@ -22,5 +22,5 @@ if [[ -f /etc/redhat-release ]]; then
 fi
 pathmunge /usr/local/bin
 pathmunge /usr/local/sbin
-pathmunge ${ZKIT}/bin
-pathmunge ${ZKIT_PRIVATE}/bin
+
+pathmunge "${__zkit_path[@]}"
