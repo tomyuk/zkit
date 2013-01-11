@@ -1,4 +1,4 @@
-#!/usr/bin/env bash
+#!/usr/bin/env zsh
 
 #{{
 # Setup zkit environment
@@ -44,12 +44,22 @@ if [[ ! -d ${ZKIT} ]]; then
     exit 1
 fi
 
-## load functions
-source ${ZKIT}/bash/functions/zkit_core
-require utils
+path=( ${ZKIT_PRIVATE}/bin ${ZKIT}/bin $path )
 
-# bash<4.2 cannot declare global in function
-source ${ZKIT}/bash/functions/colors.zkit
+## load functions
+fpath=( ${ZKIT}/zsh/functions $fpath )
+autoload -Uz zkit_utils
+zkit_utils
+# autoload -Uz __zkit_have
+# autoload -Uz __zkit_msg
+# autoload -Uz __zkit_err
+# autoload -Uz __zkit_die
+# autoload -Uz __zkit_run
+# autoload -Uz __zkit_install
+# autoload -Uz __zkit_template
+# autoload -Uz __zkit_whence
+# autoload -Uz __zkit_split
+# autoload -Uz __zkit_readarray
 
 ## default setups
 if [[ -z ${ZKIT_SETUPS[*]} ]]; then
@@ -61,19 +71,19 @@ if [[ -z ${ZKIT_SETUPS[*]} ]]; then
 fi
 
 ## update zkit
+local my=$(basename $0)
 function githash () {
-    local my=$(basename $1)
     (cd $ZKIT && git show --quiet --pretty="format:%H" ${ZKIT}/bin/${my})
 }
 
-my_hash=$(githash $0)
+my_hash=$(githash)
 if $ZKIT_AUTOUPDATE && [[ -d ${ZKIT}/.git ]]; then
     __zkit_msg "++ Pulling ZKIT" 
     ( cd ${ZKIT} && __zkit_run git pull )
     chmod -R og-rwx ${ZKIT}
-    if [[ $my_hash != $(githash $0) ]]; then
+    if [[ $my_hash != $(githash) ]]; then
 	echo "zkit_setup Updated. Restart"
-	exec ${ZKIT}/bin/zkit_setup
+	exec ${ZKIT}/bin/${my}
     fi
 fi
 
@@ -114,7 +124,7 @@ for name in "${ZKIT_SETUPS[@]}" "${ZKIT_SETUPS_LOCAL[@]}"; do
 	both=false
 	ok=false
 	if [[ $name == +* ]]; then
-	    name=${name:1}
+	    name=${name#+}  # for zsh 4.x
 	    both=true
 	fi
 	private_setup=${ZKIT_PRIVATE}/setup.d/${name}.sh
