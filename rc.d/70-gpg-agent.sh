@@ -11,7 +11,8 @@
 # gpg_agent_options="--debug-level basic"
 
 # ログインシェルの場合のみ
-if $zkit_login_shell; then
+if $zkit_login_shell && [[ -d ${HOME}/.gnupg ]]; then
+
     if [[ -z "$GNOME_KEYRING_CONTROL" && -z "$GPG_AGENT_INFO" ]]; then
         # gpg-agent がすでに起動済みであれば gpg_agent_info_file は上書きされ
         # ないので、起動済みか否かに関わらずこの内容で環境を設定する。
