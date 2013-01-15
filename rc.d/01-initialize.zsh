@@ -22,7 +22,7 @@ TMPPREFIX=${ZKIT}/var/tmp/zsh_
 
 setopt extended_glob
 #setopt nonomatch		# globが失敗してもエラーにせずそのまま返す
-setopt null_glob		# globが失敗したら空を返す (rvm で必要)
+#setopt null_glob		# globが失敗したら空を返す (rvm で必要)
 
 # Job Control
 setopt No_check_jobs		# exitするときにjobの状態をチェックしない

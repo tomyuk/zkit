@@ -46,7 +46,10 @@ function __zkit_load_rc () {
     done
 }
 
-__zkit_load_rc ${ZKIT}/rc.d/*.sh ${ZKIT}/rc.d/*.zsh
-__zkit_load_rc ${ZKIT_PRIVATE}/rc.d/*.sh ${ZKIT_PRIVATE}/rc.d/*.zsh
+__zkit_load_rc ${ZKIT}/rc.d/*.sh(N) ${ZKIT}/rc.d/*.zsh(N)
+
+__zkit_load_rc ${ZKIT_PRIVATE}/rc.d/*.sh(N) ${ZKIT_PRIVATE}/rc.d/*.zsh(N)
+
+
 
 # eof
