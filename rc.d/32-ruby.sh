@@ -9,7 +9,12 @@ if
     test "`ps -p $$ -o comm=`" != sh
 then
     # Load RVM if it is installed, try user then root install.                    
-    if [[ -n $rvm_path && -r "$rvm_path/scripts/rvm" ]]; then
+    if [[ -n $zkit_rvm_private ]]; then
+	if [[ -r "$HOME/.rvm/scripts/rvm" ]]; then
+	    source "$HOME/.rvm/scripts/rvm"
+	fi
+	
+    elif [[ -n $rvm_path && -r "$rvm_path/scripts/rvm" ]]; then
 	source "$rvm_path/scripts/rvm"
     else
 	unset rvm_path
