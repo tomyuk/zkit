@@ -20,8 +20,20 @@ zkit_utils
 
 umask ${zkit_umask:=0077}
 
-
-
+# intrinsics
+d=${ZKIT_PRIVATE}/intrinsics
+hostname=$(hostname)
+host=${d}/host-${hostname}
+if [[ ! -r ${host} ]]; then
+    host=${d}/host-${hostname%%.*}
+    if [[ ! -r ${host} ]]; then
+	host=
+    fi
+fi
+if [[ -n ${host} ]]; then
+    source ${host}
+fi
+unset d hostname host
 
 function __zkit_sort_rc () {
     emulate -L zsh
