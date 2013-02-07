@@ -1,6 +1,6 @@
 # for Sun JDK
 
-JAVA_HOME=$(echo /usr/lib/jvm/java-*-openjdk-* | sort -r | head -1)
+JAVA_HOME=$(echo /usr/lib/jvm/java-*-openjdk-*(N) | sort -r | head -1)
 
 if [[ -z $JAVA_HOME ]]; then
     if [[ -d /usr/java/default ]]; then
