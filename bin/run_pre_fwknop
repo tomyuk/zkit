@@ -34,8 +34,7 @@ case $(uname -s) in
 	WAIT="sleep 0.4"
 	;;
     *)
-	echo "Unknown system type: $(uname -s)"
-	exit 1
+	WAIT="sleep 1"
 	;;
 esac
 ncat=$(type -p ncat)
