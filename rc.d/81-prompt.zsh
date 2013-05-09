@@ -21,6 +21,9 @@ if [[ -n $PS1 ]]; then
 		TTY=$(tty)
 		TTY="${TTY/#\/dev\/}"
 	    fi
+	    if [[ -f /etc/description ]]; then
+		P+="$(cat /etc/description) "
+	    fi
 	    if [[ -n $VIRTUAL_ENV_NAME ]]; then
 		P+="(${VIRTUAL_ENV_NAME}) - "
 	    fi
