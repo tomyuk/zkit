@@ -29,7 +29,13 @@ if [[ -n $PS1 ]]; then
 	fi
     }
 
-    PS1="${pc1}Zsh"				# Bash
+    if [[ -f /etc/description ]]; then
+	DESCRIPTION=$(cat /etc/description)
+    else
+	DESCRIPTION=" Zsh "
+    fi
+
+    PS1="${pc1} ${DESCRIPTION} "		# Description
     PS1+="${pc2} %T "				# time
     PS1+="${pc3}\$($VIRTUALENV_PROMPT_COMMAND)"	# virtualenv
     PS1+="${pc4}\$($RVM_PROMPT_COMMAND)"	# rvm

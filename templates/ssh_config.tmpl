@@ -3,6 +3,10 @@
 
 ForwardAgent {= $SSH_FORWARD_AGENT =}
 HashKnownHosts no
+TCPKeepAlive yes
+ServerAliveCountMax 3
+ServerAliveInterval 15
+
 {%- if [[ -n "${HOSTS_CONF[@]}" ]]; then
        for spec in "${HOSTS_CONF[@]}"; do
            host= hostname= proxy= stanza= key=
