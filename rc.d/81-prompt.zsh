@@ -22,7 +22,7 @@ if [[ -n $PS1 ]]; then
 		TTY="${TTY/#\/dev\/}"
 	    fi
 	    if [[ -f /etc/description ]]; then
-		P+="$(cat /etc/description) "
+		P+="[ $(cat /etc/description) ] - "
 	    fi
 	    if [[ -n $VIRTUAL_ENV_NAME ]]; then
 		P+="(${VIRTUAL_ENV_NAME}) - "
