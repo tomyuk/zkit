@@ -1,0 +1,41 @@
+#!/usr/bin/env sh
+
+URL="https://github.com/kriszyp/cpm/tarball/master"
+
+if [ -z "$CPM_INSTALL_LIB" ]; then
+	CPM_INSTALL_LIB="/usr/local/lib"
+fi
+if [ ! -e "$CPM_INSTALL_LIB" ]; then
+	CPM_INSTALL_LIB="/usr/lib"
+fi
+if [ -z "$CPM_INSTALL_BIN" ]; then
+	CPM_INSTALL_BIN="/usr/local/bin"
+fi
+if [ ! -e "$CPM_INSTALL_BIN" ]; then
+	CPM_INSTALL_BIN="/usr/bin"
+fi
+
+rm -rf "/tmp/cpm"
+mkdir -p "/tmp/cpm/archive"
+
+cd "/tmp/cpm"
+
+curl -kL $URL > cpm.tar.gz
+
+# ungzip and untar, stripping base directory and
+# putting everything into "archive" directory
+tar xzf cpm.tar.gz --strip-components=1 -C archive
+
+if [ -e "$CPM_INSTALL_LIB/cpm" ]; then
+	rm -rf "$CPM_INSTALL_LIB/cpm"
+fi
+mv -f "archive" "$CPM_INSTALL_LIB/cpm"
+
+# if the file exists (whether it's an actual file or
+# a symlink, remove it because `ln` won't replace it
+if [ -e "$CPM_INSTALL_BIN/cpm" ]; then
+	rm "$CPM_INSTALL_BIN/cpm"
+fi
+
+chmod +x "$CPM_INSTALL_LIB/cpm/cpm"
+ln -fs "$CPM_INSTALL_LIB/cpm/cpm" "$CPM_INSTALL_BIN/cpm"
