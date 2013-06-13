@@ -28,7 +28,7 @@ if [[ -n $PS1 ]]; then
     PS1="${pc1}Bash"				# Bash
     PS1+="${pc2} \D{%R} "			# time
     PS1+="${pc3}$($VIRTUALENV_PROMPT_COMMAND)"	# virtualenv
-    PS1+="${pc4}\$($RVM_PROMPT_COMMAND)"	# rvm
+#    PS1+="${pc4}\$($RVM_PROMPT_COMMAND)"	# rvm
     PS1+="${pc5}\$($GIT_PROMPT_COMMAND)"	# git
     PS1+="${pc6} \w "				# pwd
     PS1+="${pc0}${nl}"

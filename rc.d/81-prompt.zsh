@@ -41,7 +41,7 @@ if [[ -n $PS1 ]]; then
     PS1="${pc1} ${DESCRIPTION} "		# Description
     PS1+="${pc2} %T "				# time
     PS1+="${pc3}\$($VIRTUALENV_PROMPT_COMMAND)"	# virtualenv
-    PS1+="${pc4}\$($RVM_PROMPT_COMMAND)"	# rvm
+#    PS1+="${pc4}\$($RVM_PROMPT_COMMAND)"	# rvm
     PS1+="${pc5}\$($GIT_PROMPT_COMMAND)"	# git
     PS1+="${pc6} %~ "				# pwd
     PS1+="${pc0}${nl}"
