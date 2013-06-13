@@ -8,7 +8,28 @@ if
     test "`ps -p $$ -o comm=`" != dash &&
     test "`ps -p $$ -o comm=`" != sh
 then
-    # Load RVM if it is installed, try user then root install.                    
+    # rbenv
+    if [[ -d ${HOME}/.rbenv ]]; then
+	export PATH="${HOME}/.rbenv/bin:${PATH}"
+	if [[ -n "${ZSH_VERSION:-}" ]]; then
+	    eval "$( rbenv init - zsh )"
+
+	    function gem(){
+		$HOME/.rbenv/shims/gem $*
+		if [ "$1" = "install" ] || [ "$1" = "i" ] || [ "$1" = "uninstall" ] || [ "$1" = "uni" ]
+		then
+		    rbenv rehash
+		    rehash
+		fi
+	    }
+
+
+	else
+	    eval "$( rbenv init - )"
+	fi
+    fi
+
+    # Load RVM if it is installed, try user then root install.
     # if [[ -n $zkit_rvm_private ]]; then
     # 	if [[ -r "$HOME/.rvm/scripts/rvm" ]]; then
     # 	    source "$HOME/.rvm/scripts/rvm"
