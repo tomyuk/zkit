@@ -9,8 +9,8 @@ if
     test "`ps -p $$ -o comm=`" != sh
 then
     # nvm
-    if [[ -d ${HOME}/.node ]]; then
-	source ${HOME}/.node/nvm.sh
+    if [[ -d ${HOME}/.nvm ]]; then
+	source ${HOME}/.nvm/nvm.sh
     fi
 fi
 
