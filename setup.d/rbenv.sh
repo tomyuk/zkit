@@ -1,10 +1,11 @@
 #!/bin/bash
 
+: ${default_ruby_version:=1.9.3-p429}
+
 if [[ ! -d ${HOME}/.rbenv ]]; then
     git clone https://github.com/sstephenson/rbenv.git ~/.rbenv
     export PATH="$HOME/.rbenv/bin:$PATH"
     eval "$(rbenv init -)"
-    rbenv install 1.9.3-p429
 fi
 
 if [[ ! -f ${HOME}/.local/bin/ruby-build ]]; then
@@ -16,4 +17,9 @@ if [[ ! -f ${HOME}/.local/bin/ruby-build ]]; then
 	PREFIX=~/.local ./install.sh
     )
     rm -rf $tmpdir
+    unset tmpdir
+fi
+
+if [[ ! -d ${HOME}/.rbenv/versions/${default_ruby_version}
+    rbenv install ${default_ruby_version}
 fi
