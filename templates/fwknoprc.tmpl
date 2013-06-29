@@ -19,6 +19,9 @@ ALLOW_IP		{= $FWKNOP_ALLOW_IP =}
             if [[ $proxy == fwknop-pw ]]; then %}
 [{= $stanza =}]
 SPA_SERVER		{= $hostname =}
+{%-             if [[ -n $spa_port ]]; then %}
+SPA_SERVER_PORT		{= $spa_port =}
+{%-             fi %}
 ACCESS			tcp/22
 SPOOF_USER		{= $FWKNOP_USER =}
 KEY_FILE		{= $FWKNOP_PASSWD_FILE =}

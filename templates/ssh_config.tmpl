@@ -17,6 +17,9 @@ Host {= $host =}
 {%-            if [[ -n $hostname ]]; then %}
 Hostname {= $hostname =}
 {%-            fi
+               if [[ -n $port ]]; then %}
+Port     {= $port =}
+{%-            fi
                if [[ $proxy == fwknop-pw ]]; then %}
 ProxyCommand {= $ZKIT =}/bin/run_pre_fwknop -p  {= $stanza =} %h %p
 {%-            fi

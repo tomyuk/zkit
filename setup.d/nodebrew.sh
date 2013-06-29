@@ -1,6 +1,6 @@
 #!/bin/bash
 
-: ${default_nodejs_version:=v0.10.12}
+: ${nodejs_default_version:=v0.10.12}
 
 if [[ ! -d ${HOME}/.nodebrew ]]; then
 
@@ -10,13 +10,12 @@ if [[ ! -d ${HOME}/.nodebrew ]]; then
     hash -r
 
     # build & install default node.js
-    nodebrew install-binary ${default_nodejs_version}
-    nodebrew use ${default_nodejs_version}
-    nodebrew alias stable ${default_nodejs_version}
+    nodebrew install-binary ${nodejs_default_version}
+    nodebrew alias default ${nodejs_default_version}
+    nodebrew use default
     hash -r
 
     # install npm
     curl https://npmjs.org/install.sh | bash
     
 fi
-
