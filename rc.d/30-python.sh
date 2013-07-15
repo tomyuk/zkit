@@ -5,7 +5,11 @@
 python=$(__zkit_whence python)
 if [[ -n "$python" ]]; then
     python_version=$(python -c "from sys import version_info as v; print('%d.%d' % (v[0], v[1]))")
-    python_bin=${HOME}/.local/lib/python${python_version}/bin
+    if [[ $(uname) == "Darwin" ]]; then
+	python_bin=${HOME}/Library/Python/${python_version}/bin
+    else
+	python_bin=${HOME}/.local/lib/python${python_version}/bin
+    fi
 
     pathmunge $python_bin
 
