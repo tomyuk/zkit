@@ -9,7 +9,7 @@ ServerAliveInterval 15
 
 {%- if [[ -n "${HOSTS_CONF[@]}" ]]; then
        for spec in "${HOSTS_CONF[@]}"; do
-           host= hostname= proxy= stanza= key=
+           host= hostname= port= proxy= stanza= key= nopty=
 	   eval $spec
 	   if [[ -n $host ]]; then %}
 
@@ -21,11 +21,15 @@ Hostname {= $hostname =}
 Port     {= $port =}
 {%-            fi
                if [[ $proxy == fwknop-pw ]]; then %}
-ProxyCommand {= $ZKIT =}/bin/run_pre_fwknop -p  {= $stanza =} %h %p
+ProxyCommand {= $ZKIT =}/bin/run_pre_fwknop -p {= $stanza =} %h %p
 {%-            fi
                if [[ $proxy == fwknop-gpg ]]; then %}
 ProxyCommand {= $ZKIT =}/bin/run_pre_fwknop {= $stanza =} %h %p
+{%-            fi 
+               if [[ -n $nopty ]]; then %}
+RequestTTY no
 {%-            fi
            fi
        done
-  fi %}
+  fi
+  %}

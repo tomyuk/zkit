@@ -28,10 +28,10 @@ fi
 
 case $(uname -s) in
     Linux)
-	WAIT="usleep $((400*1000))"
+	WAIT="usleep $((600*1000))"
 	;;
     Darwin)
-	WAIT="sleep 0.4"
+	WAIT="sleep 0.6"
 	;;
     *)
 	WAIT="sleep 1"
