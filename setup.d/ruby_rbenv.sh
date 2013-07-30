@@ -1,6 +1,6 @@
 #!/bin/bash
 
-: ${default_ruby_version:=1.9.3-p429}
+. ${ZKIT}/setup.d/ruby.sh
 
 if [[ ! -d ${HOME}/.rbenv ]]; then
     git clone https://github.com/sstephenson/rbenv.git ~/.rbenv
@@ -20,6 +20,6 @@ if [[ ! -f ${HOME}/.local/bin/ruby-build ]]; then
     unset tmpdir
 fi
 
-if [[ ! -d ${HOME}/.rbenv/versions/${default_ruby_version}
+if [[ ! -d ${HOME}/.rbenv/versions/${default_ruby_version} ]]; then
     rbenv install ${default_ruby_version}
 fi

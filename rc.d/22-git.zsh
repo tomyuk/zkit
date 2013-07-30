@@ -56,7 +56,9 @@ if [[ -n $PS1 ]]; then
 	GIT_PROMPT_COMMAND="__git_ps1 '(%s)'"
     fi
 
-    if [[ -f /usr/local/share/zsh/site-functions/git-flow-completion.zsh ]]; then
+    if [[ -f ~/.zkit/lib/git-flow-completion.zsh ]]; then
+	. ~/.zkit/lib/git-flow-completion.zsh
+    elif [[ -f /usr/local/share/zsh/site-functions/git-flow-completion.zsh ]]; then
 	. /usr/local/share/zsh/site-functions/git-flow-completion.zsh
     fi
 
