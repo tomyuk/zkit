@@ -9,8 +9,14 @@ ServerAliveInterval 15
 
 {%- if [[ -n "${HOSTS_CONF[@]}" ]]; then
        for spec in "${HOSTS_CONF[@]}"; do
-           host= hostname= port= proxy= stanza= key= nopty=
+           host= hostname= port= proxy= stanza= key= nopty= only=
 	   eval $spec
+	   if [[ -n $only && $only != `hostname` ]]; then
+               continue
+	   fi
+	   if [[ -n $without && $without == `hostname` ]]; then
+               continue
+	   fi
 	   if [[ -n $host ]]; then %}
 
 Host {= $host =}

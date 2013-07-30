@@ -39,3 +39,16 @@ if [[ ! -d ${HOME}/.rvm/rubies/ruby-${default_ruby_version} ]]; then
     rvm install ${default_ruby_version}
     rvm use ${default_ruby_version} --default
 fi
+
+
+# rc=${HOME}/.rvmrc
+# touch ${rc}
+
+# awk '
+# ! /^(rvm_ignore_dotfiles|rvm_auto_reload)/ { print $1 }
+# END {
+#   print "rvm_ignore_dotfiles=1"
+#   print "rvm_auto_reload_flag=1"
+# }
+# ' $rc > $rc.$$
+# mv $rc.$$ $rc
