@@ -66,4 +66,3 @@ path=(
     $path
     )
 
-cdpath=( $HOME ${HOME}/Projects )
