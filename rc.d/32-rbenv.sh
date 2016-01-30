@@ -3,8 +3,7 @@
 # ruby rvm
 #
 
-if
-    [ -n "${BASH_VERSION:-}" -o -n "${ZSH_VERSION:-}" ] &&
+if [ -n "${BASH_VERSION:-}" -o -n "${ZSH_VERSION:-}" ] &&
     test "`ps -p $$ -o comm=`" != dash &&
     test "`ps -p $$ -o comm=`" != sh
 then

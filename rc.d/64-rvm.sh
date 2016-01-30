@@ -3,8 +3,7 @@
 # ruby rvm
 #
 
-if
-    [ -n "${BASH_VERSION:-}" -o -n "${ZSH_VERSION:-}" ] &&
+if [ -n "${BASH_VERSION:-}" -o -n "${ZSH_VERSION:-}" ] &&
     test "`ps -p $$ -o comm=`" != dash &&
     test "`ps -p $$ -o comm=`" != sh
 then
@@ -33,10 +32,20 @@ then
     	}
 	
     	RVM_PROMPT_COMMAND=__zkit_rvm_prompt
-    	pathmunge $rvm_bin_path
+	if [ -n "$rvm_bin_path" ]; then
+	    pathmunge $rvm_bin_path
+	fi
+	#RVM_BIN_PATH=$rvm_bin_path
 
     	if [[ -n "$RUBY_VERSION" ]]; then
+	    #set _save_path=$PATH
+	    pathmunge "${rvm_path}/gems/${RUBY_VERSION}/bin"
+	    _save_path=$PATH
     	    rvm use $RUBY_VERSION >/dev/null
+	    PATH=$_save_path
+	    unset _save_path
+	else
+    	    rvm use default >/dev/null
     	fi
     	if [[ -n $ZSH_VERSION ]]; then
     	    fpath=( ${rvm_path}/scripts/zsh/Completion $fpath )

@@ -3,7 +3,15 @@
 # zsh/startup.sh
 #
 
+if [[ -r ${HOME}/.zkitrc ]]; then
+    source ${HOME}/.zkitrc
+fi
+
 export ZKIT_PRIVATE=${ZKIT_PRIVATE=${HOME}/.zkit_private}
+
+if [ -f "${ZKIT_PRIVATE}/zkitrc" ]; then
+    source ${ZKIT_PRIVATE}/zkitrc
+fi
 
 ### fpath の設定
 fpath=( ${ZDOTDIR}/functions $fpath )
@@ -59,9 +67,6 @@ function __zkit_load_rc () {
 }
 
 __zkit_load_rc ${ZKIT}/rc.d/*.sh(N) ${ZKIT}/rc.d/*.zsh(N)
-
 __zkit_load_rc ${ZKIT_PRIVATE}/rc.d/*.sh(N) ${ZKIT_PRIVATE}/rc.d/*.zsh(N)
-
-
 
 # eof

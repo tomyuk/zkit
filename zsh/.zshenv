@@ -6,11 +6,9 @@
 # 2.    ~/.zprofile  O
 # 3.    ~/.zshrc     O     O
 # 4.    ~/.zlogin    O
-
+#
+# このファイルは bin/zkit_setup.zsh で ~/.zshenv へ配置される
 setopt No_GLOBAL_RCS	# /etc/zsh* は読み込まない
 
 export ZKIT=${ZKIT=${HOME}/.zkit}
-if [[ -r ${HOME}/.zkitrc ]]; then
-    source ${HOME}/.zkitrc
-fi
-export ZDOTDIR=${ZKIT}/zsh
+export ZDOTDIR=${ZKIT}/zsh # .zprofile 以降の zsh 起動スクリプトははこのディレクトリーから読み込む
