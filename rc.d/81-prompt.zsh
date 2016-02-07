@@ -32,18 +32,26 @@ if [[ -n $PS1 ]]; then
 	fi
     }
 
-    if [[ -f /etc/description ]]; then
-	DESCRIPTION=$(cat /etc/description)
-    else
-	DESCRIPTION=" Zsh "
+    PS1=""
+    if [[ ! -n "$ZKIT_PROMPT_NO_DESCRIPTION" ]]; then
+	if [[ -f /etc/description ]]; then
+	    DESCRIPTION=$(cat /etc/description)
+	else
+	    DESCRIPTION=" Zsh "
+	fi
+	PS1+="${pc1} ${DESCRIPTION} "		# Description
     fi
-
-    PS1="${pc1} ${DESCRIPTION} "		# Description
-    PS1+="${pc2} %T "				# time
+    if [[ ! -n "$ZKIT_PROMPT_NO_TIME" ]]; then
+	PS1+="${pc2} %T "				# time
+    fi
     PS1+="${pc3}\$($VIRTUALENV_PROMPT_COMMAND)"	# virtualenv
     PS1+="${pc4}\$($RVM_PROMPT_COMMAND)"	# rvm
     PS1+="${pc5}\$($GIT_PROMPT_COMMAND)"	# git
-    PS1+="${pc6} %~ "				# pwd
+    if [[ -n "$ZKIP_PROMPT_DIR" ]]; then
+	PS1+="${pc6} ${ZKIP_PROMPT_DIR} "	# pwd
+    else
+	PS1+="${pc6} %~ "			# pwd
+    fi
     PS1+="${pc0}${nl}"
 
     if zstyle -t ':zkit:' rprompt; then
@@ -52,9 +60,11 @@ if [[ -n $PS1 ]]; then
 	RPROMPT=
     fi
     PS1+="${cc1}%n${cc2}@${cc3}%m "		# user@host
-    PS1+="${cc4}(%l)"				# (tty)
-    PS1+="${cc5}$(__zkit_shlvl_prompt)"		# shlvl
-    PS1+="${cc6}%!"				# history
+    if [[ ! -n "$ZKIT_PROMPT_SIMPLE" ]]; then
+	PS1+="${cc4}(%l)"				# (tty)
+	PS1+="${cc5}$(__zkit_shlvl_prompt)"		# shlvl
+	PS1+="${cc6}%!"				# history
+    fi
     PS1+="%(!.${cc8}#.${cc7}%%)${pc0} "		# #/%
 
     PS2="%B%{${csi}38;5;10m%}%_>%{${csi}m%}%b "

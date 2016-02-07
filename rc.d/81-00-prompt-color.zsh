@@ -36,9 +36,11 @@ if [[ -n $PS1 ]]; then
     tty=$(tty)
 
     PS1+="${cc1}\u${cc2}@${cc3}\h "				# user@host
-    PS1+="${cc4}(${tty/#\/dev\/})"				# (tty)
-    PS1+="${cc5}$(__zkit_shlvl_prompt)"				# shlvl
-    PS1+="${cc6}\!"						# history
+    if [[ ! -n "$ZKIT_PROMPT_SIMPLE" ]]; then
+	PS1+="${cc4}(${tty/#\/dev\/})"				# (tty)
+	PS1+="${cc5}$(__zkit_shlvl_prompt)"			# shlvl
+	PS1+="${cc6}\!"						# history
+    fi
     PS1+="${cc7}\\\$${pc0} "					# %
     unset tty
 
