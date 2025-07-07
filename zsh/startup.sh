@@ -3,6 +3,11 @@
 # zsh/startup.sh
 #
 
+# 必要なディレクトリを確実に作成
+mkdir -p "${ZKIT}/var/tmp"
+mkdir -p "${ZKIT}/var/cache" 
+mkdir -p "${ZKIT}/var/log"
+
 if [[ -r ${HOME}/.zkitrc ]]; then
     source ${HOME}/.zkitrc
 fi
