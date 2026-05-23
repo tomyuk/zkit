@@ -3,6 +3,7 @@
 #
 
 if [[ -n $PS1 ]]; then
+    csi=$'\e[' nl=$'\n'
 
     function __zkit_shlvl_prompt () {
 	if [[ $SHLVL > 1 ]]; then
