@@ -10,17 +10,36 @@ else
     zkit_login_shell=false
 fi
 
+# 重要：必要なディレクトリを最初に作成
+[[ ! -d "${ZKIT}/var" ]] && mkdir -p "${ZKIT}/var"
+[[ ! -d "${ZKIT}/var/tmp" ]] && mkdir -p "${ZKIT}/var/tmp"
+[[ ! -d "${ZKIT}/var/cache" ]] && mkdir -p "${ZKIT}/var/cache"
+
 ######################################################################
 # PATH 追加
 export PATH
 
-PATH=/sbin:/bin:/usr/sbin:/usr/bin
-if [[ -f /etc/redhat-release ]]; then
-    if (( $(head -1 /etc/redhat-release | awk '{print $3}') >= 18 )); then
-	PATH=/usr/sbin:/usr/bin
-    fi
+### macOS + Homebrew PATH設定
+# Homebrewパスを最優先に設定
+if [[ -x /opt/homebrew/bin/brew ]]; then
+    # Apple Silicon Mac
+    eval "$(/opt/homebrew/bin/brew shellenv)"
+    HOMEBREW_PREFIX="/opt/homebrew"
+elif [[ -x /usr/local/bin/brew ]]; then
+    # Intel Mac
+    eval "$(/usr/local/bin/brew shellenv)"
+    HOMEBREW_PREFIX="/usr/local"
 fi
-pathmunge /usr/local/bin
-pathmunge /usr/local/sbin
 
-pathmunge "${__zkit_path[@]}"
+# システムパスの基本構成
+path=(
+    $__zkit_path
+    ${HOMEBREW_PREFIX}/sbin
+    ${HOMEBREW_PREFIX}/bin
+    /usr/local/sbin
+    /usr/local/bin
+    /usr/sbin
+    /usr/bin
+    /sbin
+    /bin
+)
