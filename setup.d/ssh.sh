@@ -30,7 +30,7 @@ fi
 ## place authorized_keys
 
 if [[ -s ${ZKIT_PRIVATE}/secrets/authorized_keys ]]; then
-install -m 600 ${ZKIT_PRIVATE}/secrets/authorized_keys $ssh_dir/
+    install -m 600 ${ZKIT_PRIVATE}/secrets/authorized_keys $ssh_dir/
 fi
 
 ## house keeping

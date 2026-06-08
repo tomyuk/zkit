@@ -3,7 +3,20 @@
 # zsh/startup.sh
 #
 
+# 必要なディレクトリを確実に作成
+mkdir -p "${ZKIT}/var/tmp"
+mkdir -p "${ZKIT}/var/cache" 
+mkdir -p "${ZKIT}/var/log"
+
+if [[ -r ${HOME}/.zkitrc ]]; then
+    source ${HOME}/.zkitrc
+fi
+
 export ZKIT_PRIVATE=${ZKIT_PRIVATE=${HOME}/.zkit_private}
+
+if [ -f "${ZKIT_PRIVATE}/zkitrc" ]; then
+    source ${ZKIT_PRIVATE}/zkitrc
+fi
 
 ### fpath の設定
 fpath=( ${ZDOTDIR}/functions $fpath )
@@ -20,8 +33,20 @@ zkit_utils
 
 umask ${zkit_umask:=0077}
 
-
-
+# intrinsics
+d=${ZKIT_PRIVATE}/intrinsics
+hostname=$(hostname)
+host=${d}/host-${hostname}
+if [[ ! -r ${host} ]]; then
+    host=${d}/host-${hostname%%.*}
+    if [[ ! -r ${host} ]]; then
+	host=
+    fi
+fi
+if [[ -n ${host} ]]; then
+    source ${host}
+fi
+unset d hostname host
 
 function __zkit_sort_rc () {
     emulate -L zsh
@@ -46,7 +71,7 @@ function __zkit_load_rc () {
     done
 }
 
-__zkit_load_rc ${ZKIT}/rc.d/*.sh ${ZKIT}/rc.d/*.zsh
-__zkit_load_rc ${ZKIT_PRIVATE}/rc.d/*.sh ${ZKIT_PRIVATE}/rc.d/*.zsh
+__zkit_load_rc ${ZKIT}/rc.d/*.sh(N) ${ZKIT}/rc.d/*.zsh(N)
+__zkit_load_rc ${ZKIT_PRIVATE}/rc.d/*.sh(N) ${ZKIT_PRIVATE}/rc.d/*.zsh(N)
 
 # eof

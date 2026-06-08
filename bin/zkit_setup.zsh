@@ -1,5 +1,9 @@
 #!/usr/bin/env zsh
 
+#
+# TODO: bin/zkit_setup へ統合する
+#
+
 #{{
 # Setup zkit environment
 #}}

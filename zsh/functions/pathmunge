@@ -1,5 +1,5 @@
 # -*- zsh-script -*-
-#{{ pathmerge [-a] <newpath>
+#{{ pathmunge [-a] <newpath>
 #
 #}}
 

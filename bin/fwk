@@ -7,13 +7,15 @@ if [[ -z $1 ]]; then
     exit 2
 fi
 
+target=${1##*@}
+
 use_pass=0
 conf=${ZKIT_PRIVATE}/share/hosts.conf
 if [[ -r $conf ]]; then
    while read spec; do
        host= hostname= proxy= stanza=
        eval "$spec"
-       if [[ $host == $1 ]]; then
+       if [[ $host == $target ]]; then
 	   if [[ $proxy == fwknop-pw ]]; then
 	       use_pass=1
 	   fi
@@ -33,7 +35,9 @@ if [[ -r $conf ]]; then
 		   exit 1
 		   ;;
 	   esac
-	   LANG=C fwknop -n $stanza ${FWKNOP_OPTS} && ${WAIT}
+	   if [[ -n $stanza ]]; then
+	       LANG=C fwknop -n $stanza ${FWKNOP_OPTS} && ${WAIT}
+	   fi
 	   exit
        fi
    done < $conf
