@@ -15,13 +15,13 @@
 declare -rx ZKIT_VERSION='0.1'
 
 declare -a __zkit_modules__
-if [[ ${#__zkit_modules__[@]} -eq 0 ]];then
+if [[ ${#__zkit_modules__[@]} -eq 0 ]]; then
     __zkit_modules__=( core )
 fi
 
 declare -a __zkit_ifs_stack
 function push_ifs () {
-    __zkit_ifs_stack[${#__zkit_ifs_stack[@]}]=$IFS
+    __zkit_ifs_stack[${#__zkit_ifs_stack[@]}]="${IFS:-$' \t\n'}"
     if [[ $# -eq 0 ]]; then
 	IFS=$' \t\n'
     else
@@ -33,32 +33,32 @@ function pop_ifs () {
     local n=$(( ${#__zkit_ifs_stack[@]} - 1 ))
     if [[ $n -lt 0 ]]; then
 	echo "IFS stack underflow" >&2
-	exit 1
+	return 1
     fi
-    IFS=${__zkit_ifs_stack[$n]}
-    unset __zkit_ifs_stack[$n]
+    IFS="${__zkit_ifs_stack[$n]}"
+    unset '__zkit_ifs_stack[$n]'
 }
 
 push_ifs '.'
 declare -ar ZKIT_VERSINFO=(${ZKIT_VERSION})
 pop_ifs
 
-ZKIT_DEBUG=${ZKIT_DEBUG=false}
+ZKIT_DEBUG="${ZKIT_DEBUG:-false}"
 
 function __zkit_run () {
-    if ${ZKIT_DEBUG}; then
-	$@
+    if ${ZKIT_DEBUG:-false}; then
+	"$@"
     else
-	$@ >/dev/null
+	"$@" >/dev/null
     fi
 }
 
 function __zkit_msg () {
-    if ${ZKIT_DEBUG}; then
-	if [[ $TERM == xterm* ]]; then
-	    echo "${fg[green]}$@$reset_color"
+    if ${ZKIT_DEBUG:-false}; then
+	if [[ ${TERM:-} == xterm* ]]; then
+	    echo "${fg[green]}$*$reset_color"
 	else
-	    echo "$@"
+	    echo "$*"
 	fi
     fi
 }
@@ -68,10 +68,10 @@ function __zkit_msg () {
 #   Prints a error message to the standard error stream.
 #}}
 function __zkit_err () {
-    if [[ $TERM == xterm* ]]; then
-	echo "${fg[red]}$@$reset_color" >&2
+    if [[ ${TERM:-} == xterm* ]]; then
+	echo "${fg[red]}$*$reset_color" >&2
     else
-	echo "$@" >&2
+	echo "$*" >&2
     fi
 }
 
@@ -81,16 +81,17 @@ function __zkit_err () {
 #   error message before exiting.
 #}}
 function __zkit_die () {
-    if [[ -n $1 ]]; then
-	if [[ $TERM == xterm* ]]; then
-	    echo "${bg[red]}${fg_bold[white]}$*$reset_color" >&2
+    if [[ -n "${1:-}" ]]; then
+	if [[ ${TERM:-} == xterm* ]]; then
+	    echo "${bg[red]}${fg_bold[white]}$*${reset_color}" >&2
 	else
-	    echo $* >&2
+	    echo "$*" >&2
 	fi
     fi
-    if ! $__zkit_interactive; then
+    if ! ${__zkit_interactive:-false}; then
 	exit 1
     fi
+    return 1
 }
 
 #{{ depends tool1 [ tool2 [ ... [ toolN ] ] ]
@@ -109,7 +110,7 @@ function __zkit_die () {
 function depends () {
     local prog err=false
     for prog in "$@"; do
-	type -P $prog || {
+	type -P "$prog" || {
 	    echo "cannot find dependency command '$prog'" >&2
 	    err=true
 	}
@@ -122,35 +123,35 @@ function depends () {
 #{{ require module
 #
 #}}
-export ZKITPATH=${ZKITPATH=${ZKIT}/bash/functions}
+export ZKITPATH="${ZKITPATH:-${ZKIT}/bash/functions}"
 
 function require () {
-    local modname path funcname
+    local modname d funcname found
 
     # Check whether the module is already loaded.
     for modname in "${__zkit_modules__[@]}"; do
         # Skip it if already loaded.
-        [[ $modname = $1 ]] && return
+        [[ $modname = ${1:-} ]] && return
     done
 
     funcname="__zkit_module__${1//\//__}"
     if [[ $(type -t "$funcname") == function ]]; then
         # The module is an inline piece of preloaded code. All defs are
         # inside the function, so we just execute the function.
-        __zkit_reuired__=true $funcname
+        __zkit_reuired__=true "$funcname"
     else
-        local found=false
+        found=false
 	push_ifs :
         for d in $ZKITPATH; do
-            if [[ -r "$d/$1.zkit" ]]; then
-                __zkit_imported__=true source "$d/$1.zkit"
+            if [[ -r "$d/${1}.zkit" ]]; then
+                __zkit_imported__=true source "$d/${1}.zkit"
 		found=true
                 break
             fi
         done
 	pop_ifs
         if ! $found; then
-            echo "Could not find module '$1' in ZKITPATH=$ZKITPATH" >&2
+            echo "Could not find module '${1:-}' in ZKITPATH=$ZKITPATH" >&2
             exit 1
 	fi
     fi
@@ -158,11 +159,11 @@ function require () {
 }
 
 function __zkit_comp_require () {
-    local cur=$2 i j n=0
+    local cur=${2:-} i j n=0
     COMPREPLY=()
-    compopt -o filenames
+    compopt -o filenames 2>/dev/null || true
     for i in ${ZKITPATH//:/$'\n'}; do
-	for j in $( compgen -f $i/$cur ); do
+	for j in $( compgen -f "$i/$cur" ); do
 	    if [[ $j == *.zkit ]]; then
 		j=${j%.zkit}
 		COMPREPLY[n++]=${j#$i/}
@@ -170,7 +171,7 @@ function __zkit_comp_require () {
 	done
     done
 }
-complete -F __zkit_comp_require require
+complete -F __zkit_comp_require require 2>/dev/null || true
 
 
 #++ main
@@ -188,7 +189,7 @@ complete -F __zkit_comp_require require
 #       main foo
 #--
 function main () {
-    [[ "$__zkit_imported__" ]] || "$@"
+    [[ -n "${__zkit_imported__:-}" ]] || "$@"
 }
 
 declare -xf push_ifs pop_ifs depends require main
