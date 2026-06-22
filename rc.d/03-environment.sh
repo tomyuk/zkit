@@ -2,8 +2,11 @@
 # 環境変数の設定
 #
 
+zkit_root="${ZKIT:-${HOME:-}/.zkit}"
+homebrew_prefix="${HOMEBREW_PREFIX:-}"
+
 # 256color xterm
-if [[ $TERM == xterm* ]]; then
+if [[ ${TERM:-} == xterm* ]]; then
     export TERM=xterm-256color
 fi
 
@@ -15,21 +18,21 @@ fi
 
 
 # Homebrew環境変数
-if [[ -n $HOMEBREW_PREFIX ]]; then
+if [[ -n "$homebrew_prefix" ]]; then
     export HOMEBREW_NO_AUTO_UPDATE=1
     export HOMEBREW_NO_ANALYTICS=1
     export HOMEBREW_CASK_OPTS="--appdir=/Applications"
 fi
 
 # エディタ設定（Homebrewのemacsを優先）
-if [[ -x ${HOMEBREW_PREFIX}/bin/emacs ]]; then
-    export VISUAL=${HOMEBREW_PREFIX}/bin/emacs
+if [[ -n "$homebrew_prefix" && -x "${homebrew_prefix}/bin/emacs" ]]; then
+    export VISUAL="${homebrew_prefix}/bin/emacs"
 elif [[ -x /Applications/Emacs.app/Contents/MacOS/Emacs ]]; then
     export VISUAL=/Applications/Emacs.app/Contents/MacOS/Emacs
 else
-    export VISUAL=${ZKIT}/bin/zkit_emacs
+    export VISUAL="${zkit_root}/bin/zkit_emacs"
 fi
-export EDITOR=$VISUAL
+export EDITOR="$VISUAL"
 
 # macOS固有の設定
 export BROWSER=open
@@ -43,7 +46,7 @@ export LC_ALL=ja_JP.UTF-8
 case $(uname -s) in
     Linux)
 	if type -p dircolors >/dev/null; then
-	    eval $(dircolors --sh)
+	    eval "$(dircolors --sh)"
 	fi
 	;;
     Darwin)
@@ -81,5 +84,4 @@ case $(uname -s) in
 	;;
 esac
 
-export VISUAL=${ZKIT}/bin/zkit_emacs
-export EDITOR=$VISUAL
+unset zkit_root homebrew_prefix
