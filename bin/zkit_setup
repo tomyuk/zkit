@@ -100,7 +100,7 @@ fi
 chmod -R og-rwx "${ZKIT_PRIVATE}"
 
 ## get host setup params
- d="${ZKIT_PRIVATE}/intrinsics"
+d="${ZKIT_PRIVATE}/intrinsics"
 hostname="$(hostname)"
 host="${d}/host-${hostname}"
 if [[ ! -r "${host}" ]]; then
