@@ -3,40 +3,38 @@
 # nvm for Node.js
 #
 
-# # nvm
-# if [[ -d ${HOME}/.nvm ]]; then
-#     source ${HOME}/.nvm/nvm.sh
-#     hash -r
-#     eval "$(npm completion)"
-# fi
-
-# # eof
+homebrew_prefix="${HOMEBREW_PREFIX:-}"
+home_dir="${HOME:-}"
 
 # nvm設定（Homebrewからインストールした場合）
-if [[ -d ${HOMEBREW_PREFIX}/opt/nvm ]]; then
-    export NVM_DIR="$HOME/.nvm"
-    source ${HOMEBREW_PREFIX}/opt/nvm/nvm.sh
-    source ${HOMEBREW_PREFIX}/opt/nvm/etc/bash_completion.d/nvm
-elif [[ -d ${HOME}/.nvm ]]; then
-    export NVM_DIR="$HOME/.nvm"
-    source ${HOME}/.nvm/nvm.sh
+if [[ -n "$homebrew_prefix" && -d "${homebrew_prefix}/opt/nvm" && -n "$home_dir" ]]; then
+    export NVM_DIR="${home_dir}/.nvm"
+    source "${homebrew_prefix}/opt/nvm/nvm.sh"
+    if [[ -r "${homebrew_prefix}/opt/nvm/etc/bash_completion.d/nvm" ]]; then
+        source "${homebrew_prefix}/opt/nvm/etc/bash_completion.d/nvm"
+    fi
+elif [[ -n "$home_dir" && -d "${home_dir}/.nvm" ]]; then
+    export NVM_DIR="${home_dir}/.nvm"
+    source "${home_dir}/.nvm/nvm.sh"
     [[ -s "$NVM_DIR/bash_completion" ]] && source "$NVM_DIR/bash_completion"
 fi
 
 # n (Node.js version manager)設定
-if [[ -x ${HOMEBREW_PREFIX}/bin/n ]]; then
-    export N_PREFIX="$HOME/.n"
+if [[ -n "$homebrew_prefix" && -x "${homebrew_prefix}/bin/n" && -n "$home_dir" ]]; then
+    export N_PREFIX="${home_dir}/.n"
     pathmunge "$N_PREFIX/bin"
 fi
 
 # yarn設定
-if [[ -x ${HOMEBREW_PREFIX}/bin/yarn ]]; then
-    export YARN_GLOBAL_FOLDER="$HOME/.yarn/global"
+if [[ -n "$homebrew_prefix" && -x "${homebrew_prefix}/bin/yarn" && -n "$home_dir" ]]; then
+    export YARN_GLOBAL_FOLDER="${home_dir}/.yarn/global"
     pathmunge "$YARN_GLOBAL_FOLDER/node_modules/.bin"
 fi
 
 # pnpm設定
-if [[ -x ${HOMEBREW_PREFIX}/bin/pnpm ]]; then
-    export PNPM_HOME="$HOME/.local/share/pnpm"
+if [[ -n "$homebrew_prefix" && -x "${homebrew_prefix}/bin/pnpm" && -n "$home_dir" ]]; then
+    export PNPM_HOME="${home_dir}/.local/share/pnpm"
     pathmunge "$PNPM_HOME"
 fi
+
+unset homebrew_prefix home_dir
