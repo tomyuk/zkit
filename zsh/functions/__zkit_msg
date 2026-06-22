@@ -5,10 +5,10 @@
 autoload -Uz colors
 colors
 
-if ${ZKIT_DEBUG}; then
-    if [[ $TERM == xterm* ]]; then
+if ${ZKIT_DEBUG:-false}; then
+    if [[ ${TERM:-} == xterm* ]]; then
 	echo "${fg[green]}$*$reset_color"
     else
-	echo $*
+	echo "$*"
     fi
 fi
