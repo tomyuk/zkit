@@ -3,20 +3,20 @@
 # setting prompt
 #
 
-if [[ -n $PS1 ]]; then
+if [[ -n ${PS1:-} ]]; then
     setopt prompt_subst # TRANSIENTR_PROMPT
     csi=$'\e[' nl=$'\n'
 
     Function __zkit_shlvl_prompt () {
-	if [[ $SHLVL > 1 ]]; then
+	if (( ${SHLVL:-0} > 1 )); then
 	    echo "[$SHLVL]"
 	fi
     }
 
     function __zkit_title_command () {
-	if [[ $TERM == xterm* ]]; then
-	    local TTY P
-	    if [[ -n "$SSH_TTY" ]]; then
+	if [[ ${TERM:-} == xterm* ]]; then
+	    local TTY P="" venv_name cwd home
+	    if [[ -n "${SSH_TTY:-}" ]]; then
 		TTY="${SSH_TTY/#\/dev\/}"
 	    else
 		TTY=$(tty)
@@ -25,16 +25,27 @@ if [[ -n $PS1 ]]; then
 	    if [[ -f /etc/description ]]; then
 		P+="[ $(cat /etc/description) ] - "
 	    fi
-	    if [[ -n $VIRTUAL_ENV_NAME ]]; then
-		P+="(${VIRTUAL_ENV_NAME}) - "
+
+	    venv_name="${VIRTUAL_ENV_NAME:-}"
+	    if [[ -z "$venv_name" && -n "${VIRTUAL_ENV:-}" ]]; then
+		venv_name="${VIRTUAL_ENV##*/}"
 	    fi
-	    P+="${USER}@${HOST%%.*} (${TTY}) : ${PWD/#$HOME/~}"
+	    if [[ -n "$venv_name" ]]; then
+		P+="(${venv_name}) - "
+	    fi
+
+	    cwd="${PWD:-}"
+	    home="${HOME:-}"
+	    if [[ -n "$home" ]]; then
+		cwd="${cwd/#$home/~}"
+	    fi
+	    P+="${USER:-}@${HOST%%.*} (${TTY}) : ${cwd}"
 	    printf "\033]0;%s\007" "$P"
 	fi
     }
 
     PS1=""
-    if [[ ! -n "$ZKIT_PROMPT_NO_DESCRIPTION" ]]; then
+    if [[ ! -n "${ZKIT_PROMPT_NO_DESCRIPTION:-}" ]]; then
 	if [[ -f /etc/description ]]; then
 	    DESCRIPTION=$(cat /etc/description)
 	else
@@ -42,13 +53,19 @@ if [[ -n $PS1 ]]; then
 	fi
 	PS1+="${pc1} ${DESCRIPTION} "		# Description
     fi
-    if [[ ! -n "$ZKIT_PROMPT_NO_TIME" ]]; then
+    if [[ ! -n "${ZKIT_PROMPT_NO_TIME:-}" ]]; then
 	PS1+="${pc2} %T "				# time
     fi
-    PS1+="${pc3}\$($VIRTUALENV_PROMPT_COMMAND)"	# virtualenv
-    PS1+="${pc4}\$($RVM_PROMPT_COMMAND)"	# rvm
-    PS1+="${pc5}\$($GIT_PROMPT_COMMAND)"	# git
-    if [[ -n "$ZKIP_PROMPT_DIR" ]]; then
+    if [[ -n "${VIRTUALENV_PROMPT_COMMAND:-}" ]]; then
+	PS1+="${pc3}\$(${VIRTUALENV_PROMPT_COMMAND})"	# virtualenv
+    fi
+    if [[ -n "${RVM_PROMPT_COMMAND:-}" ]]; then
+	PS1+="${pc4}\$(${RVM_PROMPT_COMMAND})"	# rvm
+    fi
+    if [[ -n "${GIT_PROMPT_COMMAND:-}" ]]; then
+	PS1+="${pc5}\$(${GIT_PROMPT_COMMAND})"	# git
+    fi
+    if [[ -n "${ZKIP_PROMPT_DIR:-}" ]]; then
 	PS1+="${pc6} ${ZKIP_PROMPT_DIR} "	# pwd
     else
 	PS1+="${pc6} %~ "			# pwd
@@ -61,7 +78,7 @@ if [[ -n $PS1 ]]; then
 	RPROMPT=
     fi
     PS1+="${cc1}%n${cc2}@${cc3}%m "		# user@host
-    if [[ ! -n "$ZKIT_PROMPT_SIMPLE" ]]; then
+    if [[ ! -n "${ZKIT_PROMPT_SIMPLE:-}" ]]; then
 	PS1+="${cc4}(%l)"				# (tty)
 	PS1+="${cc5}$(__zkit_shlvl_prompt)"		# shlvl
 	PS1+="${cc6}%!"				# history
