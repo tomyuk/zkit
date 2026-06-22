@@ -2,8 +2,8 @@
 #{{ __zkit_run
 #}}
 
-if ${ZKIT_DEBUG}; then
-    $@
+if ${ZKIT_DEBUG:-false}; then
+    "$@"
 else
-    $@ >/dev/null
+    "$@" >/dev/null
 fi
