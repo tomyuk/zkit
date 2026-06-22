@@ -7,4 +7,6 @@ if [[ -x ${HOMEBREW_PREFIX}/bin/go ]]; then
     export GOPATH="$HOME/go"
     pathmunge "${GOPATH}/bin"
     pathmunge "${GOROOT}/bin"
+elif [[ -x /usr/local/go/bin/go ]]; then
+    pathmunge "/usr/local/go/bin"
 fi

@@ -12,3 +12,4 @@ setopt No_GLOBAL_RCS	# /etc/zsh* は読み込まない
 
 export ZKIT=${ZKIT=${HOME}/.zkit}
 export ZDOTDIR=${ZKIT}/zsh # .zprofile 以降の zsh 起動スクリプトははこのディレクトリーから読み込む
+

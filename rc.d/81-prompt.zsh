@@ -4,9 +4,10 @@
 #
 
 if [[ -n $PS1 ]]; then
-    setopt prompt_subst transientr_prompt
+    setopt prompt_subst # TRANSIENTR_PROMPT
+    csi=$'\e[' nl=$'\n'
 
-    function __zkit_shlvl_prompt () {
+    Function __zkit_shlvl_prompt () {
 	if [[ $SHLVL > 1 ]]; then
 	    echo "[$SHLVL]"
 	fi
