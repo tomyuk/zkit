@@ -81,6 +81,11 @@ fi
 ## make var directories
 mkdir -p "${ZKIT}/var/cache" "${ZKIT}/var/tmp"
 
+## ensure zkit commands are executable
+if [[ -d "${ZKIT}/bin" ]]; then
+    find "${ZKIT}/bin" -maxdepth 1 -type f -name 'zkit*' -exec chmod u+x {} +
+fi
+
 ## pull private settings
 if [[ -d "${ZKIT_PRIVATE}/.git" ]]; then
     __zkit_msg "++ Updating private"
@@ -95,7 +100,7 @@ fi
 chmod -R og-rwx "${ZKIT_PRIVATE}"
 
 ## get host setup params
-d="${ZKIT_PRIVATE}/intrinsics"
+ d="${ZKIT_PRIVATE}/intrinsics"
 hostname="$(hostname)"
 host="${d}/host-${hostname}"
 if [[ ! -r "${host}" ]]; then
