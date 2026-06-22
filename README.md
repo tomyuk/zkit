@@ -34,7 +34,7 @@ ZKIT_PRIVATE_REPO=git@github.com:yourname/zkit_private.git
 
 ```text
 ~/.zkit/                  # zkit 本体・公開可能な共通設定
-├── bin/                  # zkit_setup など
+├── bin/                  # zkit_setup, zkit_doctor など
 ├── rc.d/                 # shell 起動時に source される設定
 ├── setup.d/              # zkit_setup が実行する初期設定
 ├── zsh/                  # zsh 用起動ファイル・関数
@@ -76,6 +76,9 @@ zsh では、`~/.zshenv` が `ZKIT` と `ZDOTDIR` を設定し、以後の `.zsh
 # 詳細表示つきでセットアップ
 ~/.zkit/bin/zkit_setup -v
 
+# 環境診断
+~/.zkit/bin/zkit_doctor
+
 # 起動時に読み込まれる rc を確認
 ZKIT_DEBUG=true zsh -l
 
@@ -95,6 +98,16 @@ cd ~/.zkit_private && git pull
 - [rc.d リファレンス](docs/rc.d.md)
 - [運用メモ](docs/operations.md)
 - [トラブルシューティング](docs/troubleshooting.md)
+
+## 診断とテスト
+
+`zkit_doctor` は、環境変数、必要ディレクトリ、代表コマンド、private repo、`rc.d` 候補、未定義変数リスクの簡易スキャンを行います。
+
+```bash
+~/.zkit/bin/zkit_doctor
+```
+
+repository には GitHub Actions の smoke workflow も含まれます。push / pull request 時に bash / zsh の構文確認、`zkit_doctor`、zsh / bash startup の簡易起動確認を行います。
 
 ## 設定を書く場所の原則
 
