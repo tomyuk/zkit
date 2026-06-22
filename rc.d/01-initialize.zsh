@@ -8,16 +8,19 @@ else
     zkit_login_shell=false
 fi
 
+zkit_root="${ZKIT:-${HOME:-}/.zkit}"
+homebrew_prefix="${HOMEBREW_PREFIX:-}"
+
 # 重要：必要なディレクトリを最初に作成
-[[ ! -d "${ZKIT}/var" ]] && mkdir -p "${ZKIT}/var"
-[[ ! -d "${ZKIT}/var/tmp" ]] && mkdir -p "${ZKIT}/var/tmp"
-[[ ! -d "${ZKIT}/var/cache" ]] && mkdir -p "${ZKIT}/var/cache"
+[[ ! -d "${zkit_root}/var" ]] && mkdir -p "${zkit_root}/var"
+[[ ! -d "${zkit_root}/var/tmp" ]] && mkdir -p "${zkit_root}/var/tmp"
+[[ ! -d "${zkit_root}/var/cache" ]] && mkdir -p "${zkit_root}/var/cache"
 
 zstyle ':zkit:*' rprompt off
 zstyle ':zkit:*' compinit_secure off
 zstyle ':zkit:*' vcs_info off
 
-TMPPREFIX=${ZKIT}/var/tmp/zsh_
+TMPPREFIX="${zkit_root}/var/tmp/zsh_"
 
 ### zsh オプション
 setopt extended_glob
@@ -36,18 +39,19 @@ autoload -Uz add-zsh-hook
 if [[ -x /opt/homebrew/bin/brew ]]; then
     # Apple Silicon Mac
     eval "$(/opt/homebrew/bin/brew shellenv)"
-    HOMEBREW_PREFIX="/opt/homebrew"
+    homebrew_prefix="/opt/homebrew"
 elif [[ -x /usr/local/bin/brew ]]; then
     # Intel Mac
     eval "$(/usr/local/bin/brew shellenv)"
-    HOMEBREW_PREFIX="/usr/local"
+    homebrew_prefix="/usr/local"
 fi
+export HOMEBREW_PREFIX="$homebrew_prefix"
 
 # システムパスの基本構成
 path=(
-    $__zkit_path
-    ${HOMEBREW_PREFIX}/sbin
-    ${HOMEBREW_PREFIX}/bin
+    ${__zkit_path[@]:-}
+    ${homebrew_prefix:+${homebrew_prefix}/sbin}
+    ${homebrew_prefix:+${homebrew_prefix}/bin}
     /usr/local/sbin
     /usr/local/bin
     /usr/sbin
@@ -55,3 +59,5 @@ path=(
     /sbin
     /bin
 )
+
+unset zkit_root homebrew_prefix
