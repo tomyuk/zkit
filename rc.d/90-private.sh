@@ -3,20 +3,25 @@
 # 90-private.sh
 #
 
-pathmunge "${__zkit_path[@]}"
+if [[ ${#__zkit_path[@]:-0} -gt 0 ]]; then
+    pathmunge "${__zkit_path[@]}"
+fi
 
-if [[ -n $ZSH_VERSION ]]; then
+if [[ -n "${ZSH_VERSION:-}" ]]; then
     suffix=.zsh
 else
     suffix=.bash
 fi
 
-__rc=${ZKIT_PRIVATE}/rc.d/host-${HOST}${suffix}
-if [[ ! -r $__rc ]]; then
-    __rc=${ZKIT_PRIVATE}/rc.d/host-${HOST%%.[[:alnum:]]*}${suffix}
-    if [[ ! -r $__rc ]]; then
-	__rc=
+zkit_private="${ZKIT_PRIVATE:-${HOME:-}/.zkit_private}"
+host_name="${HOST:-${HOSTNAME:-$(hostname)}}"
+
+__rc="${zkit_private}/rc.d/host-${host_name}${suffix}"
+if [[ ! -r "$__rc" ]]; then
+    __rc="${zkit_private}/rc.d/host-${host_name%%.[[:alnum:]]*}${suffix}"
+    if [[ ! -r "$__rc" ]]; then
+	__rc=""
     fi
 fi
-[[ -n $__rc ]] && source $__rc
-unset __rc
+[[ -n "$__rc" ]] && source "$__rc"
+unset __rc zkit_private host_name suffix
