@@ -1,7 +1,9 @@
 # Cargo
 
-if [[ -x ${HOME}/.cargo/bin/cargo ]]; then
-    pathmunge "${HOME}/.cargo/bin"
+home_dir="${HOME:-}"
+
+if [[ -n "$home_dir" && -x "${home_dir}/.cargo/bin/cargo" ]]; then
+    pathmunge "${home_dir}/.cargo/bin"
 fi
 
-
+unset home_dir
