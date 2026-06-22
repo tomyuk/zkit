@@ -25,6 +25,7 @@ jobs:
           bash -n bin/zkit_doctor
           bash -n bash/startup.sh
           find bash/functions -type f -name '*.zkit' -print0 | xargs -0 -r -n1 bash -n
+          find rc.d -type f \( -name '*.sh' -o -name '*.bash' \) -print0 | xargs -0 -r -n1 bash -n
 
       - name: Zsh syntax checks
         shell: bash
@@ -37,6 +38,7 @@ jobs:
       - name: zkit doctor
         shell: bash
         run: |
+          mkdir -p "$RUNNER_TEMP/zkit_private/rc.d" "$RUNNER_TEMP/zkit_private/intrinsics"
           ZKIT="$PWD" ZDOTDIR="$PWD/zsh" ZKIT_PRIVATE="$RUNNER_TEMP/zkit_private" bash bin/zkit_doctor
 
       - name: zsh startup smoke
