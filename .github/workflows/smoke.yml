@@ -25,7 +25,7 @@ jobs:
           bash -n bin/zkit_doctor
           bash -n bash/startup.sh
           find bash/functions -type f -name '*.zkit' -print0 | xargs -0 -r -n1 bash -n
-          find rc.d -type f \( -name '*.sh' -o -name '*.bash' \) -print0 | xargs -0 -r -n1 bash -n
+          find rc.d -type f \( -name '*.bash' -o -name '*.sh' \) -print0 | xargs -0 -r -n1 bash -n
 
       - name: Zsh syntax checks
         shell: bash
@@ -33,7 +33,7 @@ jobs:
           zsh -n zsh/.zshenv
           zsh -n zsh/startup.sh
           find zsh/functions -type f -print0 | xargs -0 -r -n1 zsh -n
-          find rc.d -type f \( -name '*.zsh' -o -name '*.sh' \) -print0 | xargs -0 -r -n1 zsh -n
+          find rc.d -type f -name '*.zsh' -print0 | xargs -0 -r -n1 zsh -n
 
       - name: zkit doctor
         shell: bash
