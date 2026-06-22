@@ -1,0 +1,118 @@
+#!/usr/bin/env bash
+#
+# zkit_doctor - lightweight diagnostics for zkit environments
+#
+
+set -o pipefail
+
+ZKIT="${ZKIT:-${HOME:-}/.zkit}"
+ZDOTDIR="${ZDOTDIR:-${ZKIT}/zsh}"
+ZKIT_PRIVATE="${ZKIT_PRIVATE:-${HOME:-}/.zkit_private}"
+
+status=0
+
+ok() {
+    printf 'ok: %s\n' "$*"
+}
+
+warn() {
+    printf 'warn: %s\n' "$*" >&2
+    status=1
+}
+
+info() {
+    printf 'info: %s\n' "$*"
+}
+
+check_dir() {
+    local name="$1" path="$2"
+    if [[ -d "$path" ]]; then
+        ok "$name exists: $path"
+    else
+        warn "$name missing: $path"
+    fi
+}
+
+check_file() {
+    local name="$1" path="$2"
+    if [[ -r "$path" ]]; then
+        ok "$name readable: $path"
+    else
+        warn "$name not readable: $path"
+    fi
+}
+
+print_header() {
+    printf '\n== %s ==\n' "$1"
+}
+
+print_header "environment"
+info "SHELL=${SHELL:-}"
+info "HOME=${HOME:-}"
+info "ZKIT=$ZKIT"
+info "ZDOTDIR=$ZDOTDIR"
+info "ZKIT_PRIVATE=$ZKIT_PRIVATE"
+info "ZKIT_DEBUG=${ZKIT_DEBUG:-false}"
+info "ZSH_VERSION=${ZSH_VERSION:-}"
+info "BASH_VERSION=${BASH_VERSION:-}"
+
+print_header "required paths"
+check_dir ZKIT "$ZKIT"
+check_dir ZDOTDIR "$ZDOTDIR"
+check_dir ZKIT_PRIVATE "$ZKIT_PRIVATE"
+check_file zshenv "$ZKIT/zsh/.zshenv"
+check_file zsh-startup "$ZKIT/zsh/startup.sh"
+check_file bash-startup "$ZKIT/bash/startup.sh"
+check_file zkit-setup "$ZKIT/bin/zkit_setup"
+
+print_header "commands"
+for cmd in git bash zsh hostname; do
+    if command -v "$cmd" >/dev/null 2>&1; then
+        ok "command found: $cmd -> $(command -v "$cmd")"
+    else
+        warn "command missing: $cmd"
+    fi
+done
+
+print_header "private repository"
+if [[ -d "$ZKIT_PRIVATE/.git" ]]; then
+    ok "private repo detected"
+    git -C "$ZKIT_PRIVATE" remote -v 2>/dev/null || true
+else
+    info "private repo not detected; plain private directory is acceptable"
+fi
+
+print_header "rc.d candidates"
+if [[ -d "$ZKIT/rc.d" ]]; then
+    find "$ZKIT/rc.d" -maxdepth 1 -type f \( -name '*.sh' -o -name '*.zsh' -o -name '*.bash' \) | sort | sed 's/^/rc: /'
+else
+    warn "missing rc.d: $ZKIT/rc.d"
+fi
+
+if [[ -d "$ZKIT_PRIVATE/rc.d" ]]; then
+    find "$ZKIT_PRIVATE/rc.d" -maxdepth 1 -type f \( -name '*.sh' -o -name '*.zsh' -o -name '*.bash' \) | sort | sed 's/^/private rc: /'
+else
+    info "private rc.d not present"
+fi
+
+print_header "common nounset risk patterns"
+if command -v grep >/dev/null 2>&1; then
+    if grep -RInE '\$[A-Za-z_][A-Za-z0-9_]*' "$ZKIT/zsh" "$ZKIT/bash" "$ZKIT/rc.d" 2>/dev/null \
+        | grep -Ev '\$\{|\$\(|\$@|\$\*|\$\?|\$#|\$[0-9]|\$\$' \
+        | head -50; then
+        info "review listed lines for possible unguarded variable use"
+    else
+        ok "no obvious simple unguarded variable pattern found"
+    fi
+else
+    warn "grep missing; skipped nounset risk scan"
+fi
+
+print_header "summary"
+if [[ $status -eq 0 ]]; then
+    ok "zkit doctor completed without warnings"
+else
+    warn "zkit doctor completed with warnings"
+fi
+
+exit "$status"
