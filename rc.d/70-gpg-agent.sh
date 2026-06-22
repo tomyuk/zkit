@@ -11,9 +11,9 @@
 # gpg_agent_options="--debug-level basic"
 
 # ログインシェルの場合のみ
-if $zkit_login_shell && [[ -d ${HOME}/.gnupg ]]; then
+if ${zkit_login_shell:-false} && [[ -n "${HOME:-}" && -d "${HOME}/.gnupg" ]]; then
 
-    if [[ -z "$GNOME_KEYRING_CONTROL" && -z "$GPG_AGENT_INFO" ]]; then
+    if [[ -z "${GNOME_KEYRING_CONTROL:-}" && -z "${GPG_AGENT_INFO:-}" ]]; then
         # gpg-agent がすでに起動済みであれば gpg_agent_info_file は上書きされ
         # ないので、起動済みか否かに関わらずこの内容で環境を設定する。
 	gpg_agent_info_file="${HOME}/.gpg-agent-info"
@@ -26,24 +26,24 @@ if $zkit_login_shell && [[ -d ${HOME}/.gnupg ]]; then
 	    unset GPG_TTY
 	fi
 	/usr/bin/gpg-agent --daemon \
-	    ${gpg_agent_options} \
-	    --log-file ~/.gnupg/gpg-agent.log \
-	    --write-env-file ${gpg_agent_info_file} >/dev/null 2>&1
-	if [ -f ${gpg_agent_info_file} ]; then
-	    eval $(cat ${gpg_agent_info_file})
-	    eval $(cut -d= -f 1 <${gpg_agent_info_file} | xargs echo export)
+	    ${gpg_agent_options:-} \
+	    --log-file "${HOME}/.gnupg/gpg-agent.log" \
+	    --write-env-file "${gpg_agent_info_file}" >/dev/null 2>&1
+	if [[ -f "${gpg_agent_info_file}" ]]; then
+	    eval "$(cat "${gpg_agent_info_file}")"
+	    eval "$(cut -d= -f 1 <"${gpg_agent_info_file}" | xargs echo export)"
 	    export GPG_AGENT_INFO
 	fi
 	unset gpg_agent_info_file
     fi
 
     function kill_gpg_agent () {
-	if [[ -n "$GPG_AGENT_INFO" ]]; then
+	if [[ -n "${GPG_AGENT_INFO:-}" ]]; then
 	    x=(${GPG_AGENT_INFO//:/ })
 	    if (( x[2] != 0 )); then
-		kill ${x[2]}
+		kill "${x[2]}"
 		unset GPG_AGENT_INFO
-		rm ${HOME}/.gpg-agent-info
+		rm -f "${HOME}/.gpg-agent-info"
 		echo Killed
 	    else
 		echo Ignored
