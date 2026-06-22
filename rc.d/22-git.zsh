@@ -3,7 +3,7 @@
 # git
 #
 
-if [[ -n $PS1 ]]; then
+if [[ -n "${PS1:-}" ]]; then
 
     # git prompt
     if zstyle -t ':zkit:' vcs_info; then
@@ -20,10 +20,10 @@ if [[ -n $PS1 ]]; then
 	# git：まだpushしていないcommitあるかチェックする
 	function __git_info_push () {
 	    if [[ -n "$(git remote 2>/dev/null)" ]]; then
-		local head="$(git rev-parse HEAD)"
-		local remote
-		for remote in $(git rev-parse --remotes) ; do
-		    if [ "$head" = "$remote" ]; then return 0 ; fi
+		local head remote
+		head="$(git rev-parse HEAD 2>/dev/null)" || return 0
+		for remote in $(git rev-parse --remotes 2>/dev/null) ; do
+		    if [[ "$head" = "$remote" ]]; then return 0 ; fi
 		done
 		# pushしていないcommitがあることを示す文字列
 		echo "^"
@@ -41,14 +41,14 @@ if [[ -n $PS1 ]]; then
 	# vcs_infoの出力に独自の出力を付加する
 	function __vcs_info () {
 	    LANG=en_US.UTF-8 vcs_info
-	    if [[ -n "${vcs_info_msg_0_}" ]]; then
+	    if [[ -n "${vcs_info_msg_0_:-}" ]]; then
 		echo "(${vcs_info_msg_0_}$(__git_info_stash)$(__git_info_push))"
 	    fi
 	}
 	GIT_PROMPT_COMMAND="__vcs_info '(%s)'"
 
-    elif [[ -r $ZKIT/lib/git-prompt.sh ]]; then
-	source $ZKIT/lib/git-prompt.sh
+    elif [[ -r "${ZKIT:-}/lib/git-prompt.sh" ]]; then
+	source "${ZKIT}/lib/git-prompt.sh"
 	GIT_PS1_SHOWDIRTYSTATE=yes
 	GIT_PS1_SHOWSTASHSTATE=yes
 	GIT_PS1_SHOWUNTRACKEDFILES=yes
@@ -56,8 +56,8 @@ if [[ -n $PS1 ]]; then
 	GIT_PROMPT_COMMAND="__git_ps1 '(%s)'"
     fi
 
-    if [[ -f ~/.zkit/lib/git-flow-completion.zsh ]]; then
-	. ~/.zkit/lib/git-flow-completion.zsh
+    if [[ -n "${ZKIT:-}" && -f "${ZKIT}/lib/git-flow-completion.zsh" ]]; then
+	. "${ZKIT}/lib/git-flow-completion.zsh"
     elif [[ -f /usr/local/share/zsh/site-functions/git-flow-completion.zsh ]]; then
 	. /usr/local/share/zsh/site-functions/git-flow-completion.zsh
     fi
