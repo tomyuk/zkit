@@ -2,24 +2,37 @@
 #
 #
 
-if [[ -n $PS1 ]]; then
+if [[ -n ${PS1:-} ]]; then
     csi=$'\e[' nl=$'\n'
 
     function __zkit_shlvl_prompt () {
-	if [[ $SHLVL > 1 ]]; then
+	if (( ${SHLVL:-0} > 1 )); then
 	    echo "[$SHLVL]"
 	fi
     }
 
     function __zkit_title_command () {
-	if [[ $TERM == xterm* ]]; then
-	    local TTY P
+	if [[ ${TERM:-} == xterm* ]]; then
+	    local TTY P="" venv_name cwd home host
 	    TTY=$(tty)
 	    TTY="${TTY/#\/dev\/}"
-	    if [[ -n $VIRTUAL_ENV_NAME ]]; then
-		P+="(${VIRTUAL_ENV_NAME}) - "
+
+	    venv_name="${VIRTUAL_ENV_NAME:-}"
+	    if [[ -z "$venv_name" && -n "${VIRTUAL_ENV:-}" ]]; then
+		venv_name="${VIRTUAL_ENV##*/}"
 	    fi
-	    P+="${USER}@${HOSTNAME%%.*} (${TTY}) : ${PWD/#$HOME/~}"
+	    if [[ -n "$venv_name" ]]; then
+		P+="(${venv_name}) - "
+	    fi
+
+	    cwd="${PWD:-}"
+	    home="${HOME:-}"
+	    if [[ -n "$home" ]]; then
+		cwd="${cwd/#$home/~}"
+	    fi
+	    host="${HOSTNAME:-}"
+	    host="${host%%.*}"
+	    P+="${USER:-}@${host} (${TTY}) : ${cwd}"
 	    printf "\033]0;%s\007" "$P"
 	fi
     }
@@ -28,16 +41,22 @@ if [[ -n $PS1 ]]; then
 
     PS1="${pc1}Bash"				# Bash
     PS1+="${pc2} \D{%R} "			# time
-    PS1+="${pc3}$($VIRTUALENV_PROMPT_COMMAND)"	# virtualenv
-    PS1+="${pc4}\$($RVM_PROMPT_COMMAND)"	# rvm
-    PS1+="${pc5}\$($GIT_PROMPT_COMMAND)"	# git
+    if [[ -n "${VIRTUALENV_PROMPT_COMMAND:-}" ]]; then
+	PS1+="${pc3}\$(${VIRTUALENV_PROMPT_COMMAND})"	# virtualenv
+    fi
+    if [[ -n "${RVM_PROMPT_COMMAND:-}" ]]; then
+	PS1+="${pc4}\$(${RVM_PROMPT_COMMAND})"	# rvm
+    fi
+    if [[ -n "${GIT_PROMPT_COMMAND:-}" ]]; then
+	PS1+="${pc5}\$(${GIT_PROMPT_COMMAND})"	# git
+    fi
     PS1+="${pc6} \w "				# pwd
     PS1+="${pc0}${nl}"
 
     tty=$(tty)
 
     PS1+="${cc1}\u${cc2}@${cc3}\h "				# user@host
-    if [[ ! -n "$ZKIT_PROMPT_SIMPLE" ]]; then
+    if [[ ! -n "${ZKIT_PROMPT_SIMPLE:-}" ]]; then
 	PS1+="${cc4}(${tty/#\/dev\/})"				# (tty)
 	PS1+="${cc5}$(__zkit_shlvl_prompt)"			# shlvl
 	PS1+="${cc6}\!"						# history
