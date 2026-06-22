@@ -2,27 +2,32 @@
 #
 # Zkit utilities
 
-if [[ $BASH_VERSION != 3.* ]];then
+if [[ "${BASH_VERSION:-}" != 3.* ]]; then
     require colors
 fi
 require expand_template
 
 #{{
-# 
+#
 #}}
 
 function __zkit_install__check_src () {
-    if [[ $1 == /* ]]; then
-	if [[ -r $1 ]]; then
-	    echo $1
+    local src="${1:-}"
+    if [[ -z "$src" ]]; then
+	return 1
+    fi
+
+    if [[ "$src" == /* ]]; then
+	if [[ -r "$src" ]]; then
+	    echo "$src"
 	    return
 	fi
     else
-	if [[ -r ${ZKIT_PRIVATE}/$1 && -f ${ZKIT_PRIVATE}/$1 ]]; then
-	    echo ${ZKIT_PRIVATE}/$1
+	if [[ -r "${ZKIT_PRIVATE:-}/$src" && -f "${ZKIT_PRIVATE:-}/$src" ]]; then
+	    echo "${ZKIT_PRIVATE}/$src"
 	    return
-	elif [[ -r ${ZKIT}/$1 && -f ${ZKIT}/$1 ]]; then
-	    echo ${ZKIT}/$1
+	elif [[ -r "${ZKIT:-}/$src" && -f "${ZKIT:-}/$src" ]]; then
+	    echo "${ZKIT}/$src"
 	    return
 	fi
     fi
@@ -30,44 +35,48 @@ function __zkit_install__check_src () {
 }
 
 function __zkit_install__safe_copy () {
-    local ret=0
-    if [[ -L $2 ]]; then
-	rm -f $2 || return 1
-	cp $1 $2 || return 1
-    elif [[ -e $2 ]]; then
-	if ! cmp -s $1 $2; then
-	    mv $2 $2.$$.bak || return 1
-	    cp $1 $2 || return 1
+    local src="${1:-}" dst="${2:-}" mode="${3:-}" ret=0
+    if [[ -z "$src" || -z "$dst" ]]; then
+	return 1
+    fi
+
+    if [[ -L "$dst" ]]; then
+	rm -f "$dst" || return 1
+	cp "$src" "$dst" || return 1
+    elif [[ -e "$dst" ]]; then
+	if ! cmp -s "$src" "$dst"; then
+	    mv "$dst" "$dst.$$.bak" || return 1
+	    cp "$src" "$dst" || return 1
 	else
 	    ret=2
 	fi
     else
-	cp $1 $2 || return 1
+	cp "$src" "$dst" || return 1
     fi
-    if [[ -n "$3" ]]; then
-	chmod $3 $2 || return 1
+    if [[ -n "$mode" ]]; then
+	chmod "$mode" "$dst" || return 1
     fi
     return $ret
 }
 
 function __zkit_install () {
-    local src
+    local src ret=0
 
-    if [[ -z "$1" || -z "$2" ]]; then
-	__zkit_err "!! install: missing args:" $@
+    if [[ -z "${1:-}" || -z "${2:-}" ]]; then
+	__zkit_err "!! install: missing args:" "$@"
     elif [[ ${2:0:1} != / ]]; then
 	__zkit_err "-- template destination must be a absolute path"
     else
-	src=$(__zkit_install__check_src $1)
-	if [[ -n $src ]]; then
-	    __zkit_install__safe_copy $src $2 $3
-	    case $? in 
+	src="$(__zkit_install__check_src "$1")"
+	if [[ -n "$src" ]]; then
+	    __zkit_install__safe_copy "$src" "$2" "${3:-}"
+	    ret=$?
+	    case $ret in
 		0)  __zkit_msg "++ Copied: $1 -> $2" ;;
 		2)  __zkit_msg "== Skip: $2" ;;
-		*)  ret=$?
-		    __zkit_err "-- Install error: $1 -> $2"
-		    ;;
+		*)  __zkit_err "-- Install error: $1 -> $2" ;;
 	    esac
+	    return $ret
 	else
 	    __zkit_err "-- Missing or cannot read $1"
 	fi
@@ -76,26 +85,28 @@ function __zkit_install () {
 }
 
 function __zkit_template () {
-    local temp=${ZKIT}/var/tmp/$(basename $1).out src ret=0
+    local temp src ret=0
+    temp="${ZKIT:-}/var/tmp/$(basename "${1:-template}").out"
 
-    if [[ ${2:0:1} != / ]]; then
+    if [[ -z "${1:-}" || -z "${2:-}" ]]; then
+	__zkit_err "-- template: missing args"
+    elif [[ ${2:0:1} != / ]]; then
 	__zkit_err "-- template destination must be a absolute path"
     else
-	src=$(__zkit_install__check_src $1)
-	if [[ -n $src ]]; then
-	    if ! expand_template <$src >$temp; then
+	src="$(__zkit_install__check_src "$1")"
+	if [[ -n "$src" ]]; then
+	    if ! expand_template <"$src" >"$temp"; then
 		__zkit_err "-- Template error: $1"
 		return 1
 	    fi
-	    __zkit_install__safe_copy $temp $2 $3
-	    case $? in
+	    __zkit_install__safe_copy "$temp" "$2" "${3:-}"
+	    ret=$?
+	    case $ret in
 		0)  __zkit_msg "++ Installed: $1 -> $2" ;;
 		2)  __zkit_msg "== Skip: $2" ;;
-		*)  ret=$?
-		    __zkit_err "-- Install error: $1 -> $2"
-		    ;;
+		*)  __zkit_err "-- Install error: $1 -> $2" ;;
 	    esac
-	    rm $temp
+	    rm -f "$temp"
 	    return $ret
 	else
 	    __zkit_err "-- Cannot read template $1"
@@ -105,15 +116,15 @@ function __zkit_template () {
 }
 
 function __zkit_whence () {
-    type -P $1
+    type -P "${1:-}"
 }
 
 function __zkit_have () {
-    type -P $1 >/dev/null
+    type -P "${1:-}" >/dev/null
 }
 
 function __zkit_split () {
-    local IFS=$2
+    local IFS="${2:-$' \t\n'}"
     eval "$1=(\$3)"
 }
 
