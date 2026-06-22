@@ -1,0 +1,52 @@
+name: smoke
+
+on:
+  push:
+    branches: [ main ]
+  pull_request:
+    branches: [ main ]
+
+jobs:
+  shell-smoke:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Install zsh
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y zsh
+
+      - name: Bash syntax checks
+        shell: bash
+        run: |
+          bash -n bin/zkit_setup
+          bash -n bin/zkit_doctor
+          bash -n bash/startup.sh
+          find bash/functions -type f -name '*.zkit' -print0 | xargs -0 -r -n1 bash -n
+
+      - name: Zsh syntax checks
+        shell: bash
+        run: |
+          zsh -n zsh/.zshenv
+          zsh -n zsh/startup.sh
+          find zsh/functions -type f -print0 | xargs -0 -r -n1 zsh -n
+          find rc.d -type f \( -name '*.zsh' -o -name '*.sh' \) -print0 | xargs -0 -r -n1 zsh -n
+
+      - name: zkit doctor
+        shell: bash
+        run: |
+          ZKIT="$PWD" ZDOTDIR="$PWD/zsh" ZKIT_PRIVATE="$RUNNER_TEMP/zkit_private" bash bin/zkit_doctor
+
+      - name: zsh startup smoke
+        shell: bash
+        run: |
+          mkdir -p "$RUNNER_TEMP/zkit_private/rc.d" "$RUNNER_TEMP/zkit_private/intrinsics"
+          ZKIT="$PWD" ZDOTDIR="$PWD/zsh" ZKIT_PRIVATE="$RUNNER_TEMP/zkit_private" ZKIT_DEBUG=true zsh -f -c 'source zsh/startup.sh'
+
+      - name: bash startup smoke
+        shell: bash
+        run: |
+          mkdir -p "$RUNNER_TEMP/zkit_private/rc.d" "$RUNNER_TEMP/zkit_private/intrinsics"
+          ZKIT="$PWD" ZKIT_PRIVATE="$RUNNER_TEMP/zkit_private" ZKIT_DEBUG=true bash -c 'source bash/startup.sh'
