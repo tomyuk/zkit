@@ -5,8 +5,8 @@
 autoload -Uz colors
 colors
 
-if [[ $TERM == xterm* ]]; then
-    echo "${fg[red]}$*$reset_color"
+if [[ ${TERM:-} == xterm* ]]; then
+    echo "${fg[red]}$*$reset_color" >&2
 else
-    echo $*
+    echo "$*" >&2
 fi
