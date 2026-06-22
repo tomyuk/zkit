@@ -3,7 +3,7 @@
 # 90-private.sh
 #
 
-if [[ ${#__zkit_path[@]:-0} -gt 0 ]]; then
+if [[ -n "${__zkit_path[*]:-}" ]]; then
     pathmunge "${__zkit_path[@]}"
 fi
 
