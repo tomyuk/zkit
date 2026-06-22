@@ -4,7 +4,13 @@ zkit で起きやすい問題と確認手順をまとめます。
 
 ## まず確認すること
 
-新しい shell を起動できる場合は、読み込みログを出します。
+新しい shell を起動できる場合は、最初に診断コマンドを実行します。
+
+```bash
+~/.zkit/bin/zkit_doctor
+```
+
+続いて、読み込みログを出します。
 
 ```bash
 ZKIT_DEBUG=true zsh -l
@@ -17,6 +23,22 @@ zsh -f
 # または
 bash --noprofile --norc
 ```
+
+## `zkit_doctor` で警告が出る
+
+`zkit_doctor` は、環境変数、必要ファイル、代表コマンド、private repo、`rc.d` 候補、未定義変数リスクを確認します。
+
+よくある警告と対応:
+
+| 警告 | 対応 |
+|---|---|
+| `ZKIT missing` | `~/.zkit` が存在するか確認する |
+| `ZDOTDIR missing` | `~/.zkit/zsh` が存在するか確認する |
+| `ZKIT_PRIVATE missing` | `~/.zkit_private` を作成するか、`ZKIT_PRIVATE` を見直す |
+| `command missing` | 必要コマンドを install する |
+| `review listed lines` | 表示された行に `${VAR:-}` が必要か確認する |
+
+未定義変数リスクスキャンは簡易的なものです。警告行がすべて問題とは限りませんが、`set -u` / zsh `nounset` 環境で落ちる可能性のある箇所を探す起点になります。
 
 ## `parameter not set` が出る
 
@@ -64,6 +86,7 @@ rc.d に追加するコードでは、未定義になり得る変数を必ず `$
 3. ファイル名の番号が想定した順序になっているか
 4. private rc.d に置いたつもりが別の場所にないか
 5. 新しい shell で確認しているか
+6. `zkit_doctor` でパス警告が出ていないか
 
 zsh で読み込まれる拡張子:
 
@@ -82,6 +105,7 @@ bash で読み込まれる拡張子:
 確認コマンド:
 
 ```bash
+~/.zkit/bin/zkit_doctor
 ZKIT_DEBUG=true zsh -l
 ```
 
@@ -243,6 +267,9 @@ mv ~/.zshenv ~/.zshenv.disabled
 ## 問題調査用コマンド集
 
 ```bash
+# 診断
+~/.zkit/bin/zkit_doctor
+
 # shell と起動モード
 printf 'SHELL=%s\n' "$SHELL"
 printf 'ZSH_VERSION=%s\n' "${ZSH_VERSION:-}"
