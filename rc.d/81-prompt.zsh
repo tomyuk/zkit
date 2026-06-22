@@ -15,7 +15,7 @@ if [[ -n ${PS1:-} ]]; then
 
     function __zkit_title_command () {
 	if [[ ${TERM:-} == xterm* ]]; then
-	    local TTY P="" venv_name cwd home
+	    local TTY P="" venv_name cwd home host
 	    if [[ -n "${SSH_TTY:-}" ]]; then
 		TTY="${SSH_TTY/#\/dev\/}"
 	    else
@@ -39,7 +39,9 @@ if [[ -n ${PS1:-} ]]; then
 	    if [[ -n "$home" ]]; then
 		cwd="${cwd/#$home/~}"
 	    fi
-	    P+="${USER:-}@${HOST%%.*} (${TTY}) : ${cwd}"
+	    host="${HOST:-}"
+	    host="${host%%.*}"
+	    P+="${USER:-}@${host} (${TTY}) : ${cwd}"
 	    printf "\033]0;%s\007" "$P"
 	fi
     }
