@@ -1,8 +1,8 @@
 #!/usr/bin/env bash
 # zkit必要ディレクトリ作成スクリプト
 
-ZKIT=${ZKIT:-${HOME}/.zkit}
-ZKIT_PRIVATE=${ZKIT_PRIVATE:-${HOME}/.zkit_private}
+ZKIT="${ZKIT:-${HOME:-}/.zkit}"
+ZKIT_PRIVATE="${ZKIT_PRIVATE:-${HOME:-}/.zkit_private}"
 
 echo "zkitディレクトリ構造を作成中..."
 
