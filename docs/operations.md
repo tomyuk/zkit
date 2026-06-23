@@ -95,6 +95,12 @@ if [[ -n "${PS1:-}" ]]; then
 fi
 ```
 
+## 残作業の追跡
+
+`nounset` / `set -u` hardening のうち、GitHub connector 経由の直接更新が安全チェックでブロックされた箇所は Issue #12 で追跡します。
+
+主な対象は、Anaconda hook、RVM setup、`__zkit_die`、一部 setup script です。これらは外部取得、`eval`、またはインストール処理を含むため、ローカル環境で小さな patch として適用し、`bash -n` / `zsh -n` / `zkit_doctor` / 実起動確認を通してから commit してください。
+
 ## private repo の運用
 
 private repo には次のような情報を置きます。
