@@ -23,6 +23,7 @@ jobs:
         run: |
           bash -n bin/zkit_setup
           bash -n bin/zkit_doctor
+          bash -n bin/zkit_setup_dirs.sh
           bash -n bash/startup.sh
           find bash/functions -type f -name '*.zkit' -print0 | xargs -0 -r -n1 bash -n
           find rc.d -type f \( -name '*.bash' -o -name '*.sh' \) -print0 | xargs -0 -r -n1 bash -n
@@ -32,6 +33,7 @@ jobs:
         run: |
           zsh -n zsh/.zshenv
           zsh -n zsh/startup.sh
+          zsh -n bin/zkit_setup.zsh
           find zsh/functions -type f -print0 | xargs -0 -r -n1 zsh -n
           find rc.d -type f -name '*.zsh' -print0 | xargs -0 -r -n1 zsh -n
 
