@@ -2,45 +2,46 @@
 #
 # run_fwknop
 
-if [[ -z $1 ]]; then
+if [[ -z "${1:-}" ]]; then
     echo "Usage: $0 host"
     exit 2
 fi
 
-target=${1##*@}
+target="${1##*@}"
 
 use_pass=0
-conf=${ZKIT_PRIVATE}/share/hosts.conf
-if [[ -r $conf ]]; then
-   while read spec; do
+conf="${ZKIT_PRIVATE:-${HOME:-}/.zkit_private}/share/hosts.conf"
+if [[ -r "$conf" ]]; then
+   while IFS= read -r spec; do
        host= hostname= proxy= stanza=
        eval "$spec"
-       if [[ $host == $target ]]; then
-	   if [[ $proxy == fwknop-pw ]]; then
+       if [[ "${host:-}" == "$target" ]]; then
+	   if [[ "${proxy:-}" == fwknop-pw ]]; then
 	       use_pass=1
 	   fi
-	   FWKNOP_OPTS=
-	   if [[ $use_pass == 0 && -n "$GPG_AGENT_INFO" ]]; then
-	       FWKNOP_OPTS=--gpg-agent
+	   FWKNOP_OPTS=()
+	   if [[ "$use_pass" == 0 && -n "${GPG_AGENT_INFO:-}" ]]; then
+	       FWKNOP_OPTS=(--gpg-agent)
 	   fi
 	   case $(uname -s) in
 	       Linux)
-		   WAIT="usleep $((400*1000))"
+		   WAIT=(usleep $((400*1000)))
 		   ;;
 	       Darwin)
-		   WAIT="sleep 0.4"
+		   WAIT=(sleep 0.4)
 		   ;;
 	       *)
 		   echo "Unknown system type: $(uname -s)"
 		   exit 1
 		   ;;
 	   esac
-	   if [[ -n $stanza ]]; then
-	       LANG=C fwknop -n $stanza ${FWKNOP_OPTS} && ${WAIT}
+	   if [[ -n "${stanza:-}" ]]; then
+	       LANG=C fwknop -n "$stanza" "${FWKNOP_OPTS[@]}" && "${WAIT[@]}"
 	   fi
 	   exit
        fi
-   done < $conf
-fi	
-echo "$0: Cannot find desination $1"
+   done < "$conf"
+fi
+
+echo "$0: Cannot find destination $1"
 exit 1
